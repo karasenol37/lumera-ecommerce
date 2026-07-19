@@ -67,6 +67,8 @@ price:product.price,
 
 image:product.image
 
+stock: product.stock
+
 });
 
 
