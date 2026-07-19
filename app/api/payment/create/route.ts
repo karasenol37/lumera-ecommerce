@@ -323,11 +323,11 @@ export async function POST(
             requestData,
 
 
-            (
-              error,
-              result
+           (
+  error: any,
+  result: any
 
-            )=>{
+)=>{
 
 
               if(error){
