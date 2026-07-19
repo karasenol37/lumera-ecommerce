@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import Header from "@/components/Header";
+import HeaderClient from "@/components/HeaderClient";
 import Hero from "@/components/Hero";
 import ProductList from "@/components/ProductList";
 
@@ -17,9 +17,14 @@ return (
 
 <>
 
-<Header
+<HeaderClient
+
 search={search}
+
 setSearch={setSearch}
+
+user={null}
+
 />
 
 
