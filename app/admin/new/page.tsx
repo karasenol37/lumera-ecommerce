@@ -69,7 +69,9 @@ async function createProduct(
 
 
         stock:
-          formData.get("stock") === "on",
+          Number(
+            formData.get("stock") || 0
+          ),
 
 
         image,
@@ -89,6 +91,7 @@ async function createProduct(
       }
 
     });
+
 
 
 
@@ -116,6 +119,7 @@ async function createProduct(
   redirect("/admin");
 
 }
+
 
 
 
@@ -413,29 +417,29 @@ py-3
 
 
 
-<label className="
-flex
-items-center
-gap-3
-text-gray-300
-">
-
-
 <input
-
-type="checkbox"
 
 name="stock"
 
-defaultChecked
+type="number"
+
+placeholder="Stok adedi"
+
+defaultValue="10"
+
+min="0"
+
+className="
+w-full
+rounded-lg
+border
+border-[#333]
+bg-[#0f0f0f]
+px-4
+py-3
+"
 
 />
-
-
-Stokta mevcut
-
-
-</label>
 
 
 
