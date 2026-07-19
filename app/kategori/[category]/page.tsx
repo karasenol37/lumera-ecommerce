@@ -177,7 +177,6 @@ stock={product.stock}
 
 image={product.image}
 
-rating={5}
 
 />
 
