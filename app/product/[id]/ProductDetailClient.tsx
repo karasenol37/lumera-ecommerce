@@ -23,6 +23,8 @@ material:string;
 
 dimensions:string;
 
+stock:number;
+
 images:{
 id:number;
 url:string;
@@ -59,15 +61,15 @@ function handleAdd(){
 
 addToCart({
 
-id:product.id,
+  id: product.id,
 
-name:product.name,
+  name: product.name,
 
-price:product.price,
+  price: product.price,
 
-image:product.image
+  image: product.image,
 
-stock: product.stock
+  stock: product.stock
 
 });
 
