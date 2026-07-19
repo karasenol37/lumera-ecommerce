@@ -1,0 +1,163 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  slug        String   @unique
+  category    String
+  price       Float
+  oldPrice    Float
+  stock       Int      @default(0)
+  image       String
+  description String
+  material    String
+  dimensions  String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  images     ProductImage[]
+  orderItems OrderItem[]
+  favorites  Favorite[]
+}
+
+model ProductImage {
+  id        Int    @id @default(autoincrement())
+  url       String
+  productId Int
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id Int @id @default(autoincrement())
+
+  name     String
+  email    String @unique
+  password String
+  role     String @default("CUSTOMER")
+
+  orders          Order[]
+  favorites       Favorite[]
+  pendingPayments PendingPayment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id Int @id @default(autoincrement())
+
+  userId Int?
+  user   User? @relation(fields: [userId], references: [id])
+
+  orderNumber String @unique
+
+  paymentToken String? @unique
+
+  fullName String
+  phone    String
+  email    String
+
+  city       String
+  district   String
+  address    String
+  postalCode String
+
+  total Float
+
+  paymentStatus String @default("Bekliyor")
+  paymentMethod String @default("Kredi Kartı")
+
+  status String @default("Hazırlanıyor")
+
+  cargoCompany   String?
+  trackingNumber String?
+
+  items OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PendingPayment {
+  id Int @id @default(autoincrement())
+
+  token String @unique
+
+  userId Int?
+  user   User? @relation(fields: [userId], references: [id])
+
+  fullName String
+  phone    String
+  email    String
+
+  city       String
+  district   String
+  address    String
+  postalCode String
+
+  items Json
+
+  total Float
+
+  createdAt DateTime @default(now())
+}
+
+model PendingOrder {
+  id Int @id @default(autoincrement())
+
+  conversationId String @unique
+
+  userId Int?
+
+  fullName String
+  phone    String
+  email    String
+
+  city       String
+  district   String
+  address    String
+  postalCode String
+
+  total Float
+
+  itemsJson String
+
+  createdAt DateTime @default(now())
+}
+
+model OrderItem {
+  id Int @id @default(autoincrement())
+
+  orderId Int
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+
+  quantity Int
+
+  price Float
+}
+
+model Favorite {
+  id Int @id @default(autoincrement())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
