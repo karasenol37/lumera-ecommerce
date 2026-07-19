@@ -65,8 +65,7 @@ async function createProduct(
           ),
 
 
-        rating:5,
-
+        
 
         stock:
           Number(
