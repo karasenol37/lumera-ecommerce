@@ -167,7 +167,6 @@ price={product.price}
 
 oldPrice={product.oldPrice}
 
-rating={product.rating}
 
 stock={product.stock}
 

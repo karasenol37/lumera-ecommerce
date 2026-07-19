@@ -14,7 +14,6 @@ type ProductCardProps = {
 
   oldPrice:number;
 
-  rating:number;
 
   stock:number;
 
@@ -31,7 +30,6 @@ export default function ProductCard({
   name,
   price,
   oldPrice,
-  rating,
   stock,
   image,
 
@@ -302,7 +300,7 @@ text-yellow-400
 
 >
 
-⭐ {rating}
+⭐ 
 
 </div>
 
