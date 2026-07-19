@@ -12,9 +12,9 @@ export default async function Products() {
         createdAt:"desc"
       },
 
-      include:{
-        gallery:true
-      }
+     include:{
+  images:true
+}
 
     });
 
@@ -134,7 +134,7 @@ export default async function Products() {
                 text-yellow-500
               ">
 
-                ⭐ {product.rating}
+                ⭐ 
 
               </div>
 
