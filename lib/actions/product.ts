@@ -1,9 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { writeFile } from "fs/promises";
-import path from "path";
-
+import { put } from "@vercel/blob";
 
 
 
@@ -35,52 +33,20 @@ function createSlug(text:string){
 
 
 
-async function saveImage(
-  file:File
-){
+async function saveImage(file: File){
 
-
-  const bytes =
-  await file.arrayBuffer();
-
-
-  const buffer =
-  Buffer.from(bytes);
-
-
-
-  const fileName =
-  Date.now()
-  +
-  "-"
-  +
-  file.name.replace(/\s/g,"-");
-
-
-
-
-  const uploadPath =
-  path.join(
-    process.cwd(),
-    "public/uploads",
-    fileName
+  const blob = await put(
+    file.name,
+    file,
+    {
+      access:"public"
+    }
   );
 
 
-
-
-  await writeFile(
-    uploadPath,
-    buffer
-  );
-
-
-
-  return "/uploads/" + fileName;
-
+  return blob.url;
 
 }
-
 
 
 
