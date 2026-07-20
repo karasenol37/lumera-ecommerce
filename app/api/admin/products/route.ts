@@ -1,49 +1,15 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/actions/session";
-import fs from "fs/promises";
-import path from "path";
+import { put } from "@vercel/blob";
 
 
+async function saveFile(file: File) {
+  const blob = await put(file.name, file, {
+    access: "public",
+  });
 
-async function saveFile(
-file:File
-){
-
-const bytes =
-await file.arrayBuffer();
-
-
-const buffer =
-Buffer.from(bytes);
-
-
-
-const fileName =
-`${Date.now()}-${file.name.replace(/\s/g,"-")}`;
-
-
-
-const uploadPath =
-path.join(
-process.cwd(),
-"public",
-"uploads",
-"products",
-fileName
-);
-
-
-
-await fs.writeFile(
-uploadPath,
-buffer
-);
-
-
-
-return `/uploads/products/${fileName}`;
-
+  return blob.url;
 }
 
 
