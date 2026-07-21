@@ -111,108 +111,60 @@ enabledInstallments:[
 
 
 
-
 buyer:{
- id:"123456",
- name:"John",
- surname:"Doe",
- gsmNumber:"+905350000000",
- email:"sandbox@iyzico.com",
- identityNumber:"11111111111",
- registrationAddress:"Nişantaşı",
- city:"Istanbul",
- country:"Turkey",
- zipCode:"34742"
+  id:"LUMERA_USER",
+
+  name:"John",
+
+  surname:"Doe",
+
+  gsmNumber:"+905350000000",
+
+  email:"sandbox@iyzico.com",
+
+  identityNumber:"11111111111",
+
+  registrationAddress:"Nisantasi Istanbul",
+
+  city:"Istanbul",
+
+  country:"Türkiye",
+
+  zipCode:"34742"
+},
+
+
+shippingAddress:{
+  contactName:"John Doe",
+  city:"Istanbul",
+  country:"Türkiye",
+  address:"Nisantasi Istanbul",
+  zipCode:"34742"
+},
+
+
+billingAddress:{
+  contactName:"John Doe",
+  city:"Istanbul",
+  country:"Türkiye",
+  address:"Nisantasi Istanbul",
+  zipCode:"34742"
 },
 
 
 
 
 
-      shippingAddress:{
-
-
-        contactName:
-          buyer.fullName,
-
-
-        city:
-          buyer.city,
-
-
-        country:
-          "Turkey",
-
-
-        address:
-          buyer.address,
-
-
-        zipCode:
-          buyer.postalCode
-
-
-      },
-
-
-
-
-
-      billingAddress:{
-
-
-        contactName:
-          buyer.fullName,
-
-
-        city:
-          buyer.city,
-
-
-        country:
-          "Turkey",
-
-
-        address:
-          buyer.address,
-
-
-        zipCode:
-          buyer.postalCode
-
-
-      },
-
-
-
-
-
-     basketItems:
-items.map((item:any)=>({
-
-  id:
-  "BI"+String(item.id),
-
-  name:
-  item.name,
-
-category1:
-"General",
-
-category2:
-"General",
-
-  itemType:
-  "PHYSICAL",
-
-  price:
-  (
-    item.price *
-    item.quantity
-  ).toFixed(2)
-
-}))
-
+     basketItems:[
+{
+ id:"BI101",
+ name:"Bahçe Hamağı",
+ category1:"Bahçe",
+ category2:"Bahçe Mobilyası",
+ itemType:"PHYSICAL",
+ price:"14500.00"
+}
+]
 
     };
 
