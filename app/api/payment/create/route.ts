@@ -96,8 +96,7 @@ export async function POST(
 
 
       paymentGroup:"PRODUCT",
-paymentSource:
-"LUMERA",
+
 
 
       callbackUrl:
@@ -108,34 +107,44 @@ paymentSource:
 
 
       buyer:{
- id:"user",
+  id:
+    conversationId,
 
- name:
- buyer.fullName.split(" ")[0],
+  name:
+    buyer.fullName
+      .split(" ")[0]
+      .substring(0,20),
 
- surname:
- buyer.fullName.split(" ").slice(1).join(" ") || "KARA",
+  surname:
+    buyer.fullName
+      .split(" ")
+      .slice(1)
+      .join(" ")
+      .substring(0,20) || "Kara",
 
-gsmNumber:
-  buyer.phone || "05390000000",
+  gsmNumber:
+    buyer.phone
+      ?.replace(/\s/g,"")
+      ||
+    "05321234567",
 
- email:
- buyer.email,
+  email:
+    buyer.email,
 
- identityNumber:
- "11111111110",
+  identityNumber:
+    "11111111111",
 
- registrationAddress:
- buyer.address,
+  registrationAddress:
+    buyer.address,
 
- city:
- buyer.city,
+  city:
+    buyer.city,
 
- country:
- "Turkey",
+  country:
+    "Turkey",
 
- zipCode:
- buyer.postalCode
+  zipCode:
+    buyer.postalCode
 },
 
 
@@ -201,33 +210,30 @@ gsmNumber:
 
 
      basketItems:
+items.map((item:any)=>({
 
-items.map(
-(item:any)=>({
+  id:
+  "BI"+String(item.id),
 
-id:
-String(item.id),
+  name:
+  item.name,
 
-name:
-item.name,
+  category1:
+  "Bahçe Ürünleri",
 
-category1:
-"Bahçe Ürünleri",
+  category2:
+  "Bahçe Mobilyası",
 
-category2:
-"Bahçe Mobilyası",
+  itemType:
+  "PHYSICAL",
 
-itemType:
-"PHYSICAL",
+  price:
+  (
+    item.price *
+    item.quantity
+  ).toFixed(2)
 
-price:
-(
-item.price *
-item.quantity
-).toFixed(2)
-
-})
-)
+}))
 
 
     };
@@ -270,7 +276,10 @@ item.quantity
 
 
 
-
+console.log(
+"IYZICO JSON:",
+jsonBody
+);
 
     const response =
       await fetch(
