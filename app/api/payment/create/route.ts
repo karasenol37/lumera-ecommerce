@@ -1,248 +1,483 @@
 import { NextResponse } from "next/server";
-import { getIyzipay } from "@/lib/payment/iyzico";
 import { prisma } from "@/lib/prisma";
+import { generateIyzipayAuthorization } from "@/lib/payment/iyzico-rest";
 
-export async function POST(request: Request) {
+
+export async function POST(
+  request: Request
+) {
+
+
   try {
-    const body = await request.json();
 
-    const { items, buyer } = body;
 
-    if (!items || items.length === 0) {
+    const body =
+      await request.json();
+
+
+
+    const {
+      items,
+      buyer
+    } = body;
+
+
+
+
+    if(
+      !items ||
+      items.length === 0
+    ){
+
       return NextResponse.json(
         {
-          success: false,
-          message: "Sepet boş.",
+          success:false,
+          message:"Sepet boş."
         },
         {
-          status: 400,
+          status:400
         }
       );
+
     }
 
-    const price = items.reduce(
-      (
-        total: number,
-        item: any
-      ) =>
-        total + item.price * item.quantity,
-      0
-    );
 
-    console.log("ENV:", {
-      apiKey: process.env.IYZICO_API_KEY ? "OK" : "YOK",
-      secret: process.env.IYZICO_SECRET_KEY ? "OK" : "YOK",
-      baseUrl: process.env.IYZICO_BASE_URL,
-      callback: process.env.NEXT_PUBLIC_APP_URL,
-    });
 
-    const requestData: any = {
-      locale: "tr",
 
-      conversationId: String(Date.now()),
 
-      price: price.toFixed(2),
+    const price =
+      items.reduce(
+        (
+          total:number,
+          item:any
+        ) => {
 
-      paidPrice: price.toFixed(2),
+          return total +
+          item.price *
+          item.quantity;
 
-      currency: "TRY",
+        },
+        0
+      );
 
-      basketId: `LUM-${Date.now()}`,
 
-      paymentGroup: "PRODUCT",
+
+
+
+    const conversationId =
+      String(Date.now());
+
+
+
+
+
+    const requestData = {
+
+
+      locale:"tr",
+
+
+      conversationId,
+
+
+      price:
+        price.toFixed(2),
+
+
+      paidPrice:
+        price.toFixed(2),
+
+
+      currency:"TRY",
+
+
+      basketId:
+        `LUM-${Date.now()}`,
+
+
+      paymentGroup:"PRODUCT",
+
+
 
       callbackUrl:
         `${process.env.NEXT_PUBLIC_APP_URL}/api/payment/callback`,
 
-      buyer: {
-        id: "user",
 
-        name: buyer.fullName,
 
-        surname: "-",
 
-        gsmNumber: buyer.phone,
 
-        email: buyer.email,
+      buyer:{
 
-        identityNumber: "11111111111",
 
-        registrationAddress: buyer.address,
+        id:"user",
 
-        city: buyer.city,
 
-        country: "Turkey",
+        name:
+          buyer.fullName,
 
-        zipCode: buyer.postalCode,
+
+        surname:
+          "-",
+
+
+        gsmNumber:
+          buyer.phone,
+
+
+        email:
+          buyer.email,
+
+
+        identityNumber:
+          "11111111111",
+
+
+        registrationAddress:
+          buyer.address,
+
+
+        city:
+          buyer.city,
+
+
+        country:
+          "Turkey",
+
+
+        zipCode:
+          buyer.postalCode
+
       },
 
-      shippingAddress: {
-        contactName: buyer.fullName,
 
-        city: buyer.city,
 
-        country: "Turkey",
 
-        address: buyer.address,
 
-        zipCode: buyer.postalCode,
+      shippingAddress:{
+
+
+        contactName:
+          buyer.fullName,
+
+
+        city:
+          buyer.city,
+
+
+        country:
+          "Turkey",
+
+
+        address:
+          buyer.address,
+
+
+        zipCode:
+          buyer.postalCode
+
+
       },
 
-      billingAddress: {
-        contactName: buyer.fullName,
 
-        city: buyer.city,
 
-        country: "Turkey",
 
-        address: buyer.address,
 
-        zipCode: buyer.postalCode,
+      billingAddress:{
+
+
+        contactName:
+          buyer.fullName,
+
+
+        city:
+          buyer.city,
+
+
+        country:
+          "Turkey",
+
+
+        address:
+          buyer.address,
+
+
+        zipCode:
+          buyer.postalCode
+
+
       },
 
-      basketItems: items.map((item: any) => ({
-        id: String(item.id),
 
-        name: item.name,
 
-        category1: "Bahçe Ürünleri",
 
-        itemType: "PHYSICAL",
 
-        price: (
-          item.price *
-          item.quantity
-        ).toFixed(2),
-      })),
+      basketItems:
+
+        items.map(
+          (item:any)=>({
+
+
+            id:
+              String(item.id),
+
+
+            name:
+              item.name,
+
+
+            category1:
+              "Bahçe Ürünleri",
+
+
+            itemType:
+              "PHYSICAL",
+
+
+            price:
+              (
+                item.price *
+                item.quantity
+              ).toFixed(2)
+
+
+          })
+        )
+
+
     };
 
-    console.log("REQUEST DATA");
-    console.dir(requestData, { depth: null });
+
+
+
+
+    const jsonBody =
+      JSON.stringify(
+        requestData
+      );
+
+
+
+
+
+    const apiUrl =
+      `${process.env.IYZICO_BASE_URL}/payment/iyzipos/checkoutform/initialize/auth/ecom`;
+
+
+
+
 
     console.log(
-      "CALLBACK URL:",
-      `${process.env.NEXT_PUBLIC_APP_URL}/api/payment/callback`
+      "IYZICO URL:",
+      apiUrl
     );
 
-    const iyzipay = getIyzipay();
 
-    const result: any = await new Promise(
-      (resolve, reject) => {
-
-        iyzipay.checkoutFormInitialize.create(
-
-          requestData,
-
-          (
-            error: unknown,
-            result: any
-          ) => {
-
-            console.log("IYZICO RAW RESULT");
-            console.dir(result, { depth: null });
-
-            if (error) {
-
-              console.error("IYZICO SDK ERROR");
-              console.dir(error, { depth: null });
-
-              reject(error);
-              return;
-            }
-
-            resolve(result);
-
-          }
-
-        );
-
-      }
+    console.log(
+      "IYZICO REQUEST:",
+      requestData
     );
+    const headers =
+      generateIyzipayAuthorization(
+        "/payment/iyzipos/checkoutform/initialize/auth/ecom",
+        jsonBody
+      );
 
-    console.log("STATUS:", result.status);
-    console.log("ERROR MESSAGE:", result.errorMessage);
-        if (result.status !== "success") {
 
-      console.error("IYZICO FAILED RESPONSE");
-      console.dir(result, { depth: null });
 
-      return NextResponse.json(
+
+
+    const response =
+      await fetch(
+        apiUrl,
         {
-          success: false,
-          message: result.errorMessage || "İyzico ödeme başlatılamadı.",
-          result,
-        },
-        {
-          status: 400,
+          method:"POST",
+
+          headers,
+
+          body:jsonBody
+
         }
       );
 
+
+
+
+
+    const result =
+      await response.json();
+
+
+
+
+
+    console.log(
+      "IYZICO RESPONSE:"
+    );
+
+    console.dir(
+      result,
+      {
+        depth:null
+      }
+    );
+
+
+
+
+
+
+
+    if(
+      result.status !== "success"
+    ){
+
+
+      return NextResponse.json(
+
+        {
+
+          success:false,
+
+          message:
+            result.errorMessage ||
+            "İyzico ödeme başlatılamadı.",
+
+          error:
+            result
+
+        },
+
+        {
+          status:400
+        }
+
+      );
+
+
     }
 
-    console.log("TOKEN:", result.token);
-    console.log("PAYMENT PAGE:", result.paymentPageUrl);
+
+
+
+
+
+
+
 
     await prisma.pendingPayment.create({
 
-      data: {
+      data:{
 
-        token: result.token,
 
-        fullName: buyer.fullName,
+        token:
+          result.token,
 
-        phone: buyer.phone,
 
-        email: buyer.email,
+        fullName:
+          buyer.fullName,
 
-        city: buyer.city,
 
-        district: buyer.district,
+        phone:
+          buyer.phone,
 
-        address: buyer.address,
 
-        postalCode: buyer.postalCode,
+        email:
+          buyer.email,
+
+
+        city:
+          buyer.city,
+
+
+        district:
+          buyer.district,
+
+
+        address:
+          buyer.address,
+
+
+        postalCode:
+          buyer.postalCode,
+
 
         items,
 
-        total: price,
 
-      },
+        total:
+          price
+
+
+      }
 
     });
+
+
+
+
+
+
+
 
     return NextResponse.json({
 
-      success: true,
+      success:true,
 
-      paymentPageUrl: result.paymentPageUrl,
 
-      token: result.token,
+      paymentPageUrl:
+        result.paymentPageUrl,
+
+
+      token:
+        result.token
+
 
     });
 
-  } catch (error) {
 
-    console.error("===== IYZICO CATCH ERROR =====");
-    console.dir(error, { depth: null });
+
+
+
+
+
+  }
+
+  catch(error){
+
+
+    console.error(
+      "IYZICO REST ERROR:"
+    );
+
+
+    console.dir(
+      error,
+      {
+        depth:null
+      }
+    );
+
+
 
     return NextResponse.json(
 
       {
 
-        success: false,
+        success:false,
 
-        message: "Ödeme başlatılamadı.",
+        message:
+          "Ödeme başlatılamadı."
 
       },
 
       {
-
-        status: 500,
-
+        status:500
       }
 
     );
 
+
   }
+
 
 }
