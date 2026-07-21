@@ -6,21 +6,18 @@ import { put } from "@vercel/blob";
 
 
 
+
 function createSlug(text:string){
 
   return text
-
     .toLowerCase()
-
     .replace(/ğ/g,"g")
     .replace(/ü/g,"u")
     .replace(/ş/g,"s")
     .replace(/ı/g,"i")
     .replace(/ö/g,"o")
     .replace(/ç/g,"c")
-
     .replace(/[^a-z0-9]+/g,"-")
-
     .replace(/^-+|-+$/g,"");
 
 }
@@ -31,12 +28,15 @@ function createSlug(text:string){
 
 
 
+async function saveImage(file:File){
+
+  const fileName =
+    `${Date.now()}-${file.name.replace(/\s/g,"-")}`;
 
 
-async function saveImage(file: File){
 
   const blob = await put(
-    file.name,
+    fileName,
     file,
     {
       access:"public"
@@ -55,173 +55,164 @@ async function saveImage(file: File){
 
 
 
+
 export async function createProduct(
   formData:FormData
 ){
 
 
+  try{
 
-  const name =
-  formData.get("name") as string;
 
+    const name =
+      String(formData.get("name"));
 
 
-  const category =
-  formData.get("category") as string;
 
+    const category =
+      String(formData.get("category"));
 
 
-  const price =
-  Number(
-    formData.get("price")
-  );
 
+    const price =
+      Number(formData.get("price"));
 
 
-  const oldPrice =
-  Number(
-    formData.get("oldPrice")
-  );
 
+    const oldPrice =
+      Number(formData.get("oldPrice"));
 
 
-  const description =
-  formData.get("description") as string;
 
+    const description =
+      String(formData.get("description"));
 
 
-  const material =
-  formData.get("material") as string;
 
+    const material =
+      String(formData.get("material"));
 
 
-  const dimensions =
-  formData.get("dimensions") as string;
 
+    const dimensions =
+      String(formData.get("dimensions"));
 
 
-  const stock =
-  Number(
-    formData.get("stock")
-  );
 
+    const stock =
+      Number(formData.get("stock"));
 
 
 
 
 
 
-  const mainImage =
-  formData.get("mainImage") as File;
 
+    const mainImage =
+      formData.get("mainImage") as File;
 
 
-  if(!mainImage){
 
-    throw new Error(
-      "Ana resim zorunlu."
-    );
+    if(
+      !mainImage ||
+      mainImage.size === 0
+    ){
 
-  }
-
-
-
-
-
-
-
-  const imageUrl =
-  await saveImage(
-    mainImage
-  );
-
-
-
-
-
-
-  let slug =
-  createSlug(name);
-
-
-
-
-
-  const existingProduct =
-  await prisma.product.findUnique({
-
-    where:{
-      slug
-    }
-
-  });
-
-
-
-
-
-  if(existingProduct){
-
-
-    slug =
-    slug
-    +
-    "-"
-    +
-    Date.now();
-
-
-  }
-
-
-
-
-
-
-
-
-
-  const product =
-  await prisma.product.create({
-
-    data:{
-
-
-      name,
-
-
-      slug,
-
-
-      category,
-
-
-      price,
-
-
-      oldPrice,
-
-
-      description,
-
-
-      material,
-
-
-      dimensions,
-
-
-      stock,
-
-
-      image:imageUrl
-
-
+      throw new Error(
+        "Ana resim zorunlu."
+      );
 
     }
 
 
-  });
+
+
+
+
+    const imageUrl =
+      await saveImage(
+        mainImage
+      );
+
+
+
+
+
+
+
+    let slug =
+      createSlug(name);
+
+
+
+
+
+    const existingProduct =
+      await prisma.product.findUnique({
+
+        where:{
+          slug
+        }
+
+      });
+
+
+
+
+
+    if(existingProduct){
+
+      slug =
+        `${slug}-${Date.now()}`;
+
+    }
+
+
+
+
+
+
+
+
+    const product =
+      await prisma.product.create({
+
+        data:{
+
+
+          name,
+
+
+          slug,
+
+
+          category,
+
+
+          price,
+
+
+          oldPrice,
+
+
+          description,
+
+
+          material,
+
+
+          dimensions,
+
+
+          stock,
+
+
+          image:imageUrl
+
+
+        }
+
+      });
 
 
 
@@ -231,58 +222,80 @@ export async function createProduct(
 
 
 
-
-  const galleryImages =
-  formData.getAll(
-    "images"
-  ) as File[];
-
+    const galleryImages =
+      formData.getAll(
+        "images"
+      ) as File[];
 
 
 
 
 
 
-  for(
-    const image
-    of
-    galleryImages
-  ){
+
+    for(
+      const image of galleryImages
+    ){
 
 
-    const url =
-    await saveImage(
-      image
-    );
+      if(
+        image &&
+        image.size > 0
+      ){
+
+
+        const url =
+          await saveImage(
+            image
+          );
 
 
 
-    await prisma.productImage.create({
+        await prisma.productImage.create({
 
-      data:{
-
-
-        url,
+          data:{
 
 
-        productId:
-        product.id
+            url,
+
+
+            productId:
+              product.id
+
+
+          }
+
+        });
 
 
       }
 
-    });
+
+    }
+
+
+
+
+
+
+    return product;
+
 
 
   }
+  catch(error){
 
 
+    console.error(
+      "CREATE PRODUCT ERROR:",
+      error
+    );
 
 
+    throw error;
 
 
-
-  return product;
+  }
 
 
 }
