@@ -6,39 +6,52 @@ export function generateIyzipayAuthorization(
   requestBody:string
 ){
 
-const apiKey =
-process.env.IYZICO_API_KEY!;
+
+  const apiKey =
+    process.env.IYZICO_API_KEY!;
 
 
-const secretKey =
-process.env.IYZICO_SECRET_KEY!;
-
-
-const randomString =
-CryptoJS.lib.WordArray.random(16)
-.toString();
-
-
-const signature =
-CryptoJS.HmacSHA256(
-randomString +
-uri +
-requestBody,
-secretKey
-)
-.toString(
-CryptoJS.enc.Base64
-);
+  const secretKey =
+    process.env.IYZICO_SECRET_KEY!;
 
 
 
-return {
+  const randomString =
+    CryptoJS.lib.WordArray.random(16)
+    .toString(CryptoJS.enc.Hex);
 
-Authorization:
-`IYZWSv2 ${apiKey}:${randomString}:${signature}`,
 
-"Content-Type":
-"application/json"
+
+  const payload =
+    randomString +
+    uri +
+    requestBody;
+
+
+
+  const signature =
+    CryptoJS.HmacSHA256(
+      payload,
+      secretKey
+    )
+    .toString(
+      CryptoJS.enc.Base64
+    );
+
+
+
+
+
+ return {
+
+ Authorization:
+ `IYZWSv2 ${apiKey}:${randomString}:${signature}`,
+
+ "x-iyzi-rnd":
+ randomString,
+
+ "Content-Type":
+ "application/json"
 
 };
 

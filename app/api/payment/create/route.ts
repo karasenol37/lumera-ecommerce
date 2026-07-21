@@ -258,7 +258,10 @@ console.log(
 "IYZICO JSON:",
 jsonBody
 );
-
+console.log(
+"AUTH HEADER:",
+headers.Authorization.substring(0,30)
+);
     const response =
       await fetch(
         apiUrl,
