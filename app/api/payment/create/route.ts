@@ -106,39 +106,30 @@ export async function POST(
 
 
 
-      buyer:{
+buyer:{
   id:
     conversationId,
 
   name:
-    buyer.fullName
-      .split(" ")[0]
-      .substring(0,20),
+    "Senol",
 
   surname:
-    buyer.fullName
-      .split(" ")
-      .slice(1)
-      .join(" ")
-      .substring(0,20) || "Kara",
+    "Kara",
 
   gsmNumber:
-    buyer.phone
-      ?.replace(/\s/g,"")
-      ||
-    "05321234567",
+    "5395216430",
 
   email:
     buyer.email,
 
   identityNumber:
-    "11111111111",
+    "47821397810",
 
   registrationAddress:
     buyer.address,
 
   city:
-    buyer.city,
+    "Kastamonu",
 
   country:
     "Turkey",
@@ -218,11 +209,11 @@ items.map((item:any)=>({
   name:
   item.name,
 
-  category1:
-  "Bahçe Ürünleri",
+category1:
+"General",
 
-  category2:
-  "Bahçe Mobilyası",
+category2:
+"General",
 
   itemType:
   "PHYSICAL",
