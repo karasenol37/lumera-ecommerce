@@ -2,477 +2,247 @@ import { NextResponse } from "next/server";
 import { getIyzipay } from "@/lib/payment/iyzico";
 import { prisma } from "@/lib/prisma";
 
-
-export async function POST(
-  request: Request
-) {
-
-
+export async function POST(request: Request) {
   try {
+    const body = await request.json();
 
+    const { items, buyer } = body;
 
-    const body =
-      await request.json();
-
-
-
-    const {
-      items,
-      buyer
-    } = body;
-
-
-
-
-
-    if(
-      !items ||
-      items.length === 0
-    ){
-
+    if (!items || items.length === 0) {
       return NextResponse.json(
         {
-          success:false,
-          message:"Sepet boş."
+          success: false,
+          message: "Sepet boş.",
         },
         {
-          status:400
+          status: 400,
         }
       );
-
     }
 
-
-
-
-
-
     const price = items.reduce(
-
       (
-        total:number,
-        item:any
-
+        total: number,
+        item: any
       ) =>
-
-        total +
-        item.price *
-        item.quantity,
-
+        total + item.price * item.quantity,
       0
-
     );
 
+    console.log("ENV:", {
+      apiKey: process.env.IYZICO_API_KEY ? "OK" : "YOK",
+      secret: process.env.IYZICO_SECRET_KEY ? "OK" : "YOK",
+      baseUrl: process.env.IYZICO_BASE_URL,
+      callback: process.env.NEXT_PUBLIC_APP_URL,
+    });
 
+    const requestData: any = {
+      locale: "tr",
 
+      conversationId: String(Date.now()),
 
+      price: price.toFixed(2),
 
+      paidPrice: price.toFixed(2),
 
+      currency: "TRY",
 
+      basketId: `LUM-${Date.now()}`,
 
-
-    const requestData:any = {
-
-
-
-      locale:"tr",
-
-
-
-      conversationId:
-        String(Date.now()),
-
-
-
-
-      price:
-        price.toFixed(2),
-
-
-
-
-      paidPrice:
-        price.toFixed(2),
-
-
-
-
-      currency:"TRY",
-
-
-
-
-      basketId:
-        `LUM-${Date.now()}`,
-
-
-
-
-      paymentGroup:
-        "PRODUCT",
-
-
-
-
-
+      paymentGroup: "PRODUCT",
 
       callbackUrl:
         `${process.env.NEXT_PUBLIC_APP_URL}/api/payment/callback`,
 
+      buyer: {
+        id: "user",
 
+        name: buyer.fullName,
 
+        surname: "-",
 
+        gsmNumber: buyer.phone,
 
+        email: buyer.email,
 
+        identityNumber: "11111111111",
 
+        registrationAddress: buyer.address,
 
+        city: buyer.city,
 
-      buyer:{
+        country: "Turkey",
 
-
-        id:
-          "user",
-
-
-        name:
-          buyer.fullName,
-
-
-        surname:
-          "-",
-
-
-        gsmNumber:
-          buyer.phone,
-
-
-        email:
-          buyer.email,
-
-
-        identityNumber:
-          "11111111111",
-
-
-        registrationAddress:
-          buyer.address,
-
-
-        city:
-          buyer.city,
-
-
-        country:
-          "Turkey",
-
-
-        zipCode:
-          buyer.postalCode
-
-
+        zipCode: buyer.postalCode,
       },
 
+      shippingAddress: {
+        contactName: buyer.fullName,
 
+        city: buyer.city,
 
+        country: "Turkey",
 
+        address: buyer.address,
 
-
-
-
-
-      shippingAddress:{
-
-
-        contactName:
-          buyer.fullName,
-
-
-        city:
-          buyer.city,
-
-
-        country:
-          "Turkey",
-
-
-        address:
-          buyer.address,
-
-
-        zipCode:
-          buyer.postalCode
-
-
+        zipCode: buyer.postalCode,
       },
 
+      billingAddress: {
+        contactName: buyer.fullName,
 
+        city: buyer.city,
 
+        country: "Turkey",
 
+        address: buyer.address,
 
-
-
-
-
-      billingAddress:{
-
-
-        contactName:
-          buyer.fullName,
-
-
-        city:
-          buyer.city,
-
-
-        country:
-          "Turkey",
-
-
-        address:
-          buyer.address,
-
-
-        zipCode:
-          buyer.postalCode
-
-
+        zipCode: buyer.postalCode,
       },
 
+      basketItems: items.map((item: any) => ({
+        id: String(item.id),
 
+        name: item.name,
 
+        category1: "Bahçe Ürünleri",
 
+        itemType: "PHYSICAL",
 
-
-
-
-
-      basketItems:
-
-
-        items.map(
-          (item:any)=>({
-
-
-            id:
-              String(item.id),
-
-
-
-            name:
-              item.name,
-
-
-
-            category1:
-              "Bahçe Ürünleri",
-
-
-
-            itemType:
-              "PHYSICAL",
-
-
-
-            price:
-              (
-                item.price *
-                item.quantity
-              ).toFixed(2)
-
-
-          })
-
-        )
-
-
-
+        price: (
+          item.price *
+          item.quantity
+        ).toFixed(2),
+      })),
     };
 
+    console.log("REQUEST DATA");
+    console.dir(requestData, { depth: null });
 
     console.log(
       "CALLBACK URL:",
       `${process.env.NEXT_PUBLIC_APP_URL}/api/payment/callback`
     );
 
+    const iyzipay = getIyzipay();
 
+    const result: any = await new Promise(
+      (resolve, reject) => {
 
+        iyzipay.checkoutFormInitialize.create(
 
+          requestData,
 
+          (
+            error: unknown,
+            result: any
+          ) => {
 
-    const iyzipay =
-      getIyzipay();
+            console.log("IYZICO RAW RESULT");
+            console.dir(result, { depth: null });
 
+            if (error) {
 
+              console.error("IYZICO SDK ERROR");
+              console.dir(error, { depth: null });
 
-
-
-
-    const result:any =
-
-      await new Promise(
-
-        (
-          resolve,
-          reject
-
-        )=>{
-
-
-          iyzipay.checkoutFormInitialize.create(
-
-            requestData,
-
-
-           (
-  error: any,
-  result: any
-
-)=>{
-
-
-              if(error){
-
-                reject(error);
-
-              }
-
-              else{
-
-                resolve(result);
-
-              }
-
-
+              reject(error);
+              return;
             }
 
+            resolve(result);
 
-          );
+          }
 
+        );
 
-        }
+      }
+    );
 
+    console.log("STATUS:", result.status);
+    console.log("ERROR MESSAGE:", result.errorMessage);
+        if (result.status !== "success") {
 
-      );
-
-
-
-
-
-
-
-
-
-    if(
-      result.status !== "success"
-    ){
-
+      console.error("IYZICO FAILED RESPONSE");
+      console.dir(result, { depth: null });
 
       return NextResponse.json(
-
         {
-
-          success:false,
-
-          message:
-            result.errorMessage
-
+          success: false,
+          message: result.errorMessage || "İyzico ödeme başlatılamadı.",
+          result,
         },
-
         {
-          status:400
+          status: 400,
         }
-
       );
-
 
     }
 
+    console.log("TOKEN:", result.token);
+    console.log("PAYMENT PAGE:", result.paymentPageUrl);
 
+    await prisma.pendingPayment.create({
 
+      data: {
 
+        token: result.token,
 
+        fullName: buyer.fullName,
 
+        phone: buyer.phone,
 
+        email: buyer.email,
 
-await prisma.pendingPayment.create({
+        city: buyer.city,
 
-  data:{
+        district: buyer.district,
 
-    token: result.token,
+        address: buyer.address,
 
-    fullName: buyer.fullName,
+        postalCode: buyer.postalCode,
 
-    phone: buyer.phone,
+        items,
 
-    email: buyer.email,
+        total: price,
 
-    city: buyer.city,
+      },
 
-    district: buyer.district,
+    });
 
-    address: buyer.address,
+    return NextResponse.json({
 
-    postalCode: buyer.postalCode,
+      success: true,
 
-    items,
+      paymentPageUrl: result.paymentPageUrl,
 
-    total: price
+      token: result.token,
 
-  }
+    });
 
-});
+  } catch (error) {
 
-
-return NextResponse.json({
-
-  success:true,
-
-  paymentPageUrl:
-    result.paymentPageUrl,
-
-  token:
-    result.token
-
-});
-
-
-
-
-
-
-
-
-  }
-
-  catch(error){
-
-
-    console.error(
-      "Iyzico hata:",
-      error
-    );
-
-
+    console.error("===== IYZICO CATCH ERROR =====");
+    console.dir(error, { depth: null });
 
     return NextResponse.json(
 
       {
 
-        success:false,
+        success: false,
 
-        message:
-          "Ödeme başlatılamadı."
+        message: "Ödeme başlatılamadı.",
 
       },
 
       {
-        status:500
+
+        status: 500,
+
       }
 
     );
 
-
   }
-
 
 }
