@@ -107,47 +107,35 @@ export async function POST(
 
 
       buyer:{
+ id:"user",
 
+ name:
+ buyer.fullName.split(" ")[0],
 
-        id:"user",
+ surname:
+ buyer.fullName.split(" ").slice(1).join(" ") || "KARA",
 
+ gsmNumber:
+ buyer.phone,
 
-        name:
-          buyer.fullName,
+ email:
+ buyer.email,
 
+ identityNumber:
+ "11111111110",
 
-        surname:
-          "-",
+ registrationAddress:
+ buyer.address,
 
+ city:
+ buyer.city,
 
-        gsmNumber:
-          buyer.phone,
+ country:
+ "Turkey",
 
-
-        email:
-          buyer.email,
-
-
-        identityNumber:
-          "11111111111",
-
-
-        registrationAddress:
-          buyer.address,
-
-
-        city:
-          buyer.city,
-
-
-        country:
-          "Turkey",
-
-
-        zipCode:
-          buyer.postalCode
-
-      },
+ zipCode:
+ buyer.postalCode
+},
 
 
 
@@ -211,37 +199,34 @@ export async function POST(
 
 
 
-      basketItems:
+     basketItems:
 
-        items.map(
-          (item:any)=>({
+items.map(
+(item:any)=>({
 
+id:
+String(item.id),
 
-            id:
-              String(item.id),
+name:
+item.name,
 
+category1:
+"Bahçe Ürünleri",
 
-            name:
-              item.name,
+category2:
+"Bahçe Mobilyası",
 
+itemType:
+"PHYSICAL",
 
-            category1:
-              "Bahçe Ürünleri",
+price:
+(
+item.price *
+item.quantity
+).toFixed(2)
 
-
-            itemType:
-              "PHYSICAL",
-
-
-            price:
-              (
-                item.price *
-                item.quantity
-              ).toFixed(2)
-
-
-          })
-        )
+})
+)
 
 
     };
