@@ -97,7 +97,13 @@ export async function POST(
 
       paymentGroup:"PRODUCT",
 
-
+enabledInstallments:[
+  1,
+  2,
+  3,
+  6,
+  9
+],
 
       callbackUrl:
         `${process.env.NEXT_PUBLIC_APP_URL}/api/payment/callback`,
@@ -107,35 +113,16 @@ export async function POST(
 
 
 buyer:{
-  id:
-    conversationId,
-
-  name:
-    "Senol",
-
-  surname:
-    "Kara",
-
-  gsmNumber:
-    "5395216430",
-
-  email:
-    buyer.email,
-
-  identityNumber:
-    "47821397810",
-
-  registrationAddress:
-    buyer.address,
-
-  city:
-    "Kastamonu",
-
-  country:
-    "Turkey",
-
-  zipCode:
-    buyer.postalCode
+ id:"123456",
+ name:"John",
+ surname:"Doe",
+ gsmNumber:"+905350000000",
+ email:"sandbox@iyzico.com",
+ identityNumber:"11111111111",
+ registrationAddress:"Nişantaşı",
+ city:"Istanbul",
+ country:"Turkey",
+ zipCode:"34742"
 },
 
 
