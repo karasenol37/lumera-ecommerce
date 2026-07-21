@@ -96,7 +96,8 @@ export async function POST(
 
 
       paymentGroup:"PRODUCT",
-
+paymentSource:
+"LUMERA",
 
 
       callbackUrl:
@@ -115,8 +116,8 @@ export async function POST(
  surname:
  buyer.fullName.split(" ").slice(1).join(" ") || "KARA",
 
- gsmNumber:
- buyer.phone,
+gsmNumber:
+  buyer.phone || "05390000000",
 
  email:
  buyer.email,

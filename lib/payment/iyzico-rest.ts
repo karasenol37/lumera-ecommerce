@@ -17,22 +17,23 @@ export function generateIyzipayAuthorization(
 
   const randomString =
     CryptoJS.lib.WordArray.random(16)
-      .toString(
-        CryptoJS.enc.Hex
-      );
+    .toString(
+      CryptoJS.enc.Hex
+    );
 
+
+
+  const payload =
+    randomString +
+    uri +
+    requestBody;
 
 
 
   const signature =
     CryptoJS.HmacSHA256(
-
-      randomString +
-      uri +
-      requestBody,
-
+      payload,
       secretKey
-
     )
     .toString(
       CryptoJS.enc.Base64
@@ -40,24 +41,16 @@ export function generateIyzipayAuthorization(
 
 
 
-
-
   return {
-
 
     Authorization:
       `IYZWSv2 ${apiKey}:${signature}`,
 
-
-
     "x-iyzi-rnd":
       randomString,
 
-
-
     "Content-Type":
       "application/json"
-
 
   };
 
