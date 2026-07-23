@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
 
     "/api/payment/create": [
       "./node_modules/punycode/**",
+      "./node_modules/assert-plus/**",
+"./node_modules/verror/**",
+"./node_modules/core-util-is/**",
+"./node_modules/inherits/**",
+"./node_modules/punycode/**",
 
       // iyzipay
       "./node_modules/iyzipay/**",
@@ -79,6 +84,11 @@ const nextConfig: NextConfig = {
 
 
     "/api/payment/callback": [
+      "./node_modules/assert-plus/**",
+"./node_modules/verror/**",
+"./node_modules/core-util-is/**",
+"./node_modules/inherits/**",
+"./node_modules/punycode/**",
 
       "./node_modules/punycode/**",
 
