@@ -1,338 +1,347 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getIyzipay } from "@/lib/payment/iyzico";
-import { prisma } from "@/lib/prisma";
+import {
+  NextRequest,
+  NextResponse
+}
+from "next/server";
 
+import {
+  prisma
+}
+from "@/lib/prisma";
 
-export async function POST(req: NextRequest) {
+import {
+  iyzicoRequest
+}
+from "@/lib/payment/iyzico-auth";
 
-  try {
 
 
-    const formData =
-      await req.formData();
 
 
-    const token =
-      formData.get("token") as string;
+export async function POST(
+  req:NextRequest
+){
 
 
+try{
 
-    if (!token) {
 
-      return NextResponse.redirect(
-        new URL(
-          "/odeme-basarisiz",
-          req.url
-        )
-      );
+const formData =
+await req.formData();
 
-    }
 
 
+const token = formData.get("token") as string;
 
-    const iyzipay =
-      getIyzipay();
 
 
+if(!token){
 
 
-    const result:any =
-      await new Promise(
+return NextResponse.redirect(
 
-        (resolve, reject)=>{
+new URL(
+"/odeme-basarisiz",
+req.url
+)
 
+);
 
-          iyzipay.checkoutForm.retrieve(
 
-            {
+}
 
-              locale:"tr",
 
-              conversationId:
-                Date.now().toString(),
 
-              token
 
-            },
 
 
-            (
-              error:any,
-              response:any
-            )=>{
+const result =
+await iyzicoRequest(
 
+"/payment/iyzipos/checkoutform/auth/ecom",
 
-              if(error){
+{
 
-                reject(error);
 
-                return;
+locale:"tr",
 
-              }
 
+conversationId:
+Date.now().toString(),
 
-              resolve(response);
 
+token
 
-            }
 
-          );
+}
 
+);
 
-        }
 
-      );
 
 
 
 
+if(
+!result ||
+result.status !== "success"
+){
 
-    /*
-      İyzico ödeme başarısızsa
-    */
 
-    if(
-      !result ||
-      result.status !== "success"
-    ){
+return NextResponse.redirect(
 
-      return NextResponse.redirect(
+new URL(
+"/odeme-basarisiz",
+req.url
+)
 
-        new URL(
-          "/odeme-basarisiz",
-          req.url
-        )
+);
 
-      );
 
-    }
+}
 
 
 
 
 
-    /*
-      Bekleyen ödeme kaydını buluyoruz
-    */
 
-    const pendingPayment =
 
-      await prisma.pendingPayment.findUnique({
 
-        where:{
-          token
-        }
+const pendingPayment =
 
-      });
+await prisma.pendingPayment.findUnique({
 
+where:{
+token
+}
 
+});
 
 
-    if(!pendingPayment){
 
 
-      return NextResponse.redirect(
 
-        new URL(
-          "/odeme-basarisiz",
-          req.url
-        )
 
-      );
+if(!pendingPayment){
 
 
-    }
+return NextResponse.redirect(
 
+new URL(
+"/odeme-basarisiz",
+req.url
+)
 
+);
 
 
+}
 
-    /*
-      Sipariş numarası oluştur
-    */
 
-    const orderNumber =
 
-      `LUM-${Date.now()}`;
 
 
 
 
+const orderNumber =
 
+`LUM-${Date.now()}`;
 
 
-    /*
-      Order oluştur
-    */
 
-    const order =
 
-      await prisma.order.create({
 
-        data:{
 
 
-          userId:
-            pendingPayment.userId,
+const order =
 
+await prisma.order.create({
 
-          orderNumber,
+data:{
 
 
-          paymentToken:
-            token,
 
+userId:
+pendingPayment.userId,
 
-          fullName:
-            pendingPayment.fullName,
 
 
-          phone:
-            pendingPayment.phone,
+orderNumber,
 
 
-          email:
-            pendingPayment.email,
 
+paymentToken:
+token,
 
 
-          city:
-            pendingPayment.city,
 
+fullName:
+pendingPayment.fullName,
 
-          district:
-            pendingPayment.district,
 
+phone:
+pendingPayment.phone,
 
-          address:
-            pendingPayment.address,
 
+email:
+pendingPayment.email,
 
-          postalCode:
-            pendingPayment.postalCode,
 
 
+city:
+pendingPayment.city,
 
-          total:
-            pendingPayment.total,
 
+district:
+pendingPayment.district,
 
 
-          paymentStatus:
-            "Ödendi",
+address:
+pendingPayment.address,
 
 
+postalCode:
+pendingPayment.postalCode,
 
-          paymentMethod:
-            "Kredi Kartı",
 
 
+total:
+pendingPayment.total,
 
-          status:
-            "Hazırlanıyor",
 
 
+paymentStatus:
+"Ödendi",
 
-          items:{
 
-            create:
 
-              (pendingPayment.items as any[])
-                .map(
+paymentMethod:
+"Kredi Kartı",
 
-                  (item:any)=>({
 
-                    productId:
-                      item.id,
 
+status:
+"Hazırlanıyor",
 
-                    quantity:
-                      item.quantity,
 
 
-                    price:
-                      item.price
 
-                  })
 
-                )
+items:{
 
-          }
 
+create:
 
 
-        }
+(
+pendingPayment.items as any[]
+)
+.map(
+(item:any)=>(
 
-      });
+{
 
+productId:
+item.id,
 
 
+quantity:
+item.quantity,
 
 
+price:
+item.price
 
 
-    /*
-      Kullanılmış pending kaydı sil
-    */
+}
 
-    await prisma.pendingPayment.delete({
+)
 
-      where:{
-        id:
-          pendingPayment.id
-      }
+)
 
-    });
 
 
+}
 
 
 
+}
 
 
-    return NextResponse.redirect(
 
-      new URL(
+});
 
-        `/odeme-basarili?order=${order.orderNumber}`,
 
-        req.url
 
-      )
 
-    );
 
 
 
 
 
-  }
+await prisma.pendingPayment.delete({
 
+where:{
+id:
+pendingPayment.id
+}
 
-  catch(error:any){
+});
 
 
-    console.error(
-      "Payment callback error:",
-      error
-    );
 
 
 
-    return NextResponse.redirect(
 
-      new URL(
 
-        "/odeme-basarisiz",
 
-        req.url
+return NextResponse.redirect(
 
-      )
+new URL(
 
-    );
+`/odeme-basarili?order=${order.orderNumber}`,
 
+req.url
 
-  }
+)
+
+);
+
+
+
+
+
+
+
+}
+catch(error:any){
+
+
+
+console.error(
+"Payment callback error:",
+error
+);
+
+
+
+
+return NextResponse.redirect(
+
+new URL(
+
+"/odeme-basarisiz",
+
+req.url
+
+)
+
+);
+
+
+
+}
+
 
 
 }
