@@ -12,13 +12,19 @@
     "@prisma/client": "^6.16.2",
     "@vercel/blob": "^2.6.1",
     "bcryptjs": "^3.0.3",
+    "combined-stream": "^1.0.8",
+    "extend": "^3.0.2",
+    "form-data": "^4.0.6",
     "iyzipay": "^2.0.69",
     "jose": "^6.2.3",
     "next": "16.2.10",
     "postman-request": "^2.88.1-postman.49",
     "prisma": "^6.16.2",
+    "qs": "^6.15.3",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "tough-cookie": "^6.0.2",
+    "uuid": "^14.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
