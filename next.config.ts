@@ -14,7 +14,8 @@ const nextConfig: NextConfig = {
       "./node_modules/iyzipay/**",
       "./node_modules/postman-request/**",
       "./node_modules/extend/**",
-      "./node_modules/@postman/tough-cookie/**"
+      "./node_modules/@postman/tough-cookie/**",
+      "./node_modules/punycode/**"
     ],
 
 
@@ -22,7 +23,8 @@ const nextConfig: NextConfig = {
       "./node_modules/iyzipay/**",
       "./node_modules/postman-request/**",
       "./node_modules/extend/**",
-      "./node_modules/@postman/tough-cookie/**"
+      "./node_modules/@postman/tough-cookie/**",
+      "./node_modules/punycode/**"
     ]
 
   }
