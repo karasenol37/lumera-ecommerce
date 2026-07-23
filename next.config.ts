@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
 
     "/api/payment/create": [
+      "./node_modules/punycode/**",
 
       // iyzipay
       "./node_modules/iyzipay/**",
@@ -78,6 +79,8 @@ const nextConfig: NextConfig = {
 
 
     "/api/payment/callback": [
+
+      "./node_modules/punycode/**",
 
       // iyzipay
       "./node_modules/iyzipay/**",
