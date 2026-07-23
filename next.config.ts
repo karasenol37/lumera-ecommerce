@@ -11,11 +11,11 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
 
     "/api/payment/create": [
-      "./node_modules/iyzipay/lib/resources/**"
+      "./node_modules/iyzipay/**"
     ],
 
     "/api/payment/callback": [
-      "./node_modules/iyzipay/lib/resources/**"
+      "./node_modules/iyzipay/**"
     ]
 
   }
