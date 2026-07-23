@@ -1,17 +1,43 @@
 import crypto from "crypto";
 
 
-export function generateIyzipayAuthorization(
-  body: string
-) {
+function generateRandomKey(){
 
-
-  const randomKey =
+  return (
     Date.now().toString()
     +
     Math.random()
       .toString(36)
-      .substring(2);
+      .substring(2,15)
+  );
+
+}
+
+
+
+
+export function generateIyzipayAuthorization(
+  body:string
+){
+
+
+  const apiKey =
+    process.env.IYZICO_API_KEY!;
+
+
+  const secretKey =
+    process.env.IYZICO_SECRET_KEY!;
+
+
+
+  const randomKey =
+    generateRandomKey();
+
+
+
+  const payload =
+    randomKey +
+    body;
 
 
 
@@ -19,23 +45,22 @@ export function generateIyzipayAuthorization(
     crypto
       .createHmac(
         "sha256",
-        process.env.IYZICO_SECRET_KEY!
+        secretKey
       )
-      .update(
-        randomKey + body
-      )
+      .update(payload)
       .digest("hex");
+
+
+
+  const authorizationString =
+    `${apiKey}:${signature}`;
 
 
 
   const authorization =
     Buffer
       .from(
-        process.env.IYZICO_API_KEY!
-        +
-        ":"
-        +
-        signature
+        authorizationString
       )
       .toString("base64");
 
@@ -44,7 +69,7 @@ export function generateIyzipayAuthorization(
   return {
 
     Authorization:
-      `IYZWS ${authorization}`,
+      `IYZWSv2 ${authorization}`,
 
     "x-iyzi-rnd":
       randomKey,
@@ -54,17 +79,20 @@ export function generateIyzipayAuthorization(
 
   };
 
+
 }
 
 
 
 
 
-
 export async function iyzicoRequest(
-  endpoint: string,
-  data: any
-) {
+
+  endpoint:string,
+
+  data:any
+
+){
 
 
   const body =
@@ -75,13 +103,16 @@ export async function iyzicoRequest(
   const response =
     await fetch(
 
-      process.env.IYZICO_BASE_URL! + endpoint,
+      `${process.env.IYZICO_BASE_URL}${endpoint}`,
 
       {
+
         method:"POST",
+
 
         headers:
           generateIyzipayAuthorization(body),
+
 
         body
 
@@ -92,5 +123,6 @@ export async function iyzicoRequest(
 
 
   return await response.json();
+
 
 }

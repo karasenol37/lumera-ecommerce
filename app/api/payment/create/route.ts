@@ -50,6 +50,21 @@ export async function POST(
 
 
 
+    if(!buyer){
+
+      return NextResponse.json(
+        {
+          error:"Müşteri bilgisi bulunamadı"
+        },
+        {
+          status:400
+        }
+      );
+
+    }
+
+
+
 
     const totalPrice =
       items.reduce(
@@ -68,7 +83,6 @@ export async function POST(
 
 
 
-
     const pendingPayment =
       await prisma.pendingPayment.create({
 
@@ -80,7 +94,7 @@ export async function POST(
 
 
           userId:
-            buyer.id || null,
+            buyer.id ?? null,
 
 
           fullName:
@@ -132,14 +146,13 @@ export async function POST(
 
 
 
-
     const basketItems =
 
       items.map(
         (item:any)=>({
 
           id:
-            item.id.toString(),
+            String(item.id),
 
 
           name:
@@ -213,12 +226,15 @@ export async function POST(
 
 
 
+
       buyer:{
 
 
         id:
-          buyer.id?.toString()
-          ||
+          buyer.id
+          ?
+          String(buyer.id)
+          :
           "guest",
 
 
@@ -244,8 +260,7 @@ export async function POST(
 
 
         identityNumber:
-          buyer.identityNumber
-          ||
+          buyer.identityNumber ||
           "11111111111",
 
 
@@ -256,8 +271,7 @@ export async function POST(
 
 
         city:
-          buyer.city
-          ||
+          buyer.city ||
           "Kastamonu",
 
 
@@ -278,11 +292,7 @@ export async function POST(
 
 
 
-
-
       basketItems
-
-
 
     };
 
@@ -293,13 +303,24 @@ export async function POST(
 
 
     const endpoint =
-      "/payment/iyzipos/checkoutform/initialize/auth/e546";
+      "/payment/iyzipos/checkoutform/initialize/auth/ecom";
 
 
 
 
     const bodyString =
       JSON.stringify(requestData);
+
+
+
+
+    console.log(
+      "Iyzico Request:",
+      {
+        endpoint,
+        body:requestData
+      }
+    );
 
 
 
@@ -317,10 +338,9 @@ export async function POST(
 
 
           headers:
-
-generateIyzipayAuthorization(
-  bodyString
-),
+            generateIyzipayAuthorization(
+              bodyString
+            ),
 
 
 
@@ -336,8 +356,21 @@ generateIyzipayAuthorization(
 
 
 
+
     const result =
       await response.json();
+
+
+
+
+
+    console.log(
+      "Iyzico Response:",
+      {
+        status:response.status,
+        result
+      }
+    );
 
 
 
@@ -358,7 +391,8 @@ generateIyzipayAuthorization(
             pendingPayment.id
         }
 
-      });
+      }).catch(()=>{});
+
 
 
 
@@ -366,8 +400,8 @@ generateIyzipayAuthorization(
 
         {
           error:
-            result?.errorMessage
-            ||
+            result?.errorMessage ||
+            result?.errorGroup ||
             "Ödeme başlatılamadı"
         },
 
@@ -377,8 +411,8 @@ generateIyzipayAuthorization(
 
       );
 
-
     }
+
 
 
 
@@ -410,6 +444,7 @@ generateIyzipayAuthorization(
 
 
 
+
     return NextResponse.json({
 
       success:true,
@@ -428,7 +463,10 @@ generateIyzipayAuthorization(
 
 
 
+
   }
+
+
   catch(error:any){
 
 
@@ -443,8 +481,7 @@ generateIyzipayAuthorization(
 
       {
         error:
-          error.message
-          ||
+          error.message ||
           "Sunucu hatası"
       },
 
