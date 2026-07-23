@@ -19,7 +19,8 @@ const nextConfig: NextConfig = {
       "./node_modules/url-parse/**",
       "./node_modules/requires-port/**",
       "./node_modules/querystringify/**",
-      "./node_modules/psl/**"
+      "./node_modules/psl/**",
+      "./node_modules/universalify/**"
     ],
 
 
@@ -32,7 +33,8 @@ const nextConfig: NextConfig = {
       "./node_modules/url-parse/**",
       "./node_modules/requires-port/**",
       "./node_modules/querystringify/**",
-      "./node_modules/psl/**"
+      "./node_modules/psl/**",
+      "./node_modules/universalify/**"
     ]
 
   }

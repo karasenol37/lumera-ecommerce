@@ -29,6 +29,7 @@
     "react-dom": "19.2.4",
     "requires-port": "^1.0.0",
     "tough-cookie": "^6.0.2",
+    "universalify": "^2.0.1",
     "url-parse": "^1.5.10",
     "uuid": "^14.0.1"
   },
