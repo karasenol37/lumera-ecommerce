@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
 
     "/api/payment/create": [
+      "./node_modules/jsprim/**",
+"./node_modules/asn1/**",
+"./node_modules/json-schema/**",
+"./node_modules/jsbn/**",
+"./node_modules/bcrypt-pbkdf/**",
+"./node_modules/tweetnacl/**",
       "./node_modules/safer-buffer/**",
 "./node_modules/asn1/**",
 "./node_modules/bcrypt-pbkdf/**",
@@ -61,6 +67,12 @@ const nextConfig: NextConfig = {
 
 
     "/api/payment/callback": [
+      "./node_modules/jsprim/**",
+"./node_modules/asn1/**",
+"./node_modules/json-schema/**",
+"./node_modules/jsbn/**",
+"./node_modules/bcrypt-pbkdf/**",
+"./node_modules/tweetnacl/**",
       "./node_modules/safer-buffer/**",
 "./node_modules/asn1/**",
 "./node_modules/bcrypt-pbkdf/**",
