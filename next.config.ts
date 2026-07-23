@@ -21,7 +21,25 @@ const nextConfig: NextConfig = {
       "./node_modules/querystringify/**",
       "./node_modules/psl/**",
       "./node_modules/universalify/**",
-      "./node_modules/aws-sign2/**"
+      "./node_modules/aws-sign2/**",
+      "./node_modules/aws4/**",
+      "./node_modules/oauth-sign/**",
+      "./node_modules/http-signature/**",
+      "./node_modules/har-validator/**",
+      "./node_modules/sshpk/**",
+      "./node_modules/assert-plus/**",
+      "./node_modules/caseless/**",
+      "./node_modules/forever-agent/**",
+      "./node_modules/form-data/**",
+      "./node_modules/json-stringify-safe/**",
+      "./node_modules/tough-cookie/**",
+      "./node_modules/mime-types/**",
+      "./node_modules/combined-stream/**",
+      "./node_modules/delayed-stream/**",
+      "./node_modules/is-typedarray/**",
+      "./node_modules/isstream/**",
+      "./node_modules/performance-now/**",
+      "./node_modules/json-schema-traverse/**"
     ],
 
 
@@ -36,7 +54,25 @@ const nextConfig: NextConfig = {
       "./node_modules/querystringify/**",
       "./node_modules/psl/**",
       "./node_modules/universalify/**",
-      "./node_modules/aws-sign2/**"
+      "./node_modules/aws-sign2/**",
+      "./node_modules/aws4/**",
+      "./node_modules/oauth-sign/**",
+      "./node_modules/http-signature/**",
+      "./node_modules/har-validator/**",
+      "./node_modules/sshpk/**",
+      "./node_modules/assert-plus/**",
+      "./node_modules/caseless/**",
+      "./node_modules/forever-agent/**",
+      "./node_modules/form-data/**",
+      "./node_modules/json-stringify-safe/**",
+      "./node_modules/tough-cookie/**",
+      "./node_modules/mime-types/**",
+      "./node_modules/combined-stream/**",
+      "./node_modules/delayed-stream/**",
+      "./node_modules/is-typedarray/**",
+      "./node_modules/isstream/**",
+      "./node_modules/performance-now/**",
+      "./node_modules/json-schema-traverse/**"
     ]
 
   }
