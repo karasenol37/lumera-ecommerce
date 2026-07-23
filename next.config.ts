@@ -13,14 +13,16 @@ const nextConfig: NextConfig = {
     "/api/payment/create": [
       "./node_modules/iyzipay/**",
       "./node_modules/postman-request/**",
-      "./node_modules/extend/**"
+      "./node_modules/extend/**",
+      "./node_modules/@postman/tough-cookie/**"
     ],
 
 
     "/api/payment/callback": [
       "./node_modules/iyzipay/**",
       "./node_modules/postman-request/**",
-      "./node_modules/extend/**"
+      "./node_modules/extend/**",
+      "./node_modules/@postman/tough-cookie/**"
     ]
 
   }
