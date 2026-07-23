@@ -215,7 +215,11 @@ export async function createOrder(
 
         total,
 
+        paymentStatus:"Başarılı",
 
+        paymentMethod:"Kredi Kartı",
+
+        status:"Hazırlanıyor",
 
 
 

@@ -1,59 +1,31 @@
-import CryptoJS from "crypto-js";
-
+import crypto from "crypto";
 
 export function generateIyzipayAuthorization(
-  uri:string,
-  requestBody:string
-){
+  uri: string,
+  body: string
+) {
+  const apiKey = process.env.IYZICO_API_KEY!;
+  const secretKey = process.env.IYZICO_SECRET_KEY!;
 
-
-  const apiKey =
-    process.env.IYZICO_API_KEY!;
-
-
-  const secretKey =
-    process.env.IYZICO_SECRET_KEY!;
-
-
-
-  const randomString =
-    CryptoJS.lib.WordArray.random(16)
-    .toString(CryptoJS.enc.Hex);
-
-
+  const randomKey = crypto.randomBytes(16).toString("hex");
 
   const payload =
-    randomString +
+    randomKey +
     uri +
-    requestBody;
+    body;
 
+  const signature = crypto
+    .createHmac("sha256", secretKey)
+    .update(payload)
+    .digest("base64");
 
+  const authorization = Buffer.from(
+    `${apiKey}:${randomKey}:${signature}`
+  ).toString("base64");
 
-  const signature =
-    CryptoJS.HmacSHA256(
-      payload,
-      secretKey
-    )
-    .toString(
-      CryptoJS.enc.Base64
-    );
-
-
-
-
-
- return {
-
- Authorization:
- `IYZWSv2 ${apiKey}:${randomString}:${signature}`,
-
- "x-iyzi-rnd":
- randomString,
-
- "Content-Type":
- "application/json"
-
-};
-
-
+  return {
+    Authorization: `IYZWSv2 ${authorization}`,
+    "x-iyzi-rnd": randomKey,
+    "Content-Type": "application/json",
+  };
 }
