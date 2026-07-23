@@ -3,7 +3,27 @@ import { getSessionUser } from "@/lib/actions/session";
 import { redirect } from "next/navigation";
 import UserActions from "@/components/admin/UserActions";
 
+
+type AdminUser = {
+
+  id:number;
+
+  name:string | null;
+
+  email:string;
+
+  role:string | null;
+
+  createdAt:Date;
+
+};
+
+
+
+
+
 export default async function AdminUsersPage(){
+
 
 
 const user =
@@ -11,11 +31,16 @@ await getSessionUser();
 
 
 
+
+
 if(!user || user.role !== "ADMIN"){
 
-redirect("/");
+  redirect("/");
 
 }
+
+
+
 
 
 
@@ -24,24 +49,29 @@ redirect("/");
 const users =
 await prisma.user.findMany({
 
-orderBy:{
-createdAt:"desc"
-},
+  orderBy:{
+
+    createdAt:"desc"
+
+  },
 
 
-select:{
+  select:{
 
-id:true,
 
-name:true,
+    id:true,
 
-email:true,
+    name:true,
 
-role:true,
+    email:true,
 
-createdAt:true,
+    role:true,
 
-}
+    createdAt:true,
+
+
+  }
+
 
 });
 
@@ -49,8 +79,15 @@ createdAt:true,
 
 
 
+const typedUsers = users as AdminUser[];
+
+
+
+
+
 
 return (
+
 
 <main className="
 min-h-screen
@@ -64,6 +101,9 @@ text-white
 mx-auto
 max-w-7xl
 ">
+
+
+
 
 
 <h1 className="
@@ -80,6 +120,8 @@ Kullanıcı Yönetimi
 
 
 
+
+
 <div className="
 overflow-hidden
 rounded-2xl
@@ -89,10 +131,16 @@ bg-[#181818]
 ">
 
 
+
+
+
 <table className="
 w-full
 text-left
 ">
+
+
+
 
 
 <thead className="
@@ -102,7 +150,9 @@ text-gray-400
 ">
 
 
+
 <tr>
+
 
 <th className="p-5">
 Ad
@@ -122,9 +172,12 @@ Rol
 <th className="p-5">
 Kayıt
 </th>
+
+
 <th className="p-5">
 İşlem
 </th>
+
 
 </tr>
 
@@ -136,12 +189,20 @@ Kayıt
 
 
 
+
+
+
 <tbody>
+
+
+
 
 
 {
 
-users.map(item=>(
+
+typedUsers.map((item:AdminUser)=>(
+
 
 
 <tr
@@ -156,11 +217,18 @@ border-[#222]
 >
 
 
+
+
+
 <td className="p-5 font-semibold">
 
-{item.name}
+{item.name ?? "-"}
 
 </td>
+
+
+
+
 
 
 
@@ -173,7 +241,12 @@ border-[#222]
 
 
 
+
+
+
+
 <td className="p-5">
+
 
 
 <span className="
@@ -186,12 +259,17 @@ font-bold
 text-black
 ">
 
-{item.role}
+{item.role ?? "USER"}
 
 </span>
 
 
+
 </td>
+
+
+
+
 
 
 
@@ -199,29 +277,50 @@ text-black
 
 <td className="p-5 text-gray-400">
 
+
 {
-new Date(
-item.createdAt
-).toLocaleDateString(
+
+new Date(item.createdAt)
+
+.toLocaleDateString(
 "tr-TR"
 )
+
 }
+
 
 </td>
 
+
+
+
+
+
+
+
+
 <td className="p-5">
+
 
 <UserActions
 
 id={item.id}
 
-role={item.role}
+role={item.role ?? "USER"}
 
 />
 
+
 </td>
 
+
+
+
+
+
+
 </tr>
+
 
 
 ))
@@ -231,20 +330,35 @@ role={item.role}
 
 
 
+
+
 </tbody>
+
+
+
 
 
 
 </table>
 
 
+
+
+
+
 </div>
+
+
+
+
+
 
 
 </div>
 
 
 </main>
+
 
 );
 

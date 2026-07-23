@@ -79,6 +79,8 @@
     "url-parse": "^1.5.10",
     "uuid": "^14.0.1",
     "verror": "^1.10.1"
+    
+    
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

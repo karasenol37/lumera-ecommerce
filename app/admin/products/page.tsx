@@ -4,6 +4,32 @@ import { requireAdmin } from "@/lib/auth/admin";
 import ToggleProductStatusButton from "@/components/ToggleProductStatusButton";
 
 
+type AdminProduct = {
+
+  id:number;
+
+  name:string;
+
+  slug:string;
+
+  price:number;
+
+  oldPrice?:number | null;
+
+  image?:string | null;
+
+  stock:number;
+
+  category?:string | null;
+
+  isActive:boolean;
+
+};
+
+
+
+
+
 export default async function AdminProductsPage(){
 
 
@@ -11,14 +37,25 @@ await requireAdmin();
 
 
 
+
+
 const products =
 await prisma.product.findMany({
 
-orderBy:{
-createdAt:"desc"
-}
+  orderBy:{
+
+    createdAt:"desc"
+
+  }
 
 });
+
+
+
+
+
+const typedProducts = products as AdminProduct[];
+
 
 
 
@@ -48,6 +85,7 @@ flex
 items-center
 justify-between
 ">
+
 
 
 <h1 className="
@@ -160,14 +198,14 @@ Durum
 
 
 
-
 <tbody>
 
 
 {
 
 
-products.map(product=>(
+typedProducts.map((product:AdminProduct)=>(
+
 
 
 
@@ -186,11 +224,15 @@ border-[#333]
 
 
 
+
+
 <td className="p-5">
 
 {product.name}
 
 </td>
+
+
 
 
 
@@ -215,6 +257,7 @@ product.price.toLocaleString(
 
 
 
+
 <td>
 
 
@@ -223,6 +266,7 @@ flex
 flex-col
 gap-1
 ">
+
 
 
 <span className="font-bold">
@@ -235,7 +279,9 @@ gap-1
 
 
 
+
 {
+
 
 product.stock === 0
 
@@ -292,7 +338,6 @@ Stokta
 
 
 
-
 </div>
 
 
@@ -311,6 +356,7 @@ Stokta
 
 {
 
+
 product.isActive
 
 
@@ -325,6 +371,7 @@ text-green-400
 🟢 Yayında
 
 </span>
+
 
 
 :
@@ -361,7 +408,11 @@ text-red-400
 <div className="
 flex
 items-center
+gap-4
 ">
+
+
+
 
 
 <Link
@@ -383,6 +434,7 @@ Düzenle
 
 
 
+
 <ToggleProductStatusButton
 
 id={product.id}
@@ -390,6 +442,7 @@ id={product.id}
 isActive={product.isActive}
 
 />
+
 
 
 
@@ -407,7 +460,9 @@ isActive={product.isActive}
 
 
 
+
 </tr>
+
 
 
 ))
@@ -423,13 +478,21 @@ isActive={product.isActive}
 
 
 
+
+
 </table>
 
 
 
 
 
+
+
+
 </div>
+
+
+
 
 
 
@@ -439,6 +502,7 @@ isActive={product.isActive}
 
 
 </main>
+
 
 );
 

@@ -1,6 +1,14 @@
 import ProductCard from "./ProductCard";
 import { getProducts } from "@/lib/services/productService";
-
+type ProductItem = {
+  id: number;
+  name: string;
+  slug: string;
+  price: number;
+  oldPrice?: number | null;
+  stock: boolean | number;
+  image?: string | null;
+};
 
 type ProductListProps = {
 
@@ -150,7 +158,7 @@ Henüz ürün bulunamadı.
 
 
 
-products.map(product=>(
+products.map((product: ProductItem)=>(
 
 
 <ProductCard
@@ -165,12 +173,13 @@ name={product.name}
 
 price={product.price}
 
-oldPrice={product.oldPrice}
+oldPrice={product.oldPrice ?? 0}
 
 
-stock={product.stock}
+stock={product.stock ? 1 : 0}
 
-image={product.image}
+
+image={product.image || "/images/no-image.png"}
 
 />
 

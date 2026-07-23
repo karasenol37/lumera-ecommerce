@@ -2,204 +2,219 @@ import ProductCard from "@/components/ProductCard";
 import { prisma } from "@/lib/prisma";
 
 
+type CategoryProduct = {
+  id: number;
+  name: string;
+  slug: string;
+  price: number;
+  oldPrice: number;
+  stock: number;
+  image: string;
+};
+
+
 
 export default async function CategoryPage({
 
-params,
+  params,
 
-}:{
+}: {
 
-params: Promise<{
-category:string
-}>
+  params: Promise<{
+    category: string;
+  }>
 
-}){
+}) {
 
 
+  const { category } = await params;
 
-const {category}=await params;
 
+  const decodedCategory =
+    decodeURIComponent(category);
 
 
-const decodedCategory =
-decodeURIComponent(category);
 
 
+  const products =
+    await prisma.product.findMany({
 
+      where: {
 
+        category: decodedCategory,
 
-const products =
-await prisma.product.findMany({
+        isActive: true,
 
-where:{
+      },
 
-category:decodedCategory,
 
-isActive:true,
+      orderBy: {
 
-},
+        createdAt: "desc"
 
-orderBy:{
+      }
 
-createdAt:"desc"
+    });
 
-}
 
-});
 
 
 
 
+  return (
 
+    <main
 
-return (
+      className="
+      min-h-screen
+      bg-[#111]
+      px-6
+      py-16
+      text-white
+      "
 
-<main
+    >
 
-className="
-min-h-screen
-bg-[#111]
-px-6
-py-16
-text-white
-"
 
->
+      <div
 
+        className="
+        mx-auto
+        max-w-7xl
+        "
 
-<div
+      >
 
-className="
-mx-auto
-max-w-7xl
-"
 
->
+        <p
 
+          className="
+          text-sm
+          tracking-[0.3em]
+          text-[#c8a165]
+          "
 
+        >
 
-<p
+          LUMERA COLLECTION
 
-className="
-text-sm
-tracking-[0.3em]
-text-[#c8a165]
-"
+        </p>
 
->
 
-LUMERA COLLECTION
 
-</p>
 
+        <h1
 
+          className="
+          mt-4
+          text-5xl
+          font-bold
+          "
 
+        >
 
-<h1
+          {decodedCategory}
 
-className="
-mt-4
-text-5xl
-font-bold
-"
+        </h1>
 
->
 
-{decodedCategory}
 
-</h1>
 
 
 
+        <div
 
+          className="
+          mt-12
+          grid
+          gap-8
+          md:grid-cols-2
+          lg:grid-cols-4
+          "
 
+        >
 
-<div
 
-className="
-mt-12
-grid
-gap-8
-md:grid-cols-2
-lg:grid-cols-4
-"
+          {
 
->
+            products.length === 0 ? (
 
 
-{
+              <div
 
-products.length === 0 ?
+                className="
+                col-span-full
+                rounded-xl
+                bg-[#181818]
+                p-10
+                text-center
+                text-gray-400
+                "
 
+              >
 
+                Bu kategoride ürün bulunamadı.
 
-<div
+              </div>
 
-className="
-col-span-full
-rounded-xl
-bg-[#181818]
-p-10
-text-center
-text-gray-400
-"
 
->
+            ) : (
 
-Bu kategoride ürün bulunamadı.
 
-</div>
+              products.map((product: CategoryProduct) => (
 
 
+                <ProductCard
 
-:
 
+                  key={product.id}
 
 
-products.map(product=>(
+                  id={product.id}
 
 
-<ProductCard
+                  slug={product.slug}
 
-key={product.id}
 
-id={product.id}
+                  name={product.name}
 
-slug={product.slug}
 
-name={product.name}
+                  price={product.price}
 
-price={product.price}
 
-oldPrice={product.oldPrice}
+                  oldPrice={product.oldPrice}
 
-stock={product.stock}
 
-image={product.image}
+                  stock={product.stock}
 
 
-/>
+                  image={product.image}
 
 
-))
+                />
 
 
-}
+              ))
 
 
+            )
 
-</div>
 
+          }
 
 
-</div>
 
+        </div>
 
 
-</main>
 
+      </div>
 
-);
+
+
+    </main>
+
+  );
 
 
 }

@@ -3,6 +3,41 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth/admin";
 
 
+type OrderItem = {
+
+  id:number;
+
+  productId:number;
+
+  quantity:number;
+
+};
+
+
+
+type AdminOrder = {
+
+  id:number;
+
+  status:string;
+
+  total:number;
+
+  createdAt:Date;
+
+  fullName:string;
+
+  phone:string;
+
+  email:string;
+
+  items:OrderItem[];
+
+};
+
+
+
+
 
 function statusStyle(status:string){
 
@@ -33,6 +68,9 @@ function statusStyle(status:string){
 
 
 
+
+
+
 export default async function AdminOrdersPage(){
 
 
@@ -40,11 +78,14 @@ await requireAdmin();
 
 
 
+
 const orders =
 await prisma.order.findMany({
 
   orderBy:{
+
     createdAt:"desc"
+
   },
 
 
@@ -58,6 +99,13 @@ await prisma.order.findMany({
 
 
 });
+
+
+
+
+
+const typedOrders = orders as AdminOrder[];
+
 
 
 
@@ -81,6 +129,9 @@ max-w-7xl
 ">
 
 
+
+
+
 <div className="
 flex
 items-center
@@ -96,6 +147,8 @@ font-bold
 Sipariş Yönetimi
 
 </h1>
+
+
 
 
 
@@ -129,17 +182,22 @@ text-[#c8a165]
 
 
 
+
 <div className="
 mt-10
 space-y-6
 ">
 
 
+
+
+
 {
 
-orders.length===0
+typedOrders.length===0
 
 ?
+
 
 <div className="
 rounded-2xl
@@ -157,7 +215,8 @@ Henüz sipariş bulunmuyor.
 :
 
 
-orders.map(order=>(
+typedOrders.map((order:AdminOrder)=>(
+
 
 
 <div
@@ -173,6 +232,8 @@ p-8
 >
 
 
+
+
 <div className="
 flex
 flex-col
@@ -181,6 +242,8 @@ lg:flex-row
 lg:items-center
 lg:justify-between
 ">
+
+
 
 
 
@@ -197,6 +260,7 @@ Sipariş #{order.id}
 </h2>
 
 
+
 <p className="
 mt-2
 text-gray-400
@@ -205,6 +269,8 @@ text-gray-400
 {order.fullName}
 
 </p>
+
+
 
 
 <p className="
@@ -216,15 +282,31 @@ text-gray-400
 </p>
 
 
+
+
 <p className="
 text-gray-400
 ">
 
-{new Date(order.createdAt).toLocaleDateString(
-"tr-TR"
-)}
+{order.email}
 
 </p>
+
+
+
+
+<p className="
+text-gray-400
+">
+
+{
+new Date(order.createdAt)
+.toLocaleDateString("tr-TR")
+}
+
+</p>
+
+
 
 
 </div>
@@ -245,6 +327,9 @@ text-right
 ">
 
 
+
+
+
 <p className="
 text-2xl
 font-bold
@@ -252,23 +337,32 @@ text-[#c8a165]
 ">
 
 ₺
-{order.total.toLocaleString(
-"tr-TR"
-)}
+{
+order.total.toLocaleString("tr-TR")
+}
 
 </p>
 
 
 
 
-<p className={`
+
+
+<p
+
+className={`
 font-bold
 ${statusStyle(order.status)}
-`}>
+`}
+
+>
 
 {order.status}
 
 </p>
+
+
+
 
 
 
@@ -294,11 +388,15 @@ Sipariş Detayı
 
 
 
-</div>
-
-
 
 </div>
+
+
+
+
+
+</div>
+
 
 
 
@@ -315,6 +413,9 @@ pt-6
 ">
 
 
+
+
+
 <p className="
 mb-3
 font-semibold
@@ -326,6 +427,10 @@ font-semibold
 
 
 
+
+
+
+
 <div className="
 flex
 flex-wrap
@@ -333,9 +438,13 @@ gap-3
 ">
 
 
+
+
+
 {
 
-order.items.map(item=>(
+order.items.map((item:OrderItem)=>(
+
 
 
 <span
@@ -354,29 +463,12 @@ text-gray-300
 >
 
 Ürün ID: {item.productId}
+
 × {item.quantity}
 
 </span>
 
 
-))
-
-}
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-</div>
-
 
 ))
 
@@ -385,8 +477,41 @@ text-gray-300
 
 
 
+
+
+
 </div>
 
+
+
+
+
+</div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+))
+
+
+}
+
+
+
+
+
+
+
+</div>
 
 
 
@@ -397,6 +522,7 @@ text-gray-300
 
 
 </main>
+
 
 );
 

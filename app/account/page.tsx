@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { getSessionUser } from "@/lib/actions/session";
 import { prisma } from "@/lib/prisma";
-
+interface Order {
+  id:number;
+  status:string;
+  total:number;
+  createdAt:Date;
+}
 
 
 export default async function AccountPage() {
@@ -234,7 +239,7 @@ space-y-5
 
 {
 
-orders.map(order=>(
+orders.map((order: Order)=>(
 
 
 <div

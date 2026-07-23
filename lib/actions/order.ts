@@ -1,11 +1,12 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "./session";
+import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
 
 
 
-
+// diğer kodlar...
 
 // ===============================
 // SİPARİŞ OLUŞTURMA
@@ -67,7 +68,7 @@ export async function createOrder(
 
 
 
-  const order = await prisma.$transaction(async(tx)=>{
+  const order = await prisma.$transaction(async(tx: Prisma.TransactionClient)=>{
 
 
 
@@ -328,7 +329,7 @@ export async function updateOrderStatus({
 
 
 
-  const updatedOrder = await prisma.$transaction(async(tx)=>{
+  const updatedOrder = await prisma.$transaction(async(tx: Prisma.TransactionClient)=>{
 
 
 

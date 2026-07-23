@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/actions/session";
-
+type LatestOrder = {
+  id: number;
+  status: string;
+  total: number;
+  createdAt: Date;
+  fullName?: string;
+  email?: string;
+};
 
 
 
@@ -661,8 +668,7 @@ space-y-4
 
 {
 
-latestOrders.map(order=>(
-
+latestOrders.map((order: LatestOrder)=>(
 
 <div
 

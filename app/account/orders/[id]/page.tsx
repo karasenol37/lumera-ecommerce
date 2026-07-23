@@ -4,7 +4,6 @@ import { getSessionUser } from "@/lib/actions/session";
 import { notFound } from "next/navigation";
 
 
-
 type PageProps = {
 
   params: Promise<{
@@ -12,6 +11,23 @@ type PageProps = {
   }>;
 
 };
+
+
+interface OrderItem {
+
+  id:number;
+
+  quantity:number;
+
+  price:number;
+
+  product:{
+    id:number;
+    name:string;
+    image?:string;
+  };
+
+}
 
 
 
@@ -54,10 +70,7 @@ export default async function OrderDetailPage({
 
 
 
-
-
   const { id } = await params;
-
 
 
 
@@ -112,10 +125,6 @@ export default async function OrderDetailPage({
 
 
 
-
-
-
-
 return (
 
 <main className="
@@ -131,8 +140,6 @@ text-white
 mx-auto
 max-w-5xl
 ">
-
-
 
 
 
@@ -376,6 +383,8 @@ text-gray-300
 
 
 
+
+
 </div>
 
 
@@ -412,9 +421,18 @@ space-y-5
 ">
 
 
+
 {
 
-order.items.map(item=>(
+order.items.map((item: {
+  id:number;
+  quantity:number;
+  price:number;
+  product:{
+    name:string;
+    image?:string;
+  }
+})=>(
 
 
 <div
@@ -465,6 +483,7 @@ text-gray-400
 
 
 
+
 <div className="
 font-bold
 text-[#c8a165]
@@ -473,12 +492,14 @@ text-[#c8a165]
 
 ₺
 {
+
 (
 item.price *
 item.quantity
 ).toLocaleString(
 "tr-TR"
 )
+
 }
 
 
@@ -505,6 +526,8 @@ item.quantity
 
 
 </section>
+
+
 
 
 

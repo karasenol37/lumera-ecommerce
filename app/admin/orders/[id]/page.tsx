@@ -3,7 +3,16 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { getSessionUser } from "@/lib/actions/session";
 import UpdateOrderStatus from "@/components/admin/UpdateOrderStatus";
-
+interface AdminOrderItem {
+  id: number;
+  quantity: number;
+  price: number;
+  product: {
+    id: number;
+    name: string;
+    image?: string;
+  };
+}
 
 
 type PageProps = {
@@ -351,7 +360,7 @@ space-y-5
 
 {
 
-order.items.map(item=>(
+order.items.map((item: AdminOrderItem)=>(
 
 
 <div

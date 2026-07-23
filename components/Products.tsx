@@ -1,6 +1,14 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-
+type ProductItem = {
+  id: number;
+  name: string;
+  slug: string;
+  price: number;
+  oldPrice?: number | null;
+  image?: string | null;
+  stock: boolean | number;
+};
 
 export default async function Products() {
 
@@ -53,7 +61,7 @@ export default async function Products() {
 
 
 
-        {products.map((product)=>(
+        {products.map((product: ProductItem)=>(
 
 
           <div
