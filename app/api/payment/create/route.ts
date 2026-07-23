@@ -1,19 +1,20 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getIyzipay } from "@/lib/payment/iyzico";
 import { prisma } from "@/lib/prisma";
-import { generateIyzipayAuthorization } from "@/lib/payment/iyzico-rest";
 
 
-export async function POST(
-  request: Request
-) {
+function generateId(prefix: string = "ID") {
+  return `${prefix}_${Date.now()}_${Math.random()
+    .toString(36)
+    .substring(2, 10)}`;
+}
 
+
+export async function POST(req: NextRequest) {
 
   try {
 
-
-    const body =
-      await request.json();
-
+    const body = await req.json();
 
 
     const {
@@ -23,19 +24,14 @@ export async function POST(
 
 
 
-
-    if(
-      !items ||
-      items.length === 0
-    ){
+    if (!items || items.length === 0) {
 
       return NextResponse.json(
         {
-          success:false,
-          message:"Sepet boş."
+          error: "Sepet boş"
         },
         {
-          status:400
+          status: 400
         }
       );
 
@@ -43,67 +39,111 @@ export async function POST(
 
 
 
+    const iyzipay = getIyzipay();
 
 
-    const price =
-      items.reduce(
-        (
-          total:number,
-          item:any
-        ) => {
 
-          return total +
-          item.price *
-          item.quantity;
+    const totalPrice = items.reduce(
+      (
+        total: number,
+        item: any
+      ) =>
+        total + item.price * item.quantity,
 
-        },
-        0
-      );
-
-
+      0
+    );
 
 
 
     const conversationId =
-      String(Date.now());
+      generateId("CONV");
 
 
+
+    /*
+      Ön ödeme kaydı oluşturuyoruz.
+      İyzico başarılı olunca callback
+      buradan siparişi oluşturacak.
+    */
+
+    const pendingPayment =
+      await prisma.pendingPayment.create({
+
+        data: {
+
+          token: generateId("TEMP"),
+
+
+          userId:
+            buyer.id || null,
+
+
+          fullName:
+            `${buyer.name} ${buyer.surname}`,
+
+          phone:
+            buyer.phone,
+
+          email:
+            buyer.email,
+
+
+          city:
+            buyer.city || "Kastamonu",
+
+
+          district:
+            buyer.district || "",
+
+
+          address:
+            buyer.address,
+
+
+          postalCode:
+            buyer.postalCode || "",
+
+
+          items,
+
+
+          total:
+            totalPrice
+
+        }
+
+      });
 
 
 
     const requestData = {
 
 
-      locale:"tr",
+      locale: "tr",
 
 
       conversationId,
 
 
       price:
-        price.toFixed(2),
+        totalPrice.toFixed(2),
 
 
       paidPrice:
-        price.toFixed(2),
+        totalPrice.toFixed(2),
 
 
-      currency:"TRY",
+      currency: "TRY",
 
 
       basketId:
-        `LUM-${Date.now()}`,
+        generateId("BASKET"),
 
 
-      paymentGroup:"PRODUCT",
+      paymentGroup:
+        "PRODUCT",
 
-enabledInstallments:[
-  1,
-  2,
-  3,
-  6,
-  9
-],
+
 
       callbackUrl:
         `${process.env.NEXT_PUBLIC_APP_URL}/api/payment/callback`,
@@ -111,60 +151,83 @@ enabledInstallments:[
 
 
 
-buyer:{
-  id:"LUMERA_USER",
+      buyer: {
 
-  name:"John",
-
-  surname:"Doe",
-
-  gsmNumber:"+905350000000",
-
-  email:"sandbox@iyzico.com",
-
-  identityNumber:"11111111111",
-
-  registrationAddress:"Nisantasi Istanbul",
-
-  city:"Istanbul",
-
-  country:"Türkiye",
-
-  zipCode:"34742"
-},
+        id:
+          buyer.id?.toString() || "guest",
 
 
-shippingAddress:{
-  contactName:"John Doe",
-  city:"Istanbul",
-  country:"Türkiye",
-  address:"Nisantasi Istanbul",
-  zipCode:"34742"
-},
+        name:
+          buyer.name,
 
 
-billingAddress:{
-  contactName:"John Doe",
-  city:"Istanbul",
-  country:"Türkiye",
-  address:"Nisantasi Istanbul",
-  zipCode:"34742"
-},
+        surname:
+          buyer.surname,
+
+
+        gsmNumber:
+          buyer.phone,
+
+
+        email:
+          buyer.email,
+
+
+        identityNumber:
+          buyer.identityNumber ||
+          "11111111111",
+
+
+        registrationAddress:
+          buyer.address,
+
+
+        city:
+          buyer.city || "Kastamonu",
+
+
+        country:
+          "Turkey",
+
+
+        ip:
+          req.headers.get("x-forwarded-for")
+          || "85.34.78.112"
+
+      },
 
 
 
+      basketItems:
+
+        items.map(
+          (item: any) => ({
+
+            id:
+              item.id.toString(),
 
 
-     basketItems:[
-{
- id:"BI101",
- name:"Bahçe Hamağı",
- category1:"Bahçe",
- category2:"Bahçe Mobilyası",
- itemType:"PHYSICAL",
- price:"14500.00"
-}
-]
+            name:
+              item.name,
+
+
+            category1:
+              item.category || "Genel",
+
+
+            itemType:
+              "PHYSICAL",
+
+
+            price:
+              (
+                item.price *
+                item.quantity
+              ).toFixed(2)
+
+          })
+
+        )
 
     };
 
@@ -172,107 +235,69 @@ billingAddress:{
 
 
 
-    const jsonBody =
-      JSON.stringify(
-        requestData
-      );
+    const result: any =
+
+      await new Promise(
+
+        (resolve, reject) => {
 
 
+          iyzipay.checkoutFormInitialize.create(
+
+            requestData,
+
+            (
+              error: any,
+              result: any
+            ) => {
 
 
+              if (error) {
 
-    const apiUrl =
-      `${process.env.IYZICO_BASE_URL}/payment/iyzipos/checkoutform/initialize/auth/ecom`;
+                reject(error);
 
+                return;
 
-
-
-
-    console.log(
-      "IYZICO URL:",
-      apiUrl
-    );
+              }
 
 
-    console.log(
-      "IYZICO REQUEST:",
-      requestData
-    );
-    const headers =
-      generateIyzipayAuthorization(
-        "/payment/iyzipos/checkoutform/initialize/auth/ecom",
-        jsonBody
-      );
+              resolve(result);
 
 
+            }
 
-console.log(
-"IYZICO JSON:",
-jsonBody
-);
-console.log(
-"AUTH HEADER:",
-headers.Authorization.substring(0,30)
-);
-    const response =
-      await fetch(
-        apiUrl,
-        {
-          method:"POST",
+          );
 
-          headers,
-
-          body:jsonBody
 
         }
+
       );
 
 
 
 
 
-    const result =
-      await response.json();
 
-
-
-
-
-    console.log(
-      "IYZICO RESPONSE:"
-    );
-
-    console.dir(
-      result,
-      {
-        depth:null
-      }
-    );
-
-
-
-
-
-
-
-    if(
+    if (
+      !result ||
       result.status !== "success"
-    ){
+    ) {
+
+
+      await prisma.pendingPayment.delete({
+        where:{
+          id: pendingPayment.id
+        }
+      });
+
 
 
       return NextResponse.json(
 
         {
-
-          success:false,
-
-          message:
-            result.errorMessage ||
-            "İyzico ödeme başlatılamadı.",
-
           error:
-            result
-
+            result?.errorMessage ||
+            "Ödeme başlatılamadı"
         },
 
         {
@@ -281,65 +306,33 @@ headers.Authorization.substring(0,30)
 
       );
 
-
     }
 
 
 
 
 
+    /*
+      Gerçek iyzico tokenini kaydediyoruz
+    */
 
 
+    await prisma.pendingPayment.update({
 
+      where:{
+        id:
+          pendingPayment.id
+      },
 
-    await prisma.pendingPayment.create({
 
       data:{
 
-
         token:
-          result.token,
-
-
-        fullName:
-          buyer.fullName,
-
-
-        phone:
-          buyer.phone,
-
-
-        email:
-          buyer.email,
-
-
-        city:
-          buyer.city,
-
-
-        district:
-          buyer.district,
-
-
-        address:
-          buyer.address,
-
-
-        postalCode:
-          buyer.postalCode,
-
-
-        items,
-
-
-        total:
-          price
-
+          result.token
 
       }
 
     });
-
 
 
 
@@ -357,7 +350,10 @@ headers.Authorization.substring(0,30)
 
 
       token:
-        result.token
+        result.token,
+
+
+      conversationId
 
 
     });
@@ -366,23 +362,15 @@ headers.Authorization.substring(0,30)
 
 
 
-
-
   }
 
-  catch(error){
+
+  catch(error:any){
 
 
     console.error(
-      "IYZICO REST ERROR:"
-    );
-
-
-    console.dir(
-      error,
-      {
-        depth:null
-      }
+      "Payment create error:",
+      error
     );
 
 
@@ -390,12 +378,9 @@ headers.Authorization.substring(0,30)
     return NextResponse.json(
 
       {
-
-        success:false,
-
-        message:
-          "Ödeme başlatılamadı."
-
+        error:
+          error.message ||
+          "Sunucu hatası"
       },
 
       {
@@ -406,6 +391,5 @@ headers.Authorization.substring(0,30)
 
 
   }
-
 
 }
