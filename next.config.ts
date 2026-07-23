@@ -16,7 +16,8 @@ const nextConfig: NextConfig = {
       "./node_modules/extend/**",
       "./node_modules/@postman/tough-cookie/**",
       "./node_modules/punycode/**",
-      "./node_modules/url-parse/**"
+      "./node_modules/url-parse/**",
+      "./node_modules/requires-port/**"
     ],
 
 
@@ -26,7 +27,8 @@ const nextConfig: NextConfig = {
       "./node_modules/extend/**",
       "./node_modules/@postman/tough-cookie/**",
       "./node_modules/punycode/**",
-      "./node_modules/url-parse/**"
+      "./node_modules/url-parse/**",
+      "./node_modules/requires-port/**"
     ]
 
   }
