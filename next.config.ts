@@ -1,165 +1,140 @@
 import type { NextConfig } from "next";
 
-
 const nextConfig: NextConfig = {
 
   serverExternalPackages: [
-    "iyzipay"
+    "iyzipay",
+    "postman-request",
+    "@postman/form-data",
+    "@postman/tough-cookie",
+    "qs",
+    "tough-cookie",
+    "http-signature",
+    "sshpk"
   ],
 
 
   outputFileTracingIncludes: {
 
     "/api/payment/create": [
-      "./node_modules/safe-buffer/**",
-      "./node_modules/bluebird/**",
-      "./node_modules/stream-length/**",
-      "./node_modules/asynckit/**",
-      "./node_modules/@postman/form-data/**",
-      "./node_modules/extsprintf/**",
-"./node_modules/verror/**",
-"./node_modules/core-util-is/**",
-"./node_modules/uuid/**",
-"./node_modules/buffer-equal/**",
-"./node_modules/json-schema-traverse/**",
-"./node_modules/har-validator/**",
-"./node_modules/tough-cookie/**",
-"./node_modules/caseless/**",
-"./node_modules/combined-stream/**",
-"./node_modules/delayed-stream/**",
-"./node_modules/forever-agent/**",
-"./node_modules/isstream/**",
-"./node_modules/is-typedarray/**",
-"./node_modules/performance-now/**",
-"./node_modules/json-stringify-safe/**",
-      "./node_modules/jsprim/**",
-"./node_modules/asn1/**",
-"./node_modules/json-schema/**",
-"./node_modules/jsbn/**",
-"./node_modules/bcrypt-pbkdf/**",
-"./node_modules/tweetnacl/**",
-      "./node_modules/safer-buffer/**",
-"./node_modules/asn1/**",
-"./node_modules/bcrypt-pbkdf/**",
-"./node_modules/dashdash/**",
-"./node_modules/ecc-jsbn/**",
-"./node_modules/jsbn/**",
-"./node_modules/tweetnacl/**",
-"./node_modules/core-util-is/**",
-"./node_modules/is-typedarray/**",
-"./node_modules/isstream/**",
-"./node_modules/oauth-sign/**",
-"./node_modules/hawk/**",
-"./node_modules/boom/**",
-"./node_modules/hoek/**",
-"./node_modules/cryptiles/**",
-"./node_modules/sntp/**",
+
+      // iyzipay
       "./node_modules/iyzipay/**",
+
+      // request zinciri
       "./node_modules/postman-request/**",
-      "./node_modules/extend/**",
-      "./node_modules/@postman/tough-cookie/**",
-      "./node_modules/punycode/**",
+      "./node_modules/request/**",
+
+      // postman paketleri
+      "./node_modules/@postman/**",
+
+      // qs
+      "./node_modules/qs/**",
+      "./node_modules/querystringify/**",
       "./node_modules/url-parse/**",
       "./node_modules/requires-port/**",
-      "./node_modules/querystringify/**",
+
+      // cookie
+      "./node_modules/tough-cookie/**",
       "./node_modules/psl/**",
       "./node_modules/universalify/**",
-      "./node_modules/aws-sign2/**",
-      "./node_modules/aws4/**",
-      "./node_modules/oauth-sign/**",
+
+      // form-data
+      "./node_modules/asynckit/**",
+
+      // stream
+      "./node_modules/stream-length/**",
+      "./node_modules/bluebird/**",
+
+      // buffer
+      "./node_modules/safe-buffer/**",
+      "./node_modules/safer-buffer/**",
+
+      // object / function helpers
+      "./node_modules/extend/**",
+      "./node_modules/side-channel/**",
+      "./node_modules/object-inspect/**",
+      "./node_modules/call-bind/**",
+      "./node_modules/get-intrinsic/**",
+      "./node_modules/has-symbols/**",
+      "./node_modules/function-bind/**",
+      "./node_modules/es-errors/**",
+
+      // crypto / signature
       "./node_modules/http-signature/**",
-      "./node_modules/har-validator/**",
       "./node_modules/sshpk/**",
-      "./node_modules/assert-plus/**",
-      "./node_modules/caseless/**",
-      "./node_modules/forever-agent/**",
-      "./node_modules/form-data/**",
-      "./node_modules/json-stringify-safe/**",
-      "./node_modules/tough-cookie/**",
-      "./node_modules/mime-types/**",
-      "./node_modules/combined-stream/**",
-      "./node_modules/delayed-stream/**",
-      "./node_modules/is-typedarray/**",
-      "./node_modules/isstream/**",
-      "./node_modules/performance-now/**",
-      "./node_modules/json-schema-traverse/**"
-      
+      "./node_modules/asn1/**",
+      "./node_modules/jsbn/**",
+      "./node_modules/jsprim/**",
+      "./node_modules/extsprintf/**",
+      "./node_modules/bcrypt-pbkdf/**",
+      "./node_modules/tweetnacl/**",
+
+      // aws signature
+      "./node_modules/aws4/**",
+      "./node_modules/aws-sign2/**"
+
     ],
 
 
     "/api/payment/callback": [
-      "./node_modules/safe-buffer/**",
-      "./node_modules/bluebird/**",
-      "./node_modules/stream-length/**",
-      "./node_modules/asynckit/**",
-      "./node_modules/@postman/form-data/**",
-      "./node_modules/extsprintf/**",
-"./node_modules/verror/**",
-"./node_modules/core-util-is/**",
-"./node_modules/uuid/**",
-"./node_modules/buffer-equal/**",
-"./node_modules/json-schema-traverse/**",
-"./node_modules/har-validator/**",
-"./node_modules/tough-cookie/**",
-"./node_modules/caseless/**",
-"./node_modules/combined-stream/**",
-"./node_modules/delayed-stream/**",
-"./node_modules/forever-agent/**",
-"./node_modules/isstream/**",
-"./node_modules/is-typedarray/**",
-"./node_modules/performance-now/**",
-"./node_modules/json-stringify-safe/**",
-      "./node_modules/jsprim/**",
-"./node_modules/asn1/**",
-"./node_modules/json-schema/**",
-"./node_modules/jsbn/**",
-"./node_modules/bcrypt-pbkdf/**",
-"./node_modules/tweetnacl/**",
-      "./node_modules/safer-buffer/**",
-"./node_modules/asn1/**",
-"./node_modules/bcrypt-pbkdf/**",
-"./node_modules/dashdash/**",
-"./node_modules/ecc-jsbn/**",
-"./node_modules/jsbn/**",
-"./node_modules/tweetnacl/**",
-"./node_modules/core-util-is/**",
-"./node_modules/is-typedarray/**",
-"./node_modules/isstream/**",
-"./node_modules/oauth-sign/**",
-"./node_modules/hawk/**",
-"./node_modules/boom/**",
-"./node_modules/hoek/**",
-"./node_modules/cryptiles/**",
-"./node_modules/sntp/**",
+
+      // iyzipay
       "./node_modules/iyzipay/**",
+
+      // request zinciri
       "./node_modules/postman-request/**",
-      "./node_modules/extend/**",
-      "./node_modules/@postman/tough-cookie/**",
-      "./node_modules/punycode/**",
+      "./node_modules/request/**",
+
+      // postman
+      "./node_modules/@postman/**",
+
+      // qs
+      "./node_modules/qs/**",
+      "./node_modules/querystringify/**",
       "./node_modules/url-parse/**",
       "./node_modules/requires-port/**",
-      "./node_modules/querystringify/**",
+
+      // cookie
+      "./node_modules/tough-cookie/**",
       "./node_modules/psl/**",
       "./node_modules/universalify/**",
-      "./node_modules/aws-sign2/**",
-      "./node_modules/aws4/**",
-      "./node_modules/oauth-sign/**",
+
+      // form-data
+      "./node_modules/asynckit/**",
+
+      // stream
+      "./node_modules/stream-length/**",
+      "./node_modules/bluebird/**",
+
+      // buffer
+      "./node_modules/safe-buffer/**",
+      "./node_modules/safer-buffer/**",
+
+      // helpers
+      "./node_modules/extend/**",
+      "./node_modules/side-channel/**",
+      "./node_modules/object-inspect/**",
+      "./node_modules/call-bind/**",
+      "./node_modules/get-intrinsic/**",
+      "./node_modules/has-symbols/**",
+      "./node_modules/function-bind/**",
+      "./node_modules/es-errors/**",
+
+      // signature
       "./node_modules/http-signature/**",
-      "./node_modules/har-validator/**",
       "./node_modules/sshpk/**",
-      "./node_modules/assert-plus/**",
-      "./node_modules/caseless/**",
-      "./node_modules/forever-agent/**",
-      "./node_modules/form-data/**",
-      "./node_modules/json-stringify-safe/**",
-      "./node_modules/tough-cookie/**",
-      "./node_modules/mime-types/**",
-      "./node_modules/combined-stream/**",
-      "./node_modules/delayed-stream/**",
-      "./node_modules/is-typedarray/**",
-      "./node_modules/isstream/**",
-      "./node_modules/performance-now/**",
-      "./node_modules/json-schema-traverse/**"
+      "./node_modules/asn1/**",
+      "./node_modules/jsbn/**",
+      "./node_modules/jsprim/**",
+      "./node_modules/extsprintf/**",
+      "./node_modules/bcrypt-pbkdf/**",
+      "./node_modules/tweetnacl/**",
+
+      // aws
+      "./node_modules/aws4/**",
+      "./node_modules/aws-sign2/**"
+
     ]
 
   }
