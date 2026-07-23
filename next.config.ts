@@ -11,6 +11,22 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
 
     "/api/payment/create": [
+      "./node_modules/safer-buffer/**",
+"./node_modules/asn1/**",
+"./node_modules/bcrypt-pbkdf/**",
+"./node_modules/dashdash/**",
+"./node_modules/ecc-jsbn/**",
+"./node_modules/jsbn/**",
+"./node_modules/tweetnacl/**",
+"./node_modules/core-util-is/**",
+"./node_modules/is-typedarray/**",
+"./node_modules/isstream/**",
+"./node_modules/oauth-sign/**",
+"./node_modules/hawk/**",
+"./node_modules/boom/**",
+"./node_modules/hoek/**",
+"./node_modules/cryptiles/**",
+"./node_modules/sntp/**",
       "./node_modules/iyzipay/**",
       "./node_modules/postman-request/**",
       "./node_modules/extend/**",
@@ -40,10 +56,27 @@ const nextConfig: NextConfig = {
       "./node_modules/isstream/**",
       "./node_modules/performance-now/**",
       "./node_modules/json-schema-traverse/**"
+      
     ],
 
 
     "/api/payment/callback": [
+      "./node_modules/safer-buffer/**",
+"./node_modules/asn1/**",
+"./node_modules/bcrypt-pbkdf/**",
+"./node_modules/dashdash/**",
+"./node_modules/ecc-jsbn/**",
+"./node_modules/jsbn/**",
+"./node_modules/tweetnacl/**",
+"./node_modules/core-util-is/**",
+"./node_modules/is-typedarray/**",
+"./node_modules/isstream/**",
+"./node_modules/oauth-sign/**",
+"./node_modules/hawk/**",
+"./node_modules/boom/**",
+"./node_modules/hoek/**",
+"./node_modules/cryptiles/**",
+"./node_modules/sntp/**",
       "./node_modules/iyzipay/**",
       "./node_modules/postman-request/**",
       "./node_modules/extend/**",
