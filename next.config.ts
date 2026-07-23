@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
 
     "/api/payment/create": [
+      "./node_modules/asynckit/**",
       "./node_modules/@postman/form-data/**",
       "./node_modules/extsprintf/**",
 "./node_modules/verror/**",
@@ -84,6 +85,7 @@ const nextConfig: NextConfig = {
 
 
     "/api/payment/callback": [
+      "./node_modules/asynckit/**",
       "./node_modules/@postman/form-data/**",
       "./node_modules/extsprintf/**",
 "./node_modules/verror/**",
