@@ -60,6 +60,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "requires-port": "^1.0.0",
+    "safe-buffer": "^5.2.1",
     "safer-buffer": "^2.1.2",
     "sntp": "^3.0.2",
     "sshpk": "^1.18.0",

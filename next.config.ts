@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
 
     "/api/payment/create": [
+      "./node_modules/safe-buffer/**",
       "./node_modules/bluebird/**",
       "./node_modules/stream-length/**",
       "./node_modules/asynckit/**",
@@ -87,6 +88,7 @@ const nextConfig: NextConfig = {
 
 
     "/api/payment/callback": [
+      "./node_modules/safe-buffer/**",
       "./node_modules/bluebird/**",
       "./node_modules/stream-length/**",
       "./node_modules/asynckit/**",
