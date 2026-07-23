@@ -20,7 +20,8 @@ const nextConfig: NextConfig = {
       "./node_modules/requires-port/**",
       "./node_modules/querystringify/**",
       "./node_modules/psl/**",
-      "./node_modules/universalify/**"
+      "./node_modules/universalify/**",
+      "./node_modules/aws-sign2/**"
     ],
 
 
@@ -34,7 +35,8 @@ const nextConfig: NextConfig = {
       "./node_modules/requires-port/**",
       "./node_modules/querystringify/**",
       "./node_modules/psl/**",
-      "./node_modules/universalify/**"
+      "./node_modules/universalify/**",
+      "./node_modules/aws-sign2/**"
     ]
 
   }
