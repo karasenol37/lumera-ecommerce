@@ -66,6 +66,54 @@ export async function POST(
 
 
 
+    /*
+      Checkout formundaki
+      fullName alanını
+      İyzico'nun istediği
+      name / surname formatına çeviriyoruz
+    */
+
+    const nameParts =
+      (buyer.fullName || "")
+      .trim()
+      .split(" ");
+
+
+
+    const buyerName =
+      nameParts.shift() || "Müşteri";
+
+
+    const buyerSurname =
+      nameParts.join(" ") || "Test";
+
+
+
+
+
+
+    if(
+      !buyer.email ||
+      !buyer.phone ||
+      !buyer.fullName
+    ){
+
+      return NextResponse.json(
+        {
+          error:
+          "Ad soyad, telefon ve e-posta zorunludur."
+        },
+        {
+          status:400
+        }
+      );
+
+    }
+
+
+
+
+
     const totalPrice =
       items.reduce(
         (
@@ -78,6 +126,8 @@ export async function POST(
 
         0
       );
+
+
 
 
 
@@ -98,7 +148,7 @@ export async function POST(
 
 
           fullName:
-            `${buyer.name} ${buyer.surname}`,
+            buyer.fullName,
 
 
 
@@ -146,6 +196,9 @@ export async function POST(
 
 
 
+
+
+
     const basketItems =
 
       items.map(
@@ -176,6 +229,7 @@ export async function POST(
         })
 
       );
+
 
 
 
@@ -219,9 +273,12 @@ export async function POST(
 
 
 
+
       callbackUrl:
 
         `${process.env.NEXT_PUBLIC_APP_URL}/api/payment/callback`,
+
+
 
 
 
@@ -240,12 +297,12 @@ export async function POST(
 
 
         name:
-          buyer.name,
+          buyerName,
 
 
 
         surname:
-          buyer.surname,
+          buyerSurname,
 
 
 
@@ -302,14 +359,19 @@ export async function POST(
 
 
 
+
     const endpoint =
       "/payment/iyzipos/checkoutform/initialize/auth/ecom";
 
 
 
 
+
     const bodyString =
       JSON.stringify(requestData);
+
+
+
 
 
 
@@ -321,6 +383,7 @@ export async function POST(
         body:requestData
       }
     );
+
 
 
 
@@ -357,8 +420,11 @@ export async function POST(
 
 
 
+
+
     const result =
       await response.json();
+
 
 
 
@@ -371,6 +437,7 @@ export async function POST(
         result
       }
     );
+
 
 
 
@@ -396,6 +463,7 @@ export async function POST(
 
 
 
+
       return NextResponse.json(
 
         {
@@ -412,6 +480,7 @@ export async function POST(
       );
 
     }
+
 
 
 
@@ -445,6 +514,7 @@ export async function POST(
 
 
 
+
     return NextResponse.json({
 
       success:true,
@@ -459,6 +529,7 @@ export async function POST(
 
 
     });
+
 
 
 
