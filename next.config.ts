@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
 
     "/api/payment/create": [
+      "./node_modules/bluebird/**",
       "./node_modules/stream-length/**",
       "./node_modules/asynckit/**",
       "./node_modules/@postman/form-data/**",
@@ -86,6 +87,7 @@ const nextConfig: NextConfig = {
 
 
     "/api/payment/callback": [
+      "./node_modules/bluebird/**",
       "./node_modules/stream-length/**",
       "./node_modules/asynckit/**",
       "./node_modules/@postman/form-data/**",

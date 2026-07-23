@@ -20,6 +20,7 @@
     "aws4": "^1.13.2",
     "bcrypt-pbkdf": "^1.0.2",
     "bcryptjs": "^3.0.3",
+    "bluebird": "^3.7.2",
     "boom": "^7.3.0",
     "buffer-equal": "^1.0.1",
     "caseless": "^0.12.0",
