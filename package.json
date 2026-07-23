@@ -62,6 +62,7 @@
     "safer-buffer": "^2.1.2",
     "sntp": "^3.0.2",
     "sshpk": "^1.18.0",
+    "stream-length": "^1.0.2",
     "tough-cookie": "^6.0.2",
     "tweetnacl": "^1.0.3",
     "universalify": "^2.0.1",
