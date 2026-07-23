@@ -19,6 +19,7 @@
     "bcrypt-pbkdf": "^1.0.2",
     "bcryptjs": "^3.0.3",
     "boom": "^7.3.0",
+    "buffer-equal": "^1.0.1",
     "caseless": "^0.12.0",
     "combined-stream": "^1.0.8",
     "core-util-is": "^1.0.3",
@@ -27,6 +28,7 @@
     "delayed-stream": "^1.0.0",
     "ecc-jsbn": "^0.2.0",
     "extend": "^3.0.2",
+    "extsprintf": "^1.4.1",
     "forever-agent": "^0.6.1",
     "form-data": "^4.0.6",
     "har-validator": "^5.1.5",
@@ -62,7 +64,8 @@
     "tweetnacl": "^1.0.3",
     "universalify": "^2.0.1",
     "url-parse": "^1.5.10",
-    "uuid": "^14.0.1"
+    "uuid": "^14.0.1",
+    "verror": "^1.10.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
