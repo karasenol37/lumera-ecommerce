@@ -447,42 +447,28 @@ console.log("============================");
 
 
 
+if (
+  !result ||
+  result.status !== "success"
+) {
 
-    if(
-      !result ||
-      result.status !== "success"
-    ){
-
-
-      await prisma.pendingPayment.delete({
-
-        where:{
-          id:
-            pendingPayment.id
-        }
-
-      }).catch(()=>{});
-
-
-
-
-
-      return NextResponse.json(
-
-        {
-          error:
-            result?.errorMessage ||
-            result?.errorGroup ||
-            "Ödeme başlatılamadı"
-        },
-
-        {
-          status:400
-        }
-
-      );
-
+  await prisma.pendingPayment.delete({
+    where:{
+      id: pendingPayment.id
     }
+  }).catch(()=>{});
+
+  return NextResponse.json(
+    {
+      error: result?.errorMessage,
+      iyzico: result
+    },
+    {
+      status:400
+    }
+  );
+
+}
 
 
 
