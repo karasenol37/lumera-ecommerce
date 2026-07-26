@@ -424,7 +424,10 @@ export async function POST(
 
     const result =
       await response.json();
-
+console.log("========== IYZICO ==========");
+console.log("HTTP STATUS:", response.status);
+console.log("RESULT:", JSON.stringify(result, null, 2));
+console.log("============================");
 
 
 
