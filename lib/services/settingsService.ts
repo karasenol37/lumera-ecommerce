@@ -12,6 +12,7 @@ export const DEFAULT_SETTINGS: Record<string, string> = {
   heroSubtitle:
     "Bahçenizi sıradan bir alandan çıkarıp, doğal masif ahşap ve üst düzey el işçiliğiyle üretilmiş ultra-lüks bir dinlenme vahasına dönüştürün.",
   brandTagline: "Gölgede zarafet, dinlenmede ayrıcalık.",
+  onlinePaymentActive: "false",
 };
 
 export async function getSiteSettings(): Promise<Record<string, string>> {

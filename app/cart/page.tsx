@@ -184,16 +184,44 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <Link
-                href="/checkout"
-                className="mt-8 block w-full rounded-full gold-gradient-btn py-4 text-center text-sm font-extrabold text-black shadow-xl"
-              >
-                Ödeme Adımına Geç →
-              </Link>
+              {/* WhatsApp Direct Order Button */}
+              <div className="mt-8 space-y-3">
+                <a
+                  href={`https://wa.me/905358746909?text=${encodeURIComponent(
+                    `Merhaba LUMERA, sepetimdeki şu ürünleri sipariş vermek istiyorum:\n\n` +
+                      cart
+                        .map(
+                          (item, idx) =>
+                            `${idx + 1}. ${item.name} (${item.quantity} Adet) - ₺${(
+                              item.price * item.quantity
+                            ).toLocaleString("tr-TR")}`
+                        )
+                        .join("\n") +
+                      `\n\nKargo: ${
+                        cargo === 0 ? "Ücretsiz" : `₺${cargo}`
+                      }\n*Genel Toplam: ₺${grandTotal.toLocaleString("tr-TR")}*`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full rounded-full bg-[#25D366] py-4 text-center text-xs sm:text-sm font-extrabold text-black shadow-xl hover:bg-[#20bd5a] hover:scale-[1.02] transition"
+                >
+                  <span className="text-base">💬</span>
+                  <span>WhatsApp ile Sipariş Ver</span>
+                </a>
 
-              <p className="mt-4 text-center text-xs text-zinc-500">
-                🔒 256-Bit SSL Koruma ile Güvenli Alışveriş
-              </p>
+                <Link
+                  href="/checkout"
+                  className="flex items-center justify-center gap-2 w-full rounded-full bg-white/5 border border-white/15 py-3 text-center text-xs font-semibold text-zinc-300 hover:text-white hover:bg-white/10 hover:border-[#c8a165]/50 transition"
+                >
+                  <span>📝 Teslimat Adresi Girerek Sipariş Ver →</span>
+                </Link>
+              </div>
+
+              <div className="mt-5 rounded-xl bg-[#090a0f] p-3.5 border border-white/5 text-center">
+                <p className="text-[11px] text-zinc-400 leading-relaxed font-light">
+                  ✨ Siparişleriniz <strong>WhatsApp</strong> ve <strong>Müşteri Temsilcimiz</strong> üzerinden anında teyit edilerek hazırlanır.
+                </p>
+              </div>
             </div>
           </div>
         )}

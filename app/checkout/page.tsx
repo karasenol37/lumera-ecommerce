@@ -158,14 +158,82 @@ export default function CheckoutPage() {
               />
             </div>
 
-            <div className="mt-8 border-t border-white/10 pt-6">
-              <h2 className="text-xl font-bold text-white mb-2">
-                2. Güvenli İyzico Ödemesi
-              </h2>
-              <p className="text-xs text-zinc-400 mb-6">
-                Butona tıkladığınızda 256-bit SSL korumalı İyzico güvenli ödeme sayfasına yönlendirileceksiniz.
-              </p>
-              <PaymentButton buyer={form} />
+            <div className="mt-8 border-t border-white/10 pt-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-white">
+                  2. Sipariş Onayı & Ödeme Seçenekleri
+                </h2>
+              </div>
+
+              {/* Notice regarding current order mode */}
+              <div className="rounded-2xl border border-[#c8a165]/30 bg-[#c8a165]/10 p-4 text-xs text-zinc-300 leading-relaxed space-y-1 backdrop-blur-md">
+                <p className="font-bold text-[#e5c184] flex items-center gap-1.5">
+                  <span>ℹ️</span>
+                  <span>WhatsApp & Müşteri Temsilcisi ile Hızlı Sipariş</span>
+                </p>
+                <p className="text-zinc-400 font-light">
+                  Sipariş bilgileriniz doğrudan atölye yetkilimize iletilir. Temsilcimiz teslimat detaylarını sizinle teyit ederek siparişinizi hemen işleme alır. (Online kredi kartı pos entegrasyonu onay sürecindedir.)
+                </p>
+              </div>
+
+              {/* WhatsApp Order Action */}
+              <a
+                href={
+                  form.fullName && form.phone
+                    ? `https://wa.me/905358746909?text=${encodeURIComponent(
+                        `*LUMERA DIŞ MEKAN SİPARİŞİ*\n\n` +
+                          `*Müşteri Bilgileri:*\n` +
+                          `• Ad Soyad: ${form.fullName}\n` +
+                          `• Telefon: ${form.phone}\n` +
+                          `• E-posta: ${form.email || "Belirtilmedi"}\n` +
+                          `• İl/İlçe: ${form.city || "-"} / ${form.district || "-"}\n` +
+                          `• Açık Adres: ${form.address || "-"}\n\n` +
+                          `*Sipariş Edilen Ürünler:*\n` +
+                          cart
+                            .map(
+                              (i, idx) =>
+                                `${idx + 1}. ${i.name} (${i.quantity} Adet) - ₺${(
+                                  i.price * i.quantity
+                                ).toLocaleString("tr-TR")}`
+                            )
+                            .join("\n") +
+                          `\n\n*Kargo:* ${cargo === 0 ? "Ücretsiz" : `₺${cargo}`}` +
+                          `\n*Toplam Tutar: ₺${grandTotal.toLocaleString("tr-TR")}*`
+                      )}`
+                    : "#"
+                }
+                onClick={(e) => {
+                  if (!form.fullName.trim() || !form.phone.trim()) {
+                    e.preventDefault();
+                    alert("Lütfen en az Ad Soyad ve Telefon numaranızı giriniz.");
+                  }
+                }}
+                target={form.fullName && form.phone ? "_blank" : undefined}
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2.5 w-full rounded-full bg-[#25D366] py-4 px-6 text-sm font-extrabold text-black shadow-2xl hover:bg-[#20bd5a] hover:scale-[1.01] transition duration-200"
+              >
+                <span className="text-lg">💬</span>
+                <span>WhatsApp ile Siparişi Tamamla & Gönder</span>
+              </a>
+
+              {/* Direct Call / Contact alternative */}
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4 text-xs text-zinc-400">
+                <a
+                  href="tel:05358746909"
+                  className="flex items-center gap-1.5 hover:text-[#e5c184] transition"
+                >
+                  <span>📞 Telefonla Sipariş:</span>
+                  <strong className="text-white">0535 874 69 09</strong>
+                </a>
+                <span className="hidden sm:inline text-zinc-700">•</span>
+                <a
+                  href={`mailto:lumeratasarim@gmail.com?subject=Lumera Sipariş Talebi - ${encodeURIComponent(form.fullName || "Müşteri")}`}
+                  className="flex items-center gap-1.5 hover:text-[#c8a165] transition"
+                >
+                  <span>✉️ E-posta:</span>
+                  <span>lumeratasarim@gmail.com</span>
+                </a>
+              </div>
             </div>
           </form>
 
