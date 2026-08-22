@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/actions/session";
+import AdminHeader from "@/components/admin/AdminHeader";
 type LatestOrder = {
   id: number;
   status: string;
@@ -109,12 +110,18 @@ export default async function AdminPage(){
 
 
   const pendingOrders = await prisma.order.count({
-
-    where:{
-      status:"Bekliyor"
-    }
-
+    where: {
+      status: "Bekliyor",
+    },
   });
+
+  const contactModel = (prisma as any).contactMessage;
+  let unreadMessageCount = 0;
+  if (contactModel) {
+    unreadMessageCount = await contactModel.count({
+      where: { isRead: false },
+    });
+  }
 
 
 
@@ -178,14 +185,11 @@ max-w-7xl
 
 
 
-<h1 className="
-text-5xl
-font-bold
-">
-
-Admin Paneli
-
-</h1>
+<AdminHeader
+  title="Admin Paneli"
+  userEmail={user.email}
+  subtitle="Sistem genel bakışı, ürün, sipariş ve site ayarları yönetimi"
+/>
 
 
 
@@ -201,52 +205,36 @@ Admin Paneli
 mt-10
 grid
 gap-6
-md:grid-cols-3
+md:grid-cols-2
+lg:grid-cols-3
+xl:grid-cols-5
 ">
-
-
-
-
 
 <div className="
 rounded-2xl
 bg-[#181818]
 p-8
 ">
-
-
 <h2 className="
 text-2xl
 font-bold
 ">
-
 Ürün Yönetimi
-
 </h2>
-
-
 <p className="
 mt-2
 text-gray-400
 ">
-
 Ürünleri ekle, düzenle ve yönet.
-
 </p>
-
-
 <div className="
 mt-6
 flex
 flex-wrap
 gap-3
 ">
-
-
 <Link
-
 href="/admin/products"
-
 className="
 rounded-full
 border
@@ -255,19 +243,11 @@ px-5
 py-3
 text-[#c8a165]
 "
-
 >
-
 Ürünler
-
 </Link>
-
-
-
 <Link
-
 href="/admin/products/new"
-
 className="
 rounded-full
 bg-[#c8a165]
@@ -276,60 +256,31 @@ py-3
 font-bold
 text-black
 "
-
 >
-
 + Ürün Ekle
-
 </Link>
-
-
 </div>
-
-
 </div>
-
-
-
-
-
-
-
-
-
 
 <div className="
 rounded-2xl
 bg-[#181818]
 p-8
 ">
-
-
 <h2 className="
 text-2xl
 font-bold
 ">
-
 Sipariş Yönetimi
-
 </h2>
-
-
 <p className="
 mt-2
 text-gray-400
 ">
-
 Siparişleri görüntüle ve durum güncelle.
-
 </p>
-
-
-
 <Link
-
 href="/admin/orders"
-
 className="
 mt-6
 inline-block
@@ -340,57 +291,30 @@ py-3
 font-bold
 text-black
 "
-
 >
-
 Siparişler
-
 </Link>
-
-
 </div>
-
-
-
-
-
-
-
-
-
 
 <div className="
 rounded-2xl
 bg-[#181818]
 p-8
 ">
-
-
 <h2 className="
 text-2xl
 font-bold
 ">
-
 Kullanıcı Yönetimi
-
 </h2>
-
-
 <p className="
 mt-2
 text-gray-400
 ">
-
 Kullanıcıları görüntüle ve yönet.
-
 </p>
-
-
-
 <Link
-
 href="/admin/users"
-
 className="
 mt-6
 inline-block
@@ -401,20 +325,67 @@ py-3
 font-bold
 text-black
 "
-
 >
-
 Kullanıcılar
-
 </Link>
-
-
 </div>
 
+<div className="
+rounded-2xl
+border
+border-[#c8a165]/30
+bg-[#181818]
+p-8
+">
+<h2 className="
+text-2xl
+font-bold
+text-[#c8a165]
+">
+Site Ayarları & Yazılar
+</h2>
+<p className="
+mt-2
+text-gray-400
+">
+Duyuru metni, telefon ve ana sayfa yazılarını düzenle.
+</p>
+<Link
+href="/admin/settings"
+className="
+mt-6
+inline-block
+rounded-full
+bg-[#c8a165]
+px-6
+py-3
+font-bold
+text-black
+"
+>
+Ayarları Yönet →
+</Link>
+</div>
 
-
-
-
+<div className="relative rounded-2xl border border-white/10 bg-[#181818] p-8">
+  {unreadMessageCount > 0 && (
+    <span className="absolute top-4 right-4 rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 px-3 py-1 text-xs font-extrabold text-black shadow-lg animate-pulse">
+      {unreadMessageCount} Okunmamış
+    </span>
+  )}
+  <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+    <span>Gelen Mesajlar</span>
+  </h2>
+  <p className="mt-2 text-gray-400">
+    İletişim formundan e-posta adresine gönderilen mesajlar.
+  </p>
+  <Link
+    href="/admin/messages"
+    className="mt-6 inline-block rounded-full border border-[#c8a165] px-6 py-3 font-bold text-[#c8a165] hover:bg-[#c8a165] hover:text-black transition"
+  >
+    Mesajları Gör →
+  </Link>
+</div>
 
 </div>
 

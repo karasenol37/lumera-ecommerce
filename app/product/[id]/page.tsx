@@ -1,154 +1,59 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import ProductGallery from "@/components/ProductGallery";
-import ProductInfo from "@/components/ProductInfo";
-
+import HeaderWrapper from "@/components/HeaderWrapper";
+import Footer from "@/components/Footer";
+import ProductDetailView from "./ProductDetailView";
+import RelatedProducts from "./RelatedProducts";
 
 export default async function ProductPage({
-
-params,
-
-}:{
-
-params: Promise<{id:string}>
-
-}){
-
-
-const {id}=await params;
-
-
-
-const product =
-await prisma.product.findUnique({
-
-where:{
-
-id:Number(id)
-
-},
-
-include:{
-
-images:true
-
-}
-
-});
-
-
-
-if(!product){
-
-notFound();
-
-}
-
-
-
-return (
-
-<main
-
-className="
-min-h-screen
-bg-[#0b0b0b]
-px-6
-py-16
-text-white
-"
-
->
-
-
-<div
-
-className="
-mx-auto
-max-w-7xl
-grid
-gap-10
-md:grid-cols-2
-"
-
->
-
-
-
-<ProductGallery
-
-mainImage={product.image}
-
-name={product.name}
-
-images={product.images}
-
-/>
-
-
-
-
-
-<div>
-
-
-<p
-
-className="
-text-sm
-tracking-[0.3em]
-text-[#c8a165]
-"
-
->
-
-LUMERA COLLECTION
-
-</p>
-
-
-
-<div className="mt-5">
-
-
-<ProductInfo
-
-product={{
-
-id:product.id,
-
-name:product.name,
-
-price:product.price,
-
-image:product.image,
-
-description:product.description,
-
-material:product.material,
-
-dimensions:product.dimensions,
-
-stock:product.stock
-
-}}
-
-/>
-
-
-</div>
-
-
-</div>
-
-
-
-</div>
-
-
-</main>
-
-);
-
-
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const productId = Number(id);
+
+  if (isNaN(productId)) {
+    notFound();
+  }
+
+  // Fetch product from DB with images
+  const product = await prisma.product.findUnique({
+    where: {
+      id: productId,
+    },
+    include: {
+      images: true,
+    },
+  });
+
+  if (!product) {
+    notFound();
+  }
+
+  // Fetch 4 related products
+  const relatedProducts = await prisma.product.findMany({
+    where: {
+      id: {
+        not: productId,
+      },
+    },
+    take: 4,
+    orderBy: {
+      id: "desc",
+    },
+  });
+
+  return (
+    <div className="min-h-screen bg-[#090a0f] text-[#f5efe6] flex flex-col justify-between">
+      <HeaderWrapper />
+
+      <main className="flex-1 mx-auto max-w-7xl px-4 sm:px-6 py-12 sm:py-16 w-full">
+        <ProductDetailView product={product} />
+        <RelatedProducts products={relatedProducts} />
+      </main>
+
+      <Footer />
+    </div>
+  );
 }

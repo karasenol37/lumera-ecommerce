@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { getSessionUser } from "@/lib/actions/session";
 import UpdateOrderStatus from "@/components/admin/UpdateOrderStatus";
+import AdminHeader from "@/components/admin/AdminHeader";
+import DeleteOrderButton from "@/components/DeleteOrderButton";
 interface AdminOrderItem {
   id: number;
   quantity: number;
@@ -139,20 +141,11 @@ max-w-6xl
 
 
 
-<Link
-
-href="/admin/orders"
-
-className="
-text-gray-400
-hover:text-white
-"
-
->
-
-← Siparişlere Dön
-
-</Link>
+<AdminHeader
+  title={`Sipariş #${order.id}`}
+  userEmail={user.email}
+  subtitle="Sipariş detayları ve teslimat durumu yönetimi"
+/>
 
 
 
@@ -161,8 +154,8 @@ hover:text-white
 
 
 
+<div className="mt-8 flex items-center justify-between">
 <h1 className="
-mt-8
 text-5xl
 font-bold
 ">
@@ -170,6 +163,8 @@ font-bold
 Sipariş #{order.id}
 
 </h1>
+<DeleteOrderButton orderId={order.id} orderStatus={order.status} redirectToOrders={true} />
+</div>
 
 
 

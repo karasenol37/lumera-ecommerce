@@ -1,6 +1,26 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.vercel-storage.com",
+      },
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+      {
+        protocol: "http",
+        hostname: "**",
+      },
+    ],
+  },
 
   serverExternalPackages: [
     "iyzipay",
@@ -10,7 +30,6 @@ const nextConfig: NextConfig = {
   ],
 
   outputFileTracingIncludes: {
-
     "/api/payment/create": [
       "./node_modules/iyzipay/**",
       "./node_modules/postman-request/**",
@@ -19,7 +38,6 @@ const nextConfig: NextConfig = {
       "./node_modules/http-signature/**",
       "./node_modules/sshpk/**"
     ],
-
     "/api/payment/callback": [
       "./node_modules/iyzipay/**",
       "./node_modules/postman-request/**",
@@ -28,9 +46,7 @@ const nextConfig: NextConfig = {
       "./node_modules/http-signature/**",
       "./node_modules/sshpk/**"
     ]
-
   }
-
 };
 
 export default nextConfig;

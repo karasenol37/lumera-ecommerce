@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/actions/session";
 import { redirect } from "next/navigation";
 import UserActions from "@/components/admin/UserActions";
+import AdminHeader from "@/components/admin/AdminHeader";
 
 
 type AdminUser = {
@@ -106,15 +107,11 @@ max-w-7xl
 
 
 
-<h1 className="
-mb-10
-text-4xl
-font-bold
-">
-
-Kullanıcı Yönetimi
-
-</h1>
+<AdminHeader
+  title="Kullanıcı Yönetimi"
+  userEmail={user.email}
+  subtitle="Kayıtlı kullanıcıları listeleyin ve hesap yetkilerini yönetin"
+/>
 
 
 

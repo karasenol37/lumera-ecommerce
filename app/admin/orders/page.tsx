@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth/admin";
+import AdminHeader from "@/components/admin/AdminHeader";
+import DeleteOrderButton from "@/components/DeleteOrderButton";
 
 
 type OrderItem = {
@@ -74,7 +76,7 @@ function statusStyle(status:string){
 export default async function AdminOrdersPage(){
 
 
-await requireAdmin();
+const user = await requireAdmin();
 
 
 
@@ -132,48 +134,11 @@ max-w-7xl
 
 
 
-<div className="
-flex
-items-center
-justify-between
-">
-
-
-<h1 className="
-text-5xl
-font-bold
-">
-
-Sipariş Yönetimi
-
-</h1>
-
-
-
-
-
-<Link
-
-href="/admin"
-
-className="
-rounded-full
-border
-border-[#c8a165]
-px-6
-py-3
-text-[#c8a165]
-"
-
->
-
-← Admin Panel
-
-</Link>
-
-
-
-</div>
+<AdminHeader
+  title="Sipariş Yönetimi"
+  userEmail={user.email}
+  subtitle="Gelen siparişleri görüntüleyin, durumlarını ve detaylarını güncelleyin"
+/>
 
 
 
@@ -366,6 +331,7 @@ ${statusStyle(order.status)}
 
 
 
+<div className="flex items-center gap-3 justify-end mt-2">
 <Link
 
 href={`/admin/orders/${order.id}`}
@@ -385,6 +351,9 @@ text-[#c8a165]
 Sipariş Detayı
 
 </Link>
+
+<DeleteOrderButton orderId={order.id} orderStatus={order.status} />
+</div>
 
 
 

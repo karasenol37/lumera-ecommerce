@@ -1,81 +1,49 @@
-import Link from "next/link";
+import { getSiteSettings } from "@/lib/services/settingsService";
 
-export default function Hero() {
+export default async function Hero() {
+  const settings = await getSiteSettings();
+
+  const heroBadge = settings.heroBadge || "LUMERA PREMIUM OUTDOOR 2026";
+  const heroTitle = settings.heroTitle || "Gölgede Zarafet & Konfor";
+  const heroSubtitle =
+    settings.heroSubtitle ||
+    "Bahçenizi sıradan bir alandan çıkarıp, doğal masif ahşap ve üst düzey el işçiliğiyle üretilmiş ultra-lüks bir dinlenme vahasına dönüştürün.";
+
   return (
-    <section className="relative h-[88vh] overflow-hidden">
-      {/* Arka plan görseli */}
-      <div className="absolute inset-0">
+    <section className="relative min-h-[90vh] overflow-hidden flex items-center justify-center bg-[#090a0f]">
+      {/* Ambient Radial Background Glow */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#c8a165]/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-0 right-10 w-[400px] h-[400px] bg-[#a67c3b]/10 rounded-full blur-[120px] pointer-events-none" />
+
+      {/* Hero Background Image with Dark Vignette */}
+      <div className="absolute inset-0 overflow-hidden">
         <img
           src="/images/hero-luxury.jpg"
-          alt="LUMERA"
-          className="h-full w-full object-cover"
+          alt="LUMERA Luxury Outdoor"
+          className="h-full w-full object-cover object-center scale-105 transition-transform duration-[10000ms] hover:scale-110 opacity-40"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#090a0f] via-[#090a0f]/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#090a0f] via-[#090a0f]/40 to-transparent" />
       </div>
 
-      {/* Karartma katmanı */}
-      <div className="absolute inset-0 bg-black/55" />
+      {/* Hero Content */}
+      <div className="relative z-20 mx-auto max-w-7xl px-6 py-24 w-full">
+        <div className="max-w-3xl">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#c8a165]/30 bg-[#c8a165]/10 px-4 py-2 text-xs font-semibold tracking-[0.25em] text-[#e5c184] backdrop-blur-md shadow-lg shadow-[#c8a165]/5">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#c8a165] animate-ping" />
+            {heroBadge}
+          </div>
 
-      {/* Altın degrade */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
-
-      {/* İçerik */}
-      <div className="relative z-10 mx-auto flex h-full max-w-7xl items-center px-6">
-        <div className="max-w-2xl">
-          <p className="text-sm tracking-[0.45em] text-[#c8a165]">
-            LUMERA COLLECTION
-          </p>
-
-          <h1 className="mt-6 text-5xl font-bold leading-tight text-white md:text-7xl">
-            Gölgede
-            <span className="block text-[#c8a165]">zarafet</span>
+          {/* Main Title */}
+          <h1 className="mt-8 text-5xl font-extrabold tracking-tight text-white sm:text-7xl md:text-8xl leading-none">
+            {heroTitle}
           </h1>
 
-          <p className="mt-6 max-w-xl text-lg leading-8 text-gray-200 md:text-xl">
-            El işçiliğiyle üretilen ahşap hamaklar, şezlonglar ve dış mekan
-            koleksiyonlarıyla bahçenizi bir yaşam alanına dönüştürün.
+          {/* Subtitle */}
+          <p className="mt-8 max-w-2xl text-lg sm:text-xl leading-relaxed text-zinc-300 font-light">
+            {heroSubtitle}
           </p>
-
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-            <Link
-              href="#urunler"
-              className="rounded-full bg-[#c8a165] px-8 py-4 text-center font-semibold text-black transition hover:bg-[#d6b47c]"
-            >
-              Koleksiyonu Keşfet
-            </Link>
-
-            <Link
-              href="/kategori/Hamak"
-              className="rounded-full border border-white/30 bg-white/5 px-8 py-4 text-center font-semibold text-white backdrop-blur-sm transition hover:bg-white/10"
-            >
-              Hamakları İncele
-            </Link>
-          </div>
-
-          {/* Marka metrikleri */}
-          <div className="mt-12 grid grid-cols-3 gap-8 border-t border-white/10 pt-8">
-            <div>
-              <p className="text-3xl font-bold text-[#c8a165]">100+</p>
-              <p className="mt-1 text-sm text-gray-300">Premium ürün</p>
-            </div>
-
-            <div>
-              <p className="text-3xl font-bold text-[#c8a165]">%100</p>
-              <p className="mt-1 text-sm text-gray-300">Doğal ahşap</p>
-            </div>
-
-            <div>
-              <p className="text-3xl font-bold text-[#c8a165]">24h</p>
-              <p className="mt-1 text-sm text-gray-300">Hızlı kargo</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
-        <div className="flex flex-col items-center gap-2 text-white/70">
-          <span className="text-xs tracking-[0.3em]">SCROLL</span>
-          <div className="h-10 w-px bg-gradient-to-b from-[#c8a165] to-transparent" />
         </div>
       </div>
     </section>

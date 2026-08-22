@@ -81,95 +81,48 @@ createContext<CartContextType | undefined>(undefined);
 
 
 export function CartProvider({
+  children,
+  userId = null,
+}: {
+  children: ReactNode;
+  userId?: number | null;
+}) {
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-children,
+  const storageKey = userId
+    ? `lumera-cart-user-${userId}`
+    : "lumera-cart-guest";
 
-}:{
+  // Kayıtlı kullanıcı sepetini yükle
+  useEffect(() => {
+    setIsLoaded(false);
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const fixedCart = parsed.map((item: CartItem) => ({
+          ...item,
+          stock: item.stock ?? 0,
+        }));
+        setCart(fixedCart);
+      } else {
+        setCart([]);
+      }
+    } catch {
+      setCart([]);
+    } finally {
+      setIsLoaded(true);
+    }
+  }, [userId, storageKey]);
 
-children:ReactNode;
-
-}){
-
-
-
-
-
-const [cart,setCart] =
-useState<CartItem[]>([]);
-
-
-
-
-
-
-
-
-
-// kayıtlı sepeti getir
-
-useEffect(()=>{
-
-
-const saved =
-localStorage.getItem("lumera-cart");
-
-
-
-if(saved){
-
-
-const parsed =
-JSON.parse(saved);
-
-
-
-// eski sepetlerde stock yoksa düzelt
-
-const fixedCart =
-parsed.map((item:CartItem)=>({
-
-...item,
-
-stock:item.stock ?? 0
-
-}));
-
-
-
-setCart(fixedCart);
-
-
-}
-
-
-
-},[]);
-
-
-
-
-
-
-
-
-
-// sepet değişince kaydet
-
-useEffect(()=>{
-
-
-localStorage.setItem(
-
-"lumera-cart",
-
-JSON.stringify(cart)
-
-);
-
-
-},[cart]);
-
-
+  // Sepet değişince ilgili kullanıcının anahtarına kaydet
+  useEffect(() => {
+    if (!isLoaded) return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(cart));
+    } catch {}
+  }, [cart, storageKey, isLoaded]);
 
 
 

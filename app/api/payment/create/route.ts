@@ -1,558 +1,173 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { generateIyzipayAuthorization } from "@/lib/payment/iyzico-auth";
+import { initializeCheckoutForm } from "@/lib/payment/iyzico-auth";
+import Iyzipay from "iyzipay";
 
-
-function generateId(prefix:string="ID"){
-
-  return `${prefix}_${Date.now()}_${Math.random()
-    .toString(36)
-    .substring(2,10)}`;
-
+function generateId(prefix: string = "ID") {
+  return `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
 }
 
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { items, buyer } = body;
 
-
-export async function POST(
-  req:NextRequest
-){
-
-  try{
-
-
-    const body =
-      await req.json();
-
-
-
-    const {
-      items,
-      buyer
-    } = body;
-
-
-
-    if(
-      !items ||
-      items.length === 0
-    ){
-
+    if (!items || items.length === 0) {
       return NextResponse.json(
-        {
-          error:"Sepet boş"
-        },
-        {
-          status:400
-        }
+        { error: "Sepetinizde ürün bulunmamaktadır." },
+        { status: 400 }
       );
-
     }
 
-
-
-    if(!buyer){
-
+    if (!buyer) {
       return NextResponse.json(
-        {
-          error:"Müşteri bilgisi bulunamadı"
-        },
-        {
-          status:400
-        }
+        { error: "Müşteri bilgileri eksik." },
+        { status: 400 }
       );
-
     }
 
-
-
-
-    /*
-      Checkout formundaki
-      fullName alanını
-      İyzico'nun istediği
-      name / surname formatına çeviriyoruz
-    */
-
-    const nameParts =
-      (buyer.fullName || "")
-      .trim()
-      .split(" ");
-
-
-
-    const buyerName =
-      nameParts.shift() || "Müşteri";
-
-
-    const buyerSurname =
-      nameParts.join(" ") || "Test";
-
-
-
-
-
-
-    if(
-      !buyer.email ||
-      !buyer.phone ||
-      !buyer.fullName
-    ){
-
+    if (!buyer.fullName?.trim() || !buyer.phone?.trim() || !buyer.email?.trim()) {
       return NextResponse.json(
-        {
-          error:
-          "Ad soyad, telefon ve e-posta zorunludur."
-        },
-        {
-          status:400
-        }
+        { error: "Ad Soyad, Telefon ve E-posta alanları zorunludur." },
+        { status: 400 }
       );
-
     }
 
-
-
-
-
-    const totalPrice =
-      items.reduce(
-        (
-          total:number,
-          item:any
-        ) =>
-          total +
-          item.price *
-          item.quantity,
-
-        0
+    if (!buyer.address?.trim()) {
+      return NextResponse.json(
+        { error: "Lütfen açık adresinizi giriniz." },
+        { status: 400 }
       );
+    }
 
+    const city = buyer.city?.trim() || "Kastamonu";
+    const address = buyer.address.trim();
+    const postalCode = buyer.postalCode?.trim() || "37000";
 
+    const nameParts = buyer.fullName.trim().split(" ");
+    const buyerName = nameParts.shift() || "Müşteri";
+    const buyerSurname = nameParts.join(" ") || buyerName;
 
+    const totalPrice = items.reduce(
+      (total: number, item: any) => total + item.price * item.quantity,
+      0
+    );
 
+    const cargo = totalPrice >= 750 ? 0 : 150;
+    const grandTotal = totalPrice + cargo;
 
+    const pendingPayment = await prisma.pendingPayment.create({
+      data: {
+        token: generateId("TEMP"),
+        userId: buyer.id ?? null,
+        fullName: buyer.fullName.trim(),
+        phone: buyer.phone.trim(),
+        email: buyer.email.trim(),
+        city,
+        district: buyer.district?.trim() || "",
+        address,
+        postalCode,
+        items,
+        total: grandTotal,
+      },
+    });
 
+    const basketItems = items.map((item: any) => ({
+      id: String(item.id),
+      name: item.name,
+      category1: item.category || "Genel",
+      itemType: Iyzipay.BASKET_ITEM_TYPE.PHYSICAL,
+      price: (item.price * item.quantity).toFixed(2),
+    }));
 
-    const pendingPayment =
-      await prisma.pendingPayment.create({
-
-        data:{
-
-
-          token:
-            generateId("TEMP"),
-
-
-          userId:
-            buyer.id ?? null,
-
-
-          fullName:
-            buyer.fullName,
-
-
-
-          phone:
-            buyer.phone,
-
-
-          email:
-            buyer.email,
-
-
-
-          city:
-            buyer.city || "Kastamonu",
-
-
-
-          district:
-            buyer.district || "",
-
-
-
-          address:
-            buyer.address,
-
-
-
-          postalCode:
-            buyer.postalCode || "",
-
-
-
-          items,
-
-
-          total:
-            totalPrice
-
-        }
-
+    if (cargo > 0) {
+      basketItems.push({
+        id: "CARGO_FEE",
+        name: "Kargo Ücreti",
+        category1: "Kargo",
+        itemType: Iyzipay.BASKET_ITEM_TYPE.VIRTUAL,
+        price: cargo.toFixed(2),
       });
+    }
 
-
-
-
-
-
-
-
-
-    const basketItems =
-
-      items.map(
-        (item:any)=>({
-
-          id:
-            String(item.id),
-
-
-          name:
-            item.name,
-
-
-          category1:
-            item.category || "Genel",
-
-
-          itemType:
-            "PHYSICAL",
-
-
-          price:
-            (
-              item.price *
-              item.quantity
-            ).toFixed(2)
-
-        })
-
-      );
-
-
-
-
-
-
-
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
     const requestData = {
-
-
-      locale:"tr",
-
-
-      conversationId:
-        generateId("CONV"),
-
-
-
-      price:
-        totalPrice.toFixed(2),
-
-
-
-      paidPrice:
-        totalPrice.toFixed(2),
-
-
-
-      currency:"TRY",
-
-
-
-      basketId:
-        generateId("BASKET"),
-
-
-
-      paymentGroup:
-        "PRODUCT",
-
-
-
-
-
-      callbackUrl:
-
-        `${process.env.NEXT_PUBLIC_APP_URL}/api/payment/callback`,
-
-
-
-
-
-
-
-      buyer:{
-
-
-        id:
-          buyer.id
-          ?
-          String(buyer.id)
-          :
-          "guest",
-
-
-
-        name:
-          buyerName,
-
-
-
-        surname:
-          buyerSurname,
-
-
-
-        gsmNumber:
-          buyer.phone,
-
-
-
-        email:
-          buyer.email,
-
-
-
-        identityNumber:
-          buyer.identityNumber ||
-          "11111111111",
-
-
-
-        registrationAddress:
-          buyer.address,
-
-
-
-        city:
-          buyer.city ||
-          "Kastamonu",
-
-
-
-        country:
-          "Turkey",
-
-
-
-        ip:
-          req.headers.get(
-            "x-forwarded-for"
-          )
-          ||
-          "85.34.78.112"
-
+      locale: Iyzipay.LOCALE.TR,
+      conversationId: generateId("CONV"),
+      price: grandTotal.toFixed(2),
+      paidPrice: grandTotal.toFixed(2),
+      currency: Iyzipay.CURRENCY.TRY,
+      basketId: generateId("BASKET"),
+      paymentGroup: Iyzipay.PAYMENT_GROUP.PRODUCT,
+      callbackUrl: `${appUrl}/api/payment/callback`,
+      buyer: {
+        id: buyer.id ? String(buyer.id) : "guest",
+        name: buyerName,
+        surname: buyerSurname,
+        gsmNumber: buyer.phone.trim(),
+        email: buyer.email.trim(),
+        identityNumber: "11111111111",
+        registrationAddress: address,
+        city,
+        country: "Turkey",
+        zipCode: postalCode,
+        ip: req.headers.get("x-forwarded-for") || "85.34.78.112",
       },
-
-
-
-      basketItems
-
+      shippingAddress: {
+        contactName: buyer.fullName.trim(),
+        city,
+        country: "Turkey",
+        address,
+        zipCode: postalCode,
+      },
+      billingAddress: {
+        contactName: buyer.fullName.trim(),
+        city,
+        country: "Turkey",
+        address,
+        zipCode: postalCode,
+      },
+      basketItems,
     };
 
+    console.log("Iyzico Request Data:", requestData);
 
+    const result = await initializeCheckoutForm(requestData);
 
+    console.log("========== IYZICO RESULT ==========");
+    console.log(JSON.stringify(result, null, 2));
+    console.log("===================================");
 
+    if (!result || result.status !== "success") {
+      await prisma.pendingPayment.delete({
+        where: { id: pendingPayment.id },
+      }).catch(() => {});
 
-
-
-
-    const endpoint =
-      "/payment/iyzipos/checkoutform/initialize/auth/ecom";
-
-
-
-
-
-    const bodyString =
-      JSON.stringify(requestData);
-
-
-
-
-
-
-
-    console.log(
-      "Iyzico Request:",
-      {
-        endpoint,
-        body:requestData
-      }
-    );
-
-
-
-
-
-
-
-    const response =
-      await fetch(
-
-        `${process.env.IYZICO_BASE_URL}${endpoint}`,
-
+      return NextResponse.json(
         {
-
-          method:"POST",
-
-
-          headers:
-            generateIyzipayAuthorization(
-              bodyString
-            ),
-
-
-
-          body:
-            bodyString
-
-        }
-
+          error: result?.errorMessage || "İyzico ödeme başlatma başarısız oldu.",
+          iyzico: result,
+        },
+        { status: 400 }
       );
-
-
-
-
-
-
-
-
-
-    const result =
-      await response.json();
-console.log("========== IYZICO ==========");
-console.log("HTTP STATUS:", response.status);
-console.log("RESULT:", JSON.stringify(result, null, 2));
-console.log("============================");
-
-
-
-
-
-    console.log(
-      "Iyzico Response:",
-      {
-        status:response.status,
-        result
-      }
-    );
-
-
-
-
-
-
-
-if (
-  !result ||
-  result.status !== "success"
-) {
-
-  await prisma.pendingPayment.delete({
-    where:{
-      id: pendingPayment.id
     }
-  }).catch(()=>{});
-
-  return NextResponse.json(
-    {
-      error: result?.errorMessage,
-      iyzico: result
-    },
-    {
-      status:400
-    }
-  );
-
-}
-
-
-
-
-
-
-
-
 
     await prisma.pendingPayment.update({
-
-      where:{
-        id:
-          pendingPayment.id
-      },
-
-
-      data:{
-
-
-        token:
-          result.token
-
-      }
-
+      where: { id: pendingPayment.id },
+      data: { token: result.token },
     });
-
-
-
-
-
-
-
-
 
     return NextResponse.json({
-
-      success:true,
-
-
-      paymentPageUrl:
-        result.paymentPageUrl,
-
-
-      token:
-        result.token
-
-
+      success: true,
+      paymentPageUrl: result.paymentPageUrl,
+      token: result.token,
     });
-
-
-
-
-
-
-  }
-
-
-  catch(error:any){
-
-
-    console.error(
-      "Payment create error:",
-      error
-    );
-
-
-
+  } catch (error: any) {
+    console.error("Payment create error:", error);
     return NextResponse.json(
-
-      {
-        error:
-          error.message ||
-          "Sunucu hatası"
-      },
-
-      {
-        status:500
-      }
-
+      { error: error.message || "Ödeme oluşturulurken sunucu hatası oluştu." },
+      { status: 500 }
     );
-
-
   }
-
-
 }

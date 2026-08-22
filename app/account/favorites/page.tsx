@@ -1,198 +1,90 @@
 import Link from "next/link";
+import HeaderWrapper from "@/components/HeaderWrapper";
+import Footer from "@/components/Footer";
+import ProductCard from "@/components/ProductCard";
 import { getFavorites } from "@/lib/actions/favorite";
 
 interface FavoriteItem {
   id: number;
   product: {
     id: number;
+    slug?: string;
     name: string;
     price: number;
+    oldPrice?: number;
+    stock?: number;
     image: string;
   };
 }
 
-export default async function FavoritesPage() {
-
+export default async function AccountFavoritesPage() {
   const favorites: FavoriteItem[] = await getFavorites();
 
-
   return (
+    <div className="min-h-screen bg-[#090a0f] text-[#f5efe6] flex flex-col justify-between">
+      <HeaderWrapper />
 
-    <main
-      className="
-      min-h-screen
-      bg-[#0b0b0b]
-      px-6
-      py-20
-      text-white
-      "
-    >
+      <main className="flex-1 mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-20 w-full">
+        {/* Page Header */}
+        <div className="mb-12 text-center">
+          <span className="text-xs font-semibold tracking-[0.3em] text-[#c8a165] uppercase">
+            LUMERA KOLEKSİYONU
+          </span>
+          <h1 className="mt-3 text-3xl sm:text-5xl font-extrabold text-white">
+            Favori Ürünlerim
+          </h1>
+          <p className="mt-4 text-zinc-400 max-w-lg mx-auto text-sm sm:text-base font-light">
+            Beğendiğiniz ve daha sonra incelemek üzere kaydettiğiniz özel tasarım outdoor ve bahçe ürünleriniz.
+          </p>
+        </div>
 
-      <div className="mx-auto max-w-7xl">
-
-        <p
-          className="
-          text-sm
-          tracking-[0.3em]
-          text-[#c8a165]
-          "
-        >
-          LUMERA COLLECTION
-        </p>
-
-
-        <h1
-          className="
-          mt-4
-          text-4xl
-          font-bold
-          "
-        >
-          Favorilerim
-        </h1>
-
-
-
-        {
-          favorites.length === 0
-
-          ?
-
-          <div
-            className="
-            mt-10
-            rounded-2xl
-            bg-[#181818]
-            p-10
-            text-center
-            text-gray-400
-            "
-          >
-
-            Henüz favori ürününüz bulunmuyor.
-
-            <br />
-
+        {favorites.length === 0 ? (
+          /* Empty Favorites State */
+          <div className="mx-auto max-w-md rounded-3xl border border-white/10 bg-[#121420]/80 p-10 sm:p-12 text-center backdrop-blur-md shadow-2xl">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-3xl mb-6 shadow-[0_0_20px_rgba(244,63,94,0.2)]">
+              ♥
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">
+              Henüz Favori Ürününüz Yok
+            </h3>
+            <p className="text-xs sm:text-sm text-zinc-400 mb-8 font-light leading-relaxed">
+              Koleksiyonumuzu keşfederek beğendiğiniz ürünleri üzerlerindeki kalp ikonuna tıklayıp favorilerinize ekleyebilirsiniz.
+            </p>
             <Link
               href="/"
-              className="
-              mt-5
-              inline-block
-              text-[#c8a165]
-              hover:underline
-              "
+              className="inline-block rounded-full gold-gradient-btn px-8 py-3.5 text-xs font-extrabold text-black shadow-xl hover:scale-105 transition-transform"
             >
-              Ürünlere göz at
+              Koleksiyonları Keşfet →
             </Link>
-
           </div>
+        ) : (
+          /* Favorites Grid */
+          <div>
+            <div className="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
+              <span className="text-xs text-zinc-400 font-medium">
+                Toplam <strong className="text-[#e5c184]">{favorites.length}</strong> ürün kaydedildi
+              </span>
+            </div>
 
-
-          :
-
-
-          <div
-            className="
-            mt-10
-            grid
-            gap-8
-            md:grid-cols-2
-            lg:grid-cols-4
-            "
-          >
-
-
-            {
-              favorites.map((item: FavoriteItem)=>(
-
-                <div
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
+              {favorites.map((item: FavoriteItem) => (
+                <ProductCard
                   key={item.id}
-                  className="
-                  overflow-hidden
-                  rounded-2xl
-                  border
-                  border-[#2b2b2b]
-                  bg-[#151515]
-                  "
-                >
-
-                  <div
-                    className="
-                    h-64
-                    overflow-hidden
-                    "
-                  >
-
-                    <img
-                      src={item.product.image}
-                      alt={item.product.name}
-                      className="
-                      h-full
-                      w-full
-                      object-cover
-                      "
-                    />
-
-                  </div>
-
-
-                  <div className="p-5">
-
-                    <h2
-                      className="
-                      text-xl
-                      font-semibold
-                      "
-                    >
-                      {item.product.name}
-                    </h2>
-
-
-                    <p
-                      className="
-                      mt-3
-                      text-2xl
-                      font-bold
-                      text-[#c8a165]
-                      "
-                    >
-                      ₺{item.product.price.toLocaleString("tr-TR")}
-                    </p>
-
-
-                    <Link
-                      href={`/product/${item.product.id}`}
-                      className="
-                      mt-5
-                      inline-block
-                      text-sm
-                      text-[#c8a165]
-                      hover:underline
-                      "
-                    >
-                      Ürünü İncele →
-                    </Link>
-
-
-                  </div>
-
-
-                </div>
-
-              ))
-            }
-
-
+                  id={item.product.id}
+                  slug={item.product.slug || `product-${item.product.id}`}
+                  name={item.product.name}
+                  price={item.product.price}
+                  oldPrice={item.product.oldPrice || item.product.price * 1.2}
+                  stock={item.product.stock ?? 10}
+                  image={item.product.image}
+                />
+              ))}
+            </div>
           </div>
+        )}
+      </main>
 
-        }
-
-
-      </div>
-
-
-    </main>
-
+      <Footer />
+    </div>
   );
-
 }

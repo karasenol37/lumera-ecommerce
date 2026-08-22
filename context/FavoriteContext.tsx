@@ -45,48 +45,66 @@ undefined
 
 
 export function FavoriteProvider({
-children
-}:{
-children:ReactNode
-}){
+  children,
+  userId = null,
+}: {
+  children: ReactNode;
+  userId?: number | null;
+}) {
+  const [favorites, setFavorites] = useState<FavoriteProduct[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
+  const storageKey = userId
+    ? `lumera-favorites-user-${userId}`
+    : "lumera-favorites-guest";
 
-const [favorites,setFavorites]=
-useState<FavoriteProduct[]>([]);
+  // Favorileri yükle
+  useEffect(() => {
+    setIsLoaded(false);
+    async function loadUserFavorites() {
+      try {
+        if (userId) {
+          const res = await fetch("/api/account/favorites");
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data)) {
+              const formatted = data.map((fav: any) => ({
+                id: fav.product ? fav.product.id : fav.productId || fav.id,
+                name: fav.product ? fav.product.name : fav.name,
+                price: fav.product ? fav.product.price : fav.price,
+                image: fav.product ? fav.product.image : fav.image,
+              }));
+              setFavorites(formatted);
+              localStorage.setItem(storageKey, JSON.stringify(formatted));
+              setIsLoaded(true);
+              return;
+            }
+          }
+        }
 
+        const saved = localStorage.getItem(storageKey);
+        if (saved) {
+          setFavorites(JSON.parse(saved));
+        } else {
+          setFavorites([]);
+        }
+      } catch {
+        setFavorites([]);
+      } finally {
+        setIsLoaded(true);
+      }
+    }
 
+    loadUserFavorites();
+  }, [userId, storageKey]);
 
-useEffect(()=>{
-
-const saved =
-localStorage.getItem(
-"lumera-favorites"
-);
-
-
-if(saved){
-
-setFavorites(
-JSON.parse(saved)
-);
-
-}
-
-},[]);
-
-
-
-
-useEffect(()=>{
-
-
-localStorage.setItem(
-"lumera-favorites",
-JSON.stringify(favorites)
-);
-
-
-},[favorites]);
+  // Favoriler değişince kaydet
+  useEffect(() => {
+    if (!isLoaded) return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(favorites));
+    } catch {}
+  }, [favorites, storageKey, isLoaded]);
 
 
 

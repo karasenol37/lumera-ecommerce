@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createProduct } from "@/lib/actions/product";
 import { useRouter } from "next/navigation";
+import AdminHeader from "@/components/admin/AdminHeader";
 
 
 
@@ -224,14 +225,10 @@ max-w-5xl
 
 
 
-<h1 className="
-text-5xl
-font-bold
-">
-
-Yeni Ürün Ekle
-
-</h1>
+<AdminHeader
+  title="Yeni Ürün Ekle"
+  subtitle="Kataloğunuza yeni ürün ekleyin, fiyat ve görsellerini tanımlayın"
+/>
 
 
 

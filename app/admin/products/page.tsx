@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth/admin";
-import ToggleProductStatusButton from "@/components/ToggleProductStatusButton";
-
+import DeleteProductButton from "@/components/DeleteProductButton";
+import AdminHeader from "@/components/admin/AdminHeader";
 
 type AdminProduct = {
 
@@ -33,7 +33,7 @@ type AdminProduct = {
 export default async function AdminProductsPage(){
 
 
-await requireAdmin();
+const user = await requireAdmin();
 
 
 
@@ -80,48 +80,19 @@ max-w-7xl
 
 
 
-<div className="
-flex
-items-center
-justify-between
-">
+<AdminHeader
+  title="Ürün Yönetimi"
+  userEmail={user.email}
+  subtitle="Mevcut ürünleri görün, düzenleyin, stok ve durum bilgilerini güncelleyin"
+/>
 
-
-
-<h1 className="
-text-4xl
-font-bold
-">
-
-Ürün Yönetimi
-
-</h1>
-
-
-
-
-
-<Link
-
-href="/admin/products/new"
-
-className="
-rounded-full
-bg-[#c8a165]
-px-6
-py-3
-font-bold
-text-black
-"
-
->
-
-+ Yeni Ürün
-
-</Link>
-
-
-
+<div className="mb-6 flex justify-end">
+  <Link
+    href="/admin/products/new"
+    className="rounded-full bg-[#c8a165] px-6 py-3 font-bold text-black hover:bg-[#b58f54] transition shadow-md"
+  >
+    + Yeni Ürün Ekle
+  </Link>
 </div>
 
 
@@ -435,12 +406,9 @@ Düzenle
 
 
 
-<ToggleProductStatusButton
-
+<DeleteProductButton
 id={product.id}
-
-isActive={product.isActive}
-
+productName={product.name}
 />
 
 

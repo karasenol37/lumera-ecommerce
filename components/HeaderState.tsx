@@ -3,32 +3,26 @@
 import { useState } from "react";
 import HeaderClient from "./HeaderClient";
 
-
 type Props = {
- user:any;
+  user: any;
+  settings?: Record<string, string>;
+  unreadMessageCount?: number;
 };
 
-
 export default function HeaderState({
-user
-}:Props){
+  user,
+  settings,
+  unreadMessageCount,
+}: Props) {
+  const [search, setSearch] = useState("");
 
-
-const [search,setSearch]=useState("");
-
-
-return (
-
-<HeaderClient
-
-search={search}
-
-setSearch={setSearch}
-
-user={user}
-
-/>
-
-);
-
+  return (
+    <HeaderClient
+      search={search}
+      setSearch={setSearch}
+      user={user}
+      settings={settings}
+      unreadMessageCount={unreadMessageCount}
+    />
+  );
 }

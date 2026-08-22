@@ -23,21 +23,25 @@ export default function CartPage() {
   );
 
   const cargo = total >= 750 ? 0 : 150;
-
   const grandTotal = total + cargo;
 
   return (
-    <main className="min-h-screen bg-[#111111] px-6 py-16 text-white">
+    <main className="min-h-screen bg-[#090a0f] px-6 py-16 text-white">
       <div className="mx-auto max-w-7xl">
         <div className="mb-10 flex items-center justify-between">
-          <h1 className="text-5xl font-bold">
-            Sepetim
-          </h1>
+          <div>
+            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
+              Alışveriş Sepeti
+            </h1>
+            <p className="text-zinc-400 text-sm mt-1 font-light">
+              Sepetinizdeki ürünleri inceleyin ve siparişinizi tamamlayın.
+            </p>
+          </div>
 
           {cart.length > 0 && (
             <button
               onClick={clearCart}
-              className="rounded-full border border-red-500 px-6 py-3 text-red-400 transition hover:bg-red-500 hover:text-white"
+              className="rounded-full border border-rose-500/40 bg-rose-500/10 px-5 py-2.5 text-xs font-semibold text-rose-300 transition hover:bg-rose-500 hover:text-white"
             >
               Sepeti Temizle
             </button>
@@ -45,83 +49,86 @@ export default function CartPage() {
         </div>
 
         {cart.length === 0 ? (
-          <div className="rounded-2xl bg-[#181818] p-16 text-center">
-            <h2 className="text-3xl font-bold">
-              Sepetiniz boş
+          <div className="rounded-3xl border border-white/10 bg-[#121420]/80 p-16 text-center backdrop-blur-md shadow-2xl">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-white/5 text-4xl mb-4">
+              🛒
+            </div>
+            <h2 className="text-3xl font-extrabold text-white">
+              Sepetinizde Henüz Ürün Bulunmuyor
             </h2>
 
-            <p className="mt-3 text-gray-400">
-              Beğendiğiniz ürünleri sepete ekleyerek alışverişe başlayabilirsiniz.
+            <p className="mt-3 text-zinc-400 max-w-md mx-auto font-light">
+              Lüks bahçe mobilyaları ve konforlu hamak koleksiyonumuzu keşfederek alışverişe başlayabilirsiniz.
             </p>
 
             <Link
               href="/"
-              className="mt-8 inline-block rounded-full bg-[#c8a165] px-8 py-4 font-bold text-black"
+              className="mt-8 inline-block rounded-full gold-gradient-btn px-8 py-4 text-sm font-bold text-black shadow-xl"
             >
-              Alışverişe Başla
+              Koleksiyonu Keşfet →
             </Link>
           </div>
         ) : (
           <div className="grid gap-10 lg:grid-cols-3">
-            {/* Ürünler */}
+            {/* Ürünler Listesi */}
             <div className="lg:col-span-2 space-y-6">
               {cart.map((item) => (
                 <div
                   key={item.id}
-                  className="rounded-2xl border border-[#2b2b2b] bg-[#181818] p-6"
+                  className="group rounded-2xl border border-white/10 bg-[#121420]/80 p-6 backdrop-blur-md shadow-xl transition-all hover:border-[#c8a165]/40"
                 >
-                  <div className="flex flex-col gap-6 md:flex-row">
+                  <div className="flex flex-col gap-6 sm:flex-row items-center sm:items-start">
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="h-36 w-36 rounded-xl object-cover"
+                      className="h-32 w-32 rounded-xl object-cover border border-white/10"
                     />
 
-                    <div className="flex flex-1 flex-col justify-between">
+                    <div className="flex flex-1 flex-col justify-between w-full">
                       <div>
-                        <h2 className="text-2xl font-bold">
+                        <h2 className="text-xl font-bold text-white group-hover:text-[#c8a165] transition">
                           {item.name}
                         </h2>
 
-                        <p className="mt-2 text-[#c8a165]">
-                          ₺{item.price.toLocaleString("tr-TR")}
-                        </p>
-
-                        <p className="mt-3 text-gray-400">
-                          Toplam:
-                          <span className="ml-2 font-bold text-white">
-                            ₺
-                            {(item.price * item.quantity).toLocaleString(
-                              "tr-TR"
-                            )}
-                          </span>
+                        <p className="mt-1 text-sm font-semibold gold-gradient-text">
+                          Birim Fiyat: ₺{item.price.toLocaleString("tr-TR")}
                         </p>
                       </div>
 
-                      <div className="mt-5 flex items-center gap-3">
-                        <button
-                          onClick={() => decreaseQuantity(item.id)}
-                          className="h-10 w-10 rounded-full bg-[#222] text-xl hover:bg-[#333]"
-                        >
-                          −
-                        </button>
+                      <div className="mt-6 flex items-center justify-between">
+                        <div className="flex items-center gap-3 bg-[#090a0f] rounded-full border border-white/10 px-3 py-1.5">
+                          <button
+                            onClick={() => decreaseQuantity(item.id)}
+                            className="h-7 w-7 rounded-full bg-white/10 text-white font-bold hover:bg-[#c8a165] hover:text-black transition"
+                          >
+                            −
+                          </button>
 
-                        <span className="w-8 text-center text-lg font-bold">
-                          {item.quantity}
-                        </span>
+                          <span className="w-8 text-center text-sm font-bold text-white">
+                            {item.quantity}
+                          </span>
 
-                        <button
-                          onClick={() => increaseQuantity(item.id)}
-                          className="h-10 w-10 rounded-full bg-[#222] text-xl hover:bg-[#333]"
-                        >
-                          +
-                        </button>
+                          <button
+                            onClick={() => increaseQuantity(item.id)}
+                            className="h-7 w-7 rounded-full bg-white/10 text-white font-bold hover:bg-[#c8a165] hover:text-black transition"
+                          >
+                            +
+                          </button>
+                        </div>
+
+                        <div className="text-right">
+                          <span className="text-xs text-zinc-400 block">Toplam</span>
+                          <span className="text-lg font-extrabold text-white">
+                            ₺{(item.price * item.quantity).toLocaleString("tr-TR")}
+                          </span>
+                        </div>
 
                         <button
                           onClick={() => removeFromCart(item.id)}
-                          className="ml-auto rounded-full bg-red-600 px-5 py-2 transition hover:bg-red-700"
+                          className="p-2 text-xs font-semibold text-rose-400 hover:text-rose-300 transition"
+                          title="Ürünü Sil"
                         >
-                          Sil
+                          ✕ Sil
                         </button>
                       </div>
                     </div>
@@ -131,78 +138,59 @@ export default function CartPage() {
 
               <Link
                 href="/"
-                className="inline-block rounded-full border border-[#c8a165] px-8 py-4 text-[#c8a165] transition hover:bg-[#c8a165] hover:text-black"
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3 text-xs font-semibold text-zinc-300 transition hover:border-[#c8a165] hover:bg-white/10"
               >
                 ← Alışverişe Devam Et
               </Link>
             </div>
 
             {/* Sipariş Özeti */}
-            <div className="h-fit rounded-2xl bg-[#181818] p-8">
-              <h2 className="text-3xl font-bold">
+            <div className="h-fit rounded-2xl border border-white/10 bg-[#121420]/80 p-8 backdrop-blur-md shadow-2xl">
+              <h2 className="text-2xl font-bold text-white border-b border-white/10 pb-4">
                 Sipariş Özeti
               </h2>
 
-              <div className="mt-8 space-y-4">
-                <div className="flex justify-between text-gray-300">
-                  <span>Ürün Adedi</span>
-                  <span>{totalQuantity}</span>
+              <div className="mt-6 space-y-4 text-sm">
+                <div className="flex justify-between text-zinc-400">
+                  <span>Toplam Ürün Adedi</span>
+                  <span className="font-semibold text-white">{totalQuantity} adet</span>
                 </div>
 
-                <div className="flex justify-between text-gray-300">
+                <div className="flex justify-between text-zinc-400">
                   <span>Ara Toplam</span>
-                  <span>
+                  <span className="font-semibold text-white">
                     ₺{total.toLocaleString("tr-TR")}
                   </span>
                 </div>
 
-                <div className="flex justify-between text-gray-300">
-                  <span>Kargo</span>
-
+                <div className="flex justify-between text-zinc-400">
+                  <span>Kargo Ücreti</span>
                   {cargo === 0 ? (
-                    <span className="text-green-400">
-                      Ücretsiz
-                    </span>
+                    <span className="text-emerald-400 font-bold">Ücretsiz</span>
                   ) : (
-                    <span>
+                    <span className="font-semibold text-white">
                       ₺{cargo.toLocaleString("tr-TR")}
                     </span>
                   )}
                 </div>
 
-                <hr className="border-[#333]" />
-
-                <div className="flex justify-between text-2xl font-bold">
+                <div className="border-t border-white/10 pt-4 flex justify-between text-xl font-extrabold">
                   <span>Genel Toplam</span>
-
-                  <span className="text-[#c8a165]">
+                  <span className="gold-gradient-text">
                     ₺{grandTotal.toLocaleString("tr-TR")}
                   </span>
                 </div>
               </div>
 
-             <Link
-  href="/checkout"
-  className="
-    mt-8
-    block
-    w-full
-    rounded-full
-    bg-[#c8a165]
-    py-4
-    text-center
-    text-lg
-    font-bold
-    text-black
-    transition
-    hover:opacity-90
-  "
->
-  Ödemeye Geç
-</Link>
+              <Link
+                href="/checkout"
+                className="mt-8 block w-full rounded-full gold-gradient-btn py-4 text-center text-sm font-extrabold text-black shadow-xl"
+              >
+                Ödeme Adımına Geç →
+              </Link>
 
-              <p className="mt-5 text-center text-sm text-gray-500">
-                SSL ile güvenli ödeme
+              <p className="mt-4 text-center text-xs text-zinc-500">
+                🔒 256-Bit SSL Koruma ile Güvenli Alışveriş
               </p>
             </div>
           </div>
