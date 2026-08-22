@@ -23,7 +23,10 @@ export async function getSessionUser() {
     });
 
     return user;
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.digest === "DYNAMIC_SERVER_USAGE" || error?.message?.includes("Dynamic server usage")) {
+      throw error;
+    }
     console.error("Error getting session user:", error);
     return null;
   }

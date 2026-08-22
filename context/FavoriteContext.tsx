@@ -24,15 +24,11 @@ image:string;
 
 
 type FavoriteContextType = {
-
-favorites:FavoriteProduct[];
-
-addFavorite:(product:FavoriteProduct)=>void;
-
-removeFavorite:(id:number)=>void;
-
-isFavorite:(id:number)=>boolean;
-
+  favorites: FavoriteProduct[];
+  addFavorite: (product: FavoriteProduct) => void;
+  removeFavorite: (id: number) => void;
+  toggleFavorite: (product: FavoriteProduct) => void;
+  isFavorite: (id: number) => boolean;
 };
 
 
@@ -166,47 +162,31 @@ item=>item.id!==id
 
 
 
-function isFavorite(
-id:number
-){
+  function toggleFavorite(product: FavoriteProduct) {
+    if (isFavorite(product.id)) {
+      removeFavorite(product.id);
+    } else {
+      addFavorite(product);
+    }
+  }
 
+  function isFavorite(id: number) {
+    return favorites.some((item) => item.id === id);
+  }
 
-return favorites.some(
-item=>item.id===id
-);
-
-
-}
-
-
-
-
-
-return (
-
-<FavoriteContext.Provider
-
-value={{
-
-favorites,
-
-addFavorite,
-
-removeFavorite,
-
-isFavorite
-
-}}
-
->
-
-{children}
-
-</FavoriteContext.Provider>
-
-);
-
-
+  return (
+    <FavoriteContext.Provider
+      value={{
+        favorites,
+        addFavorite,
+        removeFavorite,
+        toggleFavorite,
+        isFavorite,
+      }}
+    >
+      {children}
+    </FavoriteContext.Provider>
+  );
 }
 
 

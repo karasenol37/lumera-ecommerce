@@ -6,7 +6,7 @@ type Product = {
   price: number;
   image: string;
   stock: number;
-  category?: {
+  category?: string | {
     name: string;
   } | null;
 };
