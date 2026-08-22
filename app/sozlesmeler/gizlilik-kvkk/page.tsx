@@ -5,7 +5,7 @@ import { getSiteSettings } from "@/lib/services/settingsService";
 export default async function PrivacyKvkkPage() {
   const settings = await getSiteSettings();
 
-  const email = settings.contactEmail || "destek@lumera.com";
+  const email = settings.contactEmail || "lumeratasarim@gmail.com";
 
   return (
     <div className="min-h-screen bg-[#090a0f] text-[#f5efe6] flex flex-col justify-between">

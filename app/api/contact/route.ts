@@ -17,7 +17,7 @@ export async function POST(req: Request) {
 
     // Site ayarlarından güncel e-posta adresini al (ana sayfada görüntülenen mail)
     const settings = await getSiteSettings();
-    const targetEmail = settings.contactEmail || "destek@lumera.com";
+    const targetEmail = settings.contactEmail || "lumeratasarim@gmail.com";
 
     // Prisma model erişimi
     let client: any = prisma;

@@ -72,7 +72,7 @@ export default function HeaderClient({
     settings?.topBannerText || "✨ 750 TL ve üzeri siparişlerde Ücretsiz Kargo";
   const announcementBadge =
     settings?.announcementBadge || "LUMERA LUXURY COLLECTION";
-  const contactPhone = settings?.contactPhone || "0850 XXX XX XX";
+  const contactPhone = settings?.contactPhone || "0535 874 69 09";
   const brandTagline =
     settings?.brandTagline || "Gölgede Zarafet, Dinlenmede Ayrıcalık";
 
@@ -91,12 +91,15 @@ export default function HeaderClient({
                 {announcementBadge}
               </span>
               <span className="text-zinc-700">|</span>
-              <span className="text-zinc-400 text-xs">
-                Müşteri Destek:{" "}
-                <strong className="text-[#e5c184] font-medium">
-                  {contactPhone}
-                </strong>
-              </span>
+              <a
+                href="https://wa.me/905358746909"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-zinc-300 hover:text-[#25D366] transition flex items-center gap-1.5 text-xs font-medium"
+              >
+                <span className="text-[#25D366]">💬 WhatsApp Sipariş:</span>
+                <strong className="text-white font-bold">{contactPhone}</strong>
+              </a>
             </div>
           </div>
         </div>
@@ -517,9 +520,28 @@ export default function HeaderClient({
                 </div>
               )}
 
-              <div className="pt-2 text-center text-[11px] text-zinc-500">
-                <span>Destek Hattı: </span>
-                <strong className="text-[#e5c184]">{contactPhone}</strong>
+              <div className="pt-3 space-y-2">
+                <a
+                  href="https://wa.me/905358746909?text=Merhaba,%20sipari%C5%9F%20vermek%20istiyorum."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-full bg-[#25D366] text-black font-extrabold text-xs shadow-lg hover:bg-[#20bd5a] transition"
+                >
+                  <span>💬</span>
+                  <span>WhatsApp ile Sipariş Ver</span>
+                </a>
+
+                <div className="text-center text-[11px] text-zinc-400 space-y-0.5">
+                  <p>
+                    <span>Müşteri Desteği: </span>
+                    <strong className="text-[#e5c184]">{contactPhone}</strong>
+                  </p>
+                  <p>
+                    <a href="mailto:lumeratasarim@gmail.com" className="text-zinc-400 hover:text-[#c8a165]">
+                      lumeratasarim@gmail.com
+                    </a>
+                  </p>
+                </div>
               </div>
             </div>
           </div>

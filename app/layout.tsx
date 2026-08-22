@@ -4,6 +4,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { FavoriteProvider } from "@/context/FavoriteContext";
 import { getSessionUser } from "@/lib/session";
+import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -32,7 +33,10 @@ export default async function RootLayout({
     >
       <body className="min-h-screen bg-[#090a0f] text-[#f5efe6] selection:bg-[#c8a165] selection:text-black">
         <CartProvider userId={userId}>
-          <FavoriteProvider userId={userId}>{children}</FavoriteProvider>
+          <FavoriteProvider userId={userId}>
+            {children}
+            <FloatingWhatsApp />
+          </FavoriteProvider>
         </CartProvider>
       </body>
     </html>

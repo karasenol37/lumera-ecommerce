@@ -126,13 +126,13 @@ export default function AdminSettingsForm({
         <div className="grid gap-6 md:grid-cols-2">
           <div>
             <label className="block text-xs font-semibold text-zinc-300 mb-2">
-              Müşteri Hizmetleri Telefon Numarası
+              WhatsApp / Telefon Numarası
             </label>
             <input
               name="contactPhone"
               value={settings.contactPhone || ""}
               onChange={handleChange}
-              placeholder="0850 XXX XX XX"
+              placeholder="0535 874 69 09"
               className="w-full rounded-xl bg-[#090a0f] border border-white/10 p-4 text-sm text-white placeholder:text-zinc-600 focus:border-[#c8a165] focus:ring-2 focus:ring-[#c8a165]/20 outline-none transition-all"
             />
           </div>
@@ -145,7 +145,7 @@ export default function AdminSettingsForm({
               name="contactEmail"
               value={settings.contactEmail || ""}
               onChange={handleChange}
-              placeholder="destek@lumera.com"
+              placeholder="lumeratasarim@gmail.com"
               className="w-full rounded-xl bg-[#090a0f] border border-white/10 p-4 text-sm text-white placeholder:text-zinc-600 focus:border-[#c8a165] focus:ring-2 focus:ring-[#c8a165]/20 outline-none transition-all"
             />
           </div>

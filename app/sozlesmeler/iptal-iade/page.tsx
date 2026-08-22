@@ -5,8 +5,8 @@ import { getSiteSettings } from "@/lib/services/settingsService";
 export default async function ReturnPolicyPage() {
   const settings = await getSiteSettings();
 
-  const phone = settings.contactPhone || "0850 XXX XX XX";
-  const email = settings.contactEmail || "destek@lumera.com";
+  const phone = settings.contactPhone || "0535 874 69 09";
+  const email = settings.contactEmail || "lumeratasarim@gmail.com";
 
   return (
     <div className="min-h-screen bg-[#090a0f] text-[#f5efe6] flex flex-col justify-between">

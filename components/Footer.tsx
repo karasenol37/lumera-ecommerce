@@ -6,8 +6,8 @@ export default async function Footer() {
 
   const brandTagline =
     settings.brandTagline || "Gölgede zarafet, dinlenmede ayrıcalık.";
-  const contactPhone = settings.contactPhone || "0850 XXX XX XX";
-  const contactEmail = settings.contactEmail || "destek@lumera.com";
+  const contactPhone = settings.contactPhone || "0535 874 69 09";
+  const contactEmail = settings.contactEmail || "lumeratasarim@gmail.com";
   const contactAddress = settings.contactAddress || "İstanbul / Türkiye";
 
   return (
@@ -92,24 +92,43 @@ export default async function Footer() {
           {/* Contact Info */}
           <div>
             <h3 className="text-xs sm:text-sm font-bold tracking-wider text-white uppercase mb-3 sm:mb-5">
-              İletişim
+              İletişim & Sipariş
             </h3>
-            <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
+            <div className="space-y-2.5 sm:space-y-3 text-xs sm:text-sm">
+              <a
+                href="https://wa.me/905358746909?text=Merhaba,%20sipari%C5%9F%20vermek%20istiyorum."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-[#25D366] transition group"
+              >
+                <span className="text-[#25D366] text-base group-hover:scale-110 transition-transform">💬</span>
+                <span>WhatsApp: <strong className="text-white">{contactPhone}</strong></span>
+              </a>
+              <a
+                href={`mailto:${contactEmail}`}
+                className="flex items-center gap-2 hover:text-[#c8a165] transition"
+              >
+                <span className="text-[#c8a165]">✉</span>
+                <span>{contactEmail}</span>
+              </a>
               <p className="flex items-center gap-2">
-                <span className="text-[#c8a165]">☎</span> {contactPhone}
+                <span className="text-[#c8a165]">📍</span>
+                <span>{contactAddress}</span>
               </p>
-              <p className="flex items-center gap-2">
-                <span className="text-[#c8a165]">✉</span> {contactEmail}
-              </p>
-              <p className="flex items-center gap-2">
-                <span className="text-[#c8a165]">📍</span> {contactAddress}
-              </p>
-              <div className="pt-2">
+              <div className="pt-2 flex flex-wrap gap-2">
+                <a
+                  href="https://wa.me/905358746909"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block text-[11px] sm:text-xs font-bold text-black bg-[#25D366] rounded-full px-3.5 py-1.5 hover:bg-[#20bd5a] transition shadow-md"
+                >
+                  WhatsApp Sipariş →
+                </a>
                 <Link
                   href="/iletisim"
-                  className="inline-block text-xs font-semibold text-[#c8a165] border border-[#c8a165]/40 rounded-full px-4 py-2 hover:bg-[#c8a165] hover:text-black transition"
+                  className="inline-block text-[11px] sm:text-xs font-semibold text-[#c8a165] border border-[#c8a165]/40 rounded-full px-3.5 py-1.5 hover:bg-[#c8a165] hover:text-black transition"
                 >
-                  İletişim Sayfası →
+                  İletişim Sayfası
                 </Link>
               </div>
             </div>

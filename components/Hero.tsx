@@ -56,10 +56,41 @@ export default async function Hero() {
             </a>
 
             <a
+              href="https://wa.me/905358746909?text=Merhaba,%20sipari%C5%9F%20vermek%20istiyorum."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full bg-[#25D366]/15 border border-[#25D366]/40 px-5 sm:px-7 py-3.5 sm:py-4 text-xs sm:text-sm font-bold text-[#25D366] hover:bg-[#25D366] hover:text-black transition backdrop-blur-md flex items-center gap-2 shadow-lg hover:scale-105"
+            >
+              <span>💬</span>
+              <span>WhatsApp Sipariş</span>
+            </a>
+
+            <a
               href="#kategoriler"
               className="rounded-full bg-white/5 border border-white/15 px-5 sm:px-7 py-3.5 sm:py-4 text-xs sm:text-sm font-semibold text-zinc-300 hover:text-white hover:bg-white/10 hover:border-[#c8a165]/50 transition backdrop-blur-md"
             >
               Kategoriler
+            </a>
+          </div>
+
+          {/* Quick Contact Micro Info on Hero */}
+          <div className="mt-6 sm:mt-8 flex flex-wrap items-center gap-4 sm:gap-6 text-xs text-zinc-400 font-light">
+            <a
+              href="https://wa.me/905358746909"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 hover:text-[#25D366] transition"
+            >
+              <span className="text-[#25D366]">📱</span>
+              <span>0535 874 69 09</span>
+            </a>
+            <span className="text-zinc-700 hidden sm:inline">•</span>
+            <a
+              href="mailto:lumeratasarim@gmail.com"
+              className="flex items-center gap-1.5 hover:text-[#c8a165] transition"
+            >
+              <span className="text-[#c8a165]">✉️</span>
+              <span>lumeratasarim@gmail.com</span>
             </a>
           </div>
         </div>

@@ -5,8 +5,8 @@ import { getSiteSettings } from "@/lib/services/settingsService";
 export default async function DistanceSellingAgreementPage() {
   const settings = await getSiteSettings();
 
-  const phone = settings.contactPhone || "0850 XXX XX XX";
-  const email = settings.contactEmail || "destek@lumera.com";
+  const phone = settings.contactPhone || "0535 874 69 09";
+  const email = settings.contactEmail || "lumeratasarim@gmail.com";
   const address = settings.contactAddress || "İstanbul / Türkiye";
 
   return (

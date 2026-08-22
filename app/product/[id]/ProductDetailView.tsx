@@ -370,6 +370,17 @@ export default function ProductDetailView({ product }: { product: Product }) {
                 )}
               </button>
             </div>
+
+            {/* WhatsApp Quick Order Button */}
+            <a
+              href={`https://wa.me/905358746909?text=${encodeURIComponent(`Merhaba, ${product.name} ürünü hakkında (${quantity} adet) sipariş vermek ve bilgi almak istiyorum.`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-full bg-[#25D366]/15 border border-[#25D366]/40 text-[#25D366] font-bold text-xs hover:bg-[#25D366] hover:text-black transition duration-300 shadow-lg"
+            >
+              <span className="text-base">💬</span>
+              <span>WhatsApp ile Hızlı Sipariş & Bilgi Al</span>
+            </a>
           </div>
 
           {/* Privilege Badges Grid */}
