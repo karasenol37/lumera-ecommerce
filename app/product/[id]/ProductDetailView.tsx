@@ -373,23 +373,61 @@ export default function ProductDetailView({ product }: { product: Product }) {
           </div>
 
           {/* Privilege Badges Grid */}
-          <div className="grid grid-cols-3 gap-3 border-t border-white/10 pt-6">
-            <div className="rounded-2xl border border-white/5 bg-[#121420]/40 p-3 text-center">
-              <span className="text-xl">🚚</span>
-              <h4 className="mt-1 text-[11px] font-bold text-white">Ücretsiz Kargo</h4>
-              <p className="mt-0.5 text-[10px] text-zinc-500">750 TL Üzeri Siparişlerde</p>
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 border-t border-white/10 pt-6">
+            <div className="rounded-2xl border border-white/5 bg-[#121420]/40 p-2.5 sm:p-3 text-center">
+              <span className="text-lg sm:text-xl">🚚</span>
+              <h4 className="mt-1 text-[10px] sm:text-[11px] font-bold text-white leading-tight">Ücretsiz Kargo</h4>
+              <p className="mt-0.5 text-[9px] sm:text-[10px] text-zinc-500 hidden xs:block">750 TL Üzeri</p>
             </div>
-            <div className="rounded-2xl border border-white/5 bg-[#121420]/40 p-3 text-center">
-              <span className="text-xl">🛡️</span>
-              <h4 className="mt-1 text-[11px] font-bold text-white">2 Yıl Garanti</h4>
-              <p className="mt-0.5 text-[10px] text-zinc-500">Doğal Ahşap Güvencesi</p>
+            <div className="rounded-2xl border border-white/5 bg-[#121420]/40 p-2.5 sm:p-3 text-center">
+              <span className="text-lg sm:text-xl">🛡️</span>
+              <h4 className="mt-1 text-[10px] sm:text-[11px] font-bold text-white leading-tight">2 Yıl Garanti</h4>
+              <p className="mt-0.5 text-[9px] sm:text-[10px] text-zinc-500 hidden xs:block">Masif Ahşap</p>
             </div>
-            <div className="rounded-2xl border border-white/5 bg-[#121420]/40 p-3 text-center">
-              <span className="text-xl">💳</span>
-              <h4 className="mt-1 text-[11px] font-bold text-white">Güvenli Ödeme</h4>
-              <p className="mt-0.5 text-[10px] text-zinc-500">256-bit SSL Koruması</p>
+            <div className="rounded-2xl border border-white/5 bg-[#121420]/40 p-2.5 sm:p-3 text-center">
+              <span className="text-lg sm:text-xl">💳</span>
+              <h4 className="mt-1 text-[10px] sm:text-[11px] font-bold text-white leading-tight">Güvenli Ödeme</h4>
+              <p className="mt-0.5 text-[9px] sm:text-[10px] text-zinc-500 hidden xs:block">256-bit SSL</p>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Sticky Mobile Bottom Add-to-Cart Bar (Above Mobile Nav Bar) */}
+      <div className="md:hidden fixed bottom-[57px] left-0 right-0 z-30 bg-[#090a0f]/95 backdrop-blur-xl border-t border-white/10 p-3 px-4 shadow-[0_-8px_20px_rgba(0,0,0,0.5)]">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <span className="text-[10px] text-zinc-400 block font-light">Toplam Tutar</span>
+            <span className="text-lg font-black gold-gradient-text">
+              ₺{(product.price * quantity).toLocaleString("tr-TR")}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            disabled={product.stock === 0}
+            className={`flex-1 max-w-[200px] rounded-full py-3 px-4 text-xs font-extrabold transition-all shadow-xl flex items-center justify-center gap-1.5 ${
+              product.stock === 0
+                ? "bg-zinc-800 text-zinc-500 cursor-not-allowed"
+                : added
+                ? "bg-emerald-500 text-black scale-[1.02]"
+                : "gold-gradient-btn text-black active:scale-95"
+            }`}
+          >
+            {product.stock === 0 ? (
+              "Tükendi"
+            ) : added ? (
+              <>
+                <span>✓</span>
+                <span>Eklendi</span>
+              </>
+            ) : (
+              <>
+                <span>🛍️ Sepete Ekle</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
     </div>

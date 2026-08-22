@@ -65,3 +65,26 @@ body {
   box-shadow: 0 0 25px rgba(200, 161, 101, 0.4);
   transform: translateY(-2px);
 }
+
+/* Mobile Scrollbar Hide & Touch Optimizations */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.touch-pan-x {
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Safe Area Inset Utility for Mobile Floating Bars */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}
+.mb-safe-bottom {
+  margin-bottom: env(safe-area-inset-bottom, 16px);
+}
+

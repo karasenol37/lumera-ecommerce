@@ -27,23 +27,41 @@ export default async function Hero() {
       </div>
 
       {/* Hero Content */}
-      <div className="relative z-20 mx-auto max-w-7xl px-6 py-24 w-full">
+      <div className="relative z-20 mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24 w-full">
         <div className="max-w-3xl">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#c8a165]/30 bg-[#c8a165]/10 px-4 py-2 text-xs font-semibold tracking-[0.25em] text-[#e5c184] backdrop-blur-md shadow-lg shadow-[#c8a165]/5">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#c8a165]/30 bg-[#c8a165]/10 px-3.5 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-semibold tracking-[0.2em] sm:tracking-[0.25em] text-[#e5c184] backdrop-blur-md shadow-lg shadow-[#c8a165]/5">
             <span className="h-1.5 w-1.5 rounded-full bg-[#c8a165] animate-ping" />
             {heroBadge}
           </div>
 
           {/* Main Title */}
-          <h1 className="mt-8 text-5xl font-extrabold tracking-tight text-white sm:text-7xl md:text-8xl leading-none">
+          <h1 className="mt-5 sm:mt-8 text-3.5xl xs:text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white leading-tight sm:leading-none">
             {heroTitle}
           </h1>
 
           {/* Subtitle */}
-          <p className="mt-8 max-w-2xl text-lg sm:text-xl leading-relaxed text-zinc-300 font-light">
+          <p className="mt-4 sm:mt-8 max-w-2xl text-sm sm:text-lg md:text-xl leading-relaxed text-zinc-300 font-light">
             {heroSubtitle}
           </p>
+
+          {/* CTA Buttons */}
+          <div className="mt-8 sm:mt-10 flex flex-wrap items-center gap-3 sm:gap-4">
+            <a
+              href="#urunler"
+              className="rounded-full gold-gradient-btn px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-extrabold text-black shadow-xl hover:scale-105 transition-transform flex items-center gap-2"
+            >
+              <span>Koleksiyonu Keşfet</span>
+              <span>→</span>
+            </a>
+
+            <a
+              href="#kategoriler"
+              className="rounded-full bg-white/5 border border-white/15 px-5 sm:px-7 py-3.5 sm:py-4 text-xs sm:text-sm font-semibold text-zinc-300 hover:text-white hover:bg-white/10 hover:border-[#c8a165]/50 transition backdrop-blur-md"
+            >
+              Kategoriler
+            </a>
+          </div>
         </div>
       </div>
     </section>

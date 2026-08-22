@@ -11,20 +11,20 @@ export default async function Footer() {
   const contactAddress = settings.contactAddress || "İstanbul / Türkiye";
 
   return (
-    <footer className="relative bg-[#06070a] border-t border-white/10 text-zinc-400 font-light">
-      <div className="mx-auto max-w-7xl px-6 py-20">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
+    <footer className="relative bg-[#06070a] border-t border-white/10 text-zinc-400 font-light pb-24 md:pb-16">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 sm:py-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12">
           {/* Brand Info */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4 col-span-1 sm:col-span-2 lg:col-span-1">
             <Link href="/" className="inline-block">
-              <span className="text-3xl font-extrabold tracking-wider gold-gradient-text">
+              <span className="text-2xl sm:text-3xl font-extrabold tracking-wider gold-gradient-text">
                 LUMERA
               </span>
             </Link>
-            <p className="text-sm leading-relaxed text-zinc-400">
+            <p className="text-xs sm:text-sm leading-relaxed text-zinc-400 max-w-sm">
               {brandTagline} Doğal masif ahşap ve lüks dış mekan mobilya koleksiyonu.
             </p>
-            <div className="pt-2 flex items-center gap-4 text-zinc-400 text-lg">
+            <div className="pt-1 flex items-center gap-4 text-zinc-400 text-base sm:text-lg">
               <span className="hover:text-[#c8a165] cursor-pointer transition">📷</span>
               <span className="hover:text-[#c8a165] cursor-pointer transition">🌐</span>
               <span className="hover:text-[#c8a165] cursor-pointer transition">▶</span>
@@ -33,10 +33,10 @@ export default async function Footer() {
 
           {/* Quick Categories */}
           <div>
-            <h3 className="text-sm font-bold tracking-wider text-white uppercase mb-5">
+            <h3 className="text-xs sm:text-sm font-bold tracking-wider text-white uppercase mb-3 sm:mb-5">
               Koleksiyonlar
             </h3>
-            <ul className="space-y-3 text-sm">
+            <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
               <li>
                 <Link href="/kategori/Hamak" className="hover:text-[#c8a165] transition">
                   Hamak Serisi
@@ -62,10 +62,10 @@ export default async function Footer() {
 
           {/* Customer Service & Legal */}
           <div>
-            <h3 className="text-sm font-bold tracking-wider text-white uppercase mb-5">
+            <h3 className="text-xs sm:text-sm font-bold tracking-wider text-white uppercase mb-3 sm:mb-5">
               Kurumsal & Yasal
             </h3>
-            <ul className="space-y-3 text-sm">
+            <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
               <li>
                 <Link href="/sozlesmeler/mesafeli-satis" className="hover:text-[#c8a165] transition">
                   Mesafeli Satış Sözleşmesi
@@ -91,10 +91,10 @@ export default async function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-sm font-bold tracking-wider text-white uppercase mb-5">
+            <h3 className="text-xs sm:text-sm font-bold tracking-wider text-white uppercase mb-3 sm:mb-5">
               İletişim
             </h3>
-            <div className="space-y-3 text-sm">
+            <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
               <p className="flex items-center gap-2">
                 <span className="text-[#c8a165]">☎</span> {contactPhone}
               </p>
@@ -117,9 +117,9 @@ export default async function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-16 border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+        <div className="mt-10 sm:mt-16 border-t border-white/5 pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] sm:text-xs text-zinc-500">
           <p>© 2026 LUMERA Outdoor. Tüm hakları saklıdır.</p>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             <Link href="/sozlesmeler/gizlilik-kvkk" className="hover:text-zinc-300">
               KVKK Aydınlatma Metni
             </Link>
