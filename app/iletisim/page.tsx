@@ -8,7 +8,7 @@ export default async function ContactPage() {
 
   const phone = settings.contactPhone || "0535 874 69 09";
   const email = settings.contactEmail || "lumeratasarim@gmail.com";
-  const address = settings.contactAddress || "İstanbul / Türkiye";
+  const address = settings.contactAddress || "Kastamonu / Tosya";
 
   return (
     <div className="min-h-screen bg-[#090a0f] text-[#f5efe6] flex flex-col justify-between">

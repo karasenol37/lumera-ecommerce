@@ -27,8 +27,8 @@ export default function BrandStory() {
             </div>
             <div className="h-8 w-px bg-white/10" />
             <div>
-              <span className="text-2xl sm:text-3xl font-extrabold gold-gradient-text block">10+ Yıl</span>
-              <span className="text-[11px] sm:text-xs text-zinc-400">Malzeme Ömrü</span>
+              <span className="text-2xl sm:text-3xl font-extrabold gold-gradient-text block">Köklü Tecrübe</span>
+              <span className="text-[11px] sm:text-xs text-zinc-400">Usta El İşçiliği</span>
             </div>
           </div>
         </div>

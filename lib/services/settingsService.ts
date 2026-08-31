@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
 export const DEFAULT_SETTINGS: Record<string, string> = {
-  topBannerText: "✨ 750 TL ve üzeri siparişlerde **Ücretsiz Kargo** | 💬 WhatsApp Sipariş & Destek: 0535 874 69 09",
+  topBannerText: "✨ Doğal Masif Ahşap & El İşçiliği Özel Tasarım Koleksiyonlar | 💬 WhatsApp Sipariş: 0535 874 69 09",
   announcementBadge: "LUMERA LUXURY COLLECTION",
   contactPhone: "0535 874 69 09",
   contactEmail: "lumeratasarim@gmail.com",

@@ -7,7 +7,7 @@ export default async function Hero() {
   const heroTitle = settings.heroTitle || "Gölgede Zarafet & Konfor";
   const heroSubtitle =
     settings.heroSubtitle ||
-    "Bahçenizi sıradan bir alandan çıkarıp, doğal masif ahşap ve üst düzey el işçiliğiyle üretilmiş ultra-lüks bir dinlenme vahasına dönüştürün.";
+    "Açık hava yaşam alanlarınızı, doğal masif ahşap ve üst düzey el işçiliğiyle üretilmiş ultra-lüks bir dinlenme vahasına dönüştürün.";
 
   return (
     <section className="relative min-h-[90vh] overflow-hidden flex items-center justify-center bg-[#090a0f]">

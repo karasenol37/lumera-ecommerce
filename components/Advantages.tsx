@@ -1,8 +1,8 @@
 const advantages = [
   {
     icon: "🚚",
-    title: "Hızlı & Ücretsiz Kargo",
-    text: "750 TL ve üzeri siparişlerde Türkiye geneline güvenli ve sigortalı hızlı teslimat.",
+    title: "Güvenli & Sigortalı Teslimat",
+    text: "Türkiye geneline özel korumalı sandık ambalajında güvenli ve sigortalı teslimat.",
   },
   {
     icon: "🛡️",

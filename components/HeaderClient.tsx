@@ -68,7 +68,7 @@ export default function HeaderClient({
   }
 
   const topBannerText =
-    settings?.topBannerText || "✨ 750 TL ve üzeri siparişlerde Ücretsiz Kargo";
+    settings?.topBannerText || "✨ Doğal Masif Ahşap & El İşçiliği Özel Tasarım Koleksiyonlar";
   const announcementBadge =
     settings?.announcementBadge || "LUMERA LUXURY COLLECTION";
   const contactPhone = settings?.contactPhone || "0535 874 69 09";

@@ -81,7 +81,7 @@ export default function AdminSettingsForm({
               name="topBannerText"
               value={settings.topBannerText || ""}
               onChange={handleChange}
-              placeholder="✨ 750 TL ve üzeri siparişlerde Ücretsiz Kargo"
+              placeholder="✨ Doğal Masif Ahşap & El İşçiliği Özel Tasarım Koleksiyonlar"
               className="w-full rounded-xl bg-[#090a0f] border border-white/10 p-4 text-sm text-white placeholder:text-zinc-600 focus:border-[#c8a165] focus:ring-2 focus:ring-[#c8a165]/20 outline-none transition-all"
             />
           </div>
