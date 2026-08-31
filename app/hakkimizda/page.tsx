@@ -78,7 +78,7 @@ export default function HakkimizdaPage() {
                 Fırınlanmış birinci sınıf Teak ve masif ahşap malzemeleri, usta marangozlarımızın el işçiliğiyle biçimlendiriyoruz. Güneş ışınlarına, neme ve tüm mevsim şartlarına dayanıklı kılan özel doğal yağ cilalarımız sayesinde koleksiyonlarımız yıllar boyu estetiğini korur.
               </p>
               <p>
-                Hamaklardan lüks şezlonglara, bahçe oturma gruplarından güneş şemsiyelerine kadar tasarladığımız her üründe konfor, dayanıklılık ve mimari zarafet ön plandadır.
+                Hamaklardan lüks şezlonglara, şemsiye modellerinden ateş çukurlarına kadar tasarladığımız her üründe konfor, dayanıklılık ve mimari zarafet ön plandadır.
               </p>
             </div>
           </div>

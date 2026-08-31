@@ -8,7 +8,7 @@ export default async function Footer() {
     settings.brandTagline || "Gölgede zarafet, dinlenmede ayrıcalık.";
   const contactPhone = settings.contactPhone || "0535 874 69 09";
   const contactEmail = settings.contactEmail || "lumeratasarim@gmail.com";
-  const contactAddress = settings.contactAddress || "İstanbul / Türkiye";
+  const contactAddress = settings.contactAddress || "Kastamonu / Tosya";
 
   return (
     <footer className="relative bg-[#06070a] border-t border-white/10 text-zinc-400 font-light pb-24 md:pb-16">
@@ -22,7 +22,7 @@ export default async function Footer() {
               </span>
             </Link>
             <p className="text-xs sm:text-sm leading-relaxed text-zinc-400 max-w-sm">
-              {brandTagline} Doğal masif ahşap ve lüks dış mekan mobilya koleksiyonu.
+              {brandTagline} Doğal masif ahşap ve lüks dinlenme koleksiyonu.
             </p>
             <div className="pt-1 flex items-center gap-4 text-zinc-400 text-base sm:text-lg">
               <span className="hover:text-[#c8a165] cursor-pointer transition">📷</span>
@@ -39,22 +39,22 @@ export default async function Footer() {
             <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
               <li>
                 <Link href="/kategori/Hamak" className="hover:text-[#c8a165] transition">
-                  Hamak Serisi
+                  Hamak
                 </Link>
               </li>
               <li>
-                <Link href="/kategori/Şezlong" className="hover:text-[#c8a165] transition">
-                  Lüks Şezlonglar
+                <Link href={`/kategori/${encodeURIComponent("Lüks Şezlong")}`} className="hover:text-[#c8a165] transition">
+                  Lüks Şezlong
                 </Link>
               </li>
               <li>
-                <Link href="/kategori/Bahçe Mobilyaları" className="hover:text-[#c8a165] transition">
-                  Bahçe Mobilyaları
+                <Link href={`/kategori/${encodeURIComponent("Şemsiye Modelleri")}`} className="hover:text-[#c8a165] transition">
+                  Şemsiye Modelleri
                 </Link>
               </li>
               <li>
-                <Link href="/kategori/Şemsiye" className="hover:text-[#c8a165] transition">
-                  Güneş Şemsiyeleri
+                <Link href={`/kategori/${encodeURIComponent("Ateş Çukurları")}`} className="hover:text-[#c8a165] transition">
+                  Ateş Çukurları
                 </Link>
               </li>
             </ul>

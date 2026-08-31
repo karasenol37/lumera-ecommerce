@@ -28,7 +28,7 @@ export default function RelatedProducts({
           İlginizi Çekebilecek Diğer Koleksiyon Parçaları
         </h2>
         <p className="mt-3 text-xs sm:text-sm text-zinc-400 font-light max-w-lg mx-auto">
-          Aynı üst düzey el işçiliği ve masif ahşap kalitesiyle üretilmiş alternatif bahçe ve teras mobilyalarımız.
+          Aynı üst düzey el işçiliği ve masif ahşap kalitesiyle üretilmiş alternatif dinlenme koleksiyonlarımız.
         </p>
       </div>
 

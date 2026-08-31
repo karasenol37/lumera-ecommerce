@@ -8,17 +8,17 @@ const categories = [
     desc: "Masif Ahşap Standlı & Lüks Pamuklu Hamaklar",
   },
   {
-    name: "Şemsiye",
-    image: "/images/categories/semsiye.jpg",
-    desc: "Güneş Korumalı Premium Cantilever Bahçe Şemsiyeleri",
-  },
-  {
-    name: "Şezlong",
+    name: "Lüks Şezlong",
     image: "/images/categories/sezlong.jpg",
-    desc: "Ergonomik Tasarımlı Teak Ağacı Havuz & Bahçe Şezlongları",
+    desc: "Ergonomik Tasarımlı Teak Ağacı Havuz & Teras Şezlongları",
   },
   {
-    name: "Ateş Çukuru",
+    name: "Şemsiye Modelleri",
+    image: "/images/categories/semsiye.jpg",
+    desc: "Güneş Korumalı Premium Dış Mekan Şemsiyeleri",
+  },
+  {
+    name: "Ateş Çukurları",
     image: "/images/categories/ates-cukuru.jpg",
     desc: "Akşam Keyfi İçin Özel Tasarım Çelik Ateş Çukurları",
   },

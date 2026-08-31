@@ -29,7 +29,7 @@ export default async function PrivacyKvkkPage() {
           <section>
             <h2 className="text-xl font-bold text-white mb-3">1. VERİ SORUMLUSU KİMLİĞİ</h2>
             <p>
-              LUMERA Outdoor & Bahçe Mobilyaları San. Tic. A.Ş. olarak kişisel verilerinizin güvenliğine ve gizliliğine büyük önem veriyoruz. İşbu Aydınlatma Metni, 6698 sayılı Kişisel Verilerin Korunması Kanunu (“KVKK”) uyarınca veri sorumlusu sıfatıyla hazırlanmıştır.
+              LUMERA Luxury Outdoor & Tasarım San. Tic. A.Ş. olarak kişisel verilerinizin güvenliğine ve gizliliğine büyük önem veriyoruz. İşbu Aydınlatma Metni, 6698 sayılı Kişisel Verilerin Korunması Kanunu (“KVKK”) uyarınca veri sorumlusu sıfatıyla hazırlanmıştır.
             </p>
           </section>
 

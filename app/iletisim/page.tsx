@@ -86,7 +86,7 @@ export default async function ContactPage() {
                 🏢
               </div>
               <h3 className="text-lg font-bold text-white">Adres & Üretim</h3>
-              <p className="text-xs text-zinc-400 mt-1">LUMERA Outdoor & Bahçe Mobilyaları</p>
+              <p className="text-xs text-zinc-400 mt-1">LUMERA Luxury Outdoor & Tasarım</p>
               <p className="text-sm text-zinc-300 mt-3 flex items-start gap-2">
                 <span>📍</span>
                 <span>{address}</span>

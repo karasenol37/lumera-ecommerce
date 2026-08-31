@@ -17,7 +17,7 @@ export default function BrandStory() {
           </p>
 
           <p className="mt-2 sm:mt-4 text-xs sm:text-base leading-relaxed text-zinc-400 font-light">
-            Bahçeler, geniş teraslar ve havuz başı yaşam alanları için dış mekan koşullarına dirençli, estetik ve maksimum konfor sağlayan ultra-lüks dinlenme ürünleri üretiyoruz.
+            Açık hava yaşam alanları, geniş teraslar ve havuz başı mekanlar için dış koşullara dirençli, estetik ve maksimum konfor sağlayan ultra-lüks dinlenme ürünleri üretiyoruz.
           </p>
 
           <div className="mt-6 sm:mt-8 flex items-center gap-6 sm:gap-8 border-t border-white/10 pt-6 sm:pt-8">

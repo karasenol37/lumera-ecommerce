@@ -33,7 +33,7 @@ export default async function DistanceSellingAgreementPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#090a0f] p-6 rounded-2xl border border-white/5">
               <div>
                 <h3 className="font-bold text-[#e5c184] mb-2">SATICI BİLGİLERİ</h3>
-                <p><strong>Unvan:</strong> LUMERA Outdoor & Bahçe Mobilyaları San. Tic. A.Ş.</p>
+                <p><strong>Unvan:</strong> LUMERA Luxury Outdoor & Tasarım San. Tic. A.Ş.</p>
                 <p><strong>Adres:</strong> {address}</p>
                 <p><strong>Telefon:</strong> {phone}</p>
                 <p><strong>E-posta:</strong> {email}</p>

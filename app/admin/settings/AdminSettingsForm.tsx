@@ -123,7 +123,7 @@ export default function AdminSettingsForm({
           Header ve Footer alanlarında gösterilen telefon numarası ve destek adreslerini düzenleyin.
         </p>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-3">
           <div>
             <label className="block text-xs font-semibold text-zinc-300 mb-2">
               WhatsApp / Telefon Numarası
@@ -146,6 +146,19 @@ export default function AdminSettingsForm({
               value={settings.contactEmail || ""}
               onChange={handleChange}
               placeholder="lumeratasarim@gmail.com"
+              className="w-full rounded-xl bg-[#090a0f] border border-white/10 p-4 text-sm text-white placeholder:text-zinc-600 focus:border-[#c8a165] focus:ring-2 focus:ring-[#c8a165]/20 outline-none transition-all"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-zinc-300 mb-2">
+              Konum / Adres (Şehir / İlçe)
+            </label>
+            <input
+              name="contactAddress"
+              value={settings.contactAddress || ""}
+              onChange={handleChange}
+              placeholder="Kastamonu / Tosya"
               className="w-full rounded-xl bg-[#090a0f] border border-white/10 p-4 text-sm text-white placeholder:text-zinc-600 focus:border-[#c8a165] focus:ring-2 focus:ring-[#c8a165]/20 outline-none transition-all"
             />
           </div>
@@ -197,7 +210,7 @@ export default function AdminSettingsForm({
               rows={3}
               value={settings.heroSubtitle || ""}
               onChange={handleChange}
-              placeholder="Bahçenizi sıradan bir alandan çıkarıp..."
+              placeholder="Açık hava yaşam alanlarınızı..."
               className="w-full rounded-xl bg-[#090a0f] border border-white/10 p-4 text-sm text-white placeholder:text-zinc-600 focus:border-[#c8a165] focus:ring-2 focus:ring-[#c8a165]/20 outline-none transition-all"
             />
           </div>

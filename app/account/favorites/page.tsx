@@ -34,7 +34,7 @@ export default async function AccountFavoritesPage() {
             Favori Ürünlerim
           </h1>
           <p className="mt-4 text-zinc-400 max-w-lg mx-auto text-sm sm:text-base font-light">
-            Beğendiğiniz ve daha sonra incelemek üzere kaydettiğiniz özel tasarım outdoor ve bahçe ürünleriniz.
+            Beğendiğiniz ve daha sonra incelemek üzere kaydettiğiniz özel tasarım outdoor dinlenme ürünleriniz.
           </p>
         </div>
 

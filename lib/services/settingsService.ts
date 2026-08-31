@@ -5,12 +5,12 @@ export const DEFAULT_SETTINGS: Record<string, string> = {
   announcementBadge: "LUMERA LUXURY COLLECTION",
   contactPhone: "0535 874 69 09",
   contactEmail: "lumeratasarim@gmail.com",
-  contactAddress: "İstanbul / Türkiye",
+  contactAddress: "Kastamonu / Tosya",
   whatsappNumber: "905358746909",
   heroBadge: "LUMERA PREMIUM OUTDOOR 2026",
   heroTitle: "Gölgede Zarafet & Konfor",
   heroSubtitle:
-    "Bahçenizi sıradan bir alandan çıkarıp, doğal masif ahşap ve üst düzey el işçiliğiyle üretilmiş ultra-lüks bir dinlenme vahasına dönüştürün.",
+    "Açık hava yaşam alanlarınızı, doğal masif ahşap ve üst düzey el işçiliğiyle üretilmiş ultra-lüks bir dinlenme vahasına dönüştürün.",
   brandTagline: "Gölgede zarafet, dinlenmede ayrıcalık.",
   onlinePaymentActive: "false",
 };

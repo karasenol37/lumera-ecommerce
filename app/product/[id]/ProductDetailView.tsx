@@ -21,6 +21,8 @@ type Product = {
   dimensions: string;
   stock: number;
   category?: string;
+  freeShipping?: boolean;
+  shippingFee?: number;
   images: ProductImage[];
 };
 
@@ -34,6 +36,8 @@ export default function ProductDetailView({ product }: { product: Product }) {
   const [activeTab, setActiveTab] = useState<"desc" | "specs" | "shipping">("desc");
 
   const favorited = isFavorite(product.id);
+  const isFreeShipping = product.freeShipping !== false;
+  const shippingFee = product.shippingFee || 0;
 
   // Gallery array
   const allImages = [
@@ -68,6 +72,9 @@ export default function ProductDetailView({ product }: { product: Product }) {
   }
 
   const oldPrice = Math.round(product.price * 1.25);
+  const whatsappUrl = `https://wa.me/905358746909?text=${encodeURIComponent(
+    `Merhaba LUMERA, ${product.name} ürünü hakkında (${quantity} adet) WhatsApp ile sipariş vermek ve bilgi almak istiyorum.`
+  )}`;
 
   return (
     <div className="w-full">
@@ -80,7 +87,7 @@ export default function ProductDetailView({ product }: { product: Product }) {
           <span>/</span>
           {product.category ? (
             <Link
-              href={`/kategori/${product.category}`}
+              href={`/kategori/${encodeURIComponent(product.category)}`}
               className="hover:text-[#c8a165] transition font-medium text-zinc-300"
             >
               {product.category}
@@ -232,12 +239,18 @@ export default function ProductDetailView({ product }: { product: Product }) {
               </div>
             </div>
 
-            <div className="rounded-2xl bg-emerald-500/10 border border-emerald-500/30 px-3.5 py-2 text-right">
-              <span className="block text-[10px] font-bold text-emerald-400 uppercase tracking-wider">
-                ÜCRETSİZ
+            <div className={`rounded-2xl px-3.5 py-2 text-right border ${
+              isFreeShipping
+                ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
+                : "bg-amber-500/10 border-amber-500/30 text-amber-300"
+            }`}>
+              <span className={`block text-[10px] font-bold uppercase tracking-wider ${
+                isFreeShipping ? "text-emerald-400" : "text-amber-400"
+              }`}>
+                {isFreeShipping ? "ÜCRETSİZ" : `₺${shippingFee}`}
               </span>
-              <span className="text-xs font-semibold text-emerald-300">
-                Sigortalı Kargo
+              <span className="text-xs font-semibold">
+                {isFreeShipping ? "Sigortalı Kargo" : "Kargo Ücreti"}
               </span>
             </div>
           </div>
@@ -280,7 +293,7 @@ export default function ProductDetailView({ product }: { product: Product }) {
             {/* Tab Content */}
             <div className="text-xs sm:text-sm leading-relaxed text-zinc-300 font-light">
               {activeTab === "desc" && (
-                <p>{product.description || "Bu özel tasarım ürün, dış mekan koşullarına yüksek dayanıklılık gösteren fırınlanmış masif ahşaptan üretilmiştir. Bahçenize ve terasınıza şıklık katmak üzere tasarlanmıştır."}</p>
+                <p>{product.description || "Bu özel tasarım ürün, dış mekan koşullarına yüksek dayanıklılık gösteren fırınlanmış masif ahşaptan üretilmiştir. Dinlenme alanlarınıza şıklık katmak üzere tasarlanmıştır."}</p>
               )}
 
               {activeTab === "specs" && (
@@ -306,35 +319,37 @@ export default function ProductDetailView({ product }: { product: Product }) {
 
               {activeTab === "shipping" && (
                 <div className="space-y-2">
-                  <p>• Türkiye geneli <strong>Özel Korumalı Ahşap Sandık</strong> ambalajı ile ücretsiz kargolanır.</p>
+                  <p>
+                    • Türkiye geneli <strong>Özel Korumalı Ahşap Sandık</strong> ambalajı ile {isFreeShipping ? "ücretsiz teslim edilir." : `₺${shippingFee} kargo bedeli ile gönderilir.`}
+                  </p>
                   <p>• Ürünlerimiz <strong>2 Yıl Lumera Üretici Garantisi</strong> kapsamındadır.</p>
-                  <p>• 14 gün içinde koşulsuz ücretsiz iade imkanı sunulmaktadır.</p>
+                  <p>• 14 gün içinde koşulsuz iade imkanı sunulmaktadır.</p>
                 </div>
               )}
             </div>
           </div>
 
           {/* Quantity & Add to Cart Controls */}
-          <div className="space-y-4 pt-2">
-            <div className="flex items-center gap-4">
+          <div className="space-y-3.5 pt-2">
+            <div className="flex items-center gap-3 sm:gap-4">
               {/* Quantity Stepper */}
-              <div className="flex items-center rounded-full border border-white/10 bg-[#121420] p-1 shadow-lg">
+              <div className="flex items-center rounded-full border border-white/10 bg-[#121420] p-1 shadow-lg shrink-0">
                 <button
                   type="button"
                   onClick={() => handleQuantityChange(-1)}
                   disabled={quantity <= 1}
-                  className="flex h-11 w-11 items-center justify-center rounded-full text-lg font-bold text-white hover:bg-white/10 disabled:opacity-30 transition"
+                  className="flex h-11 w-11 items-center justify-center rounded-full text-lg font-bold text-white hover:bg-white/10 disabled:opacity-30 transition cursor-pointer"
                 >
                   −
                 </button>
-                <span className="w-10 text-center font-bold text-white text-base">
+                <span className="w-9 sm:w-10 text-center font-bold text-white text-base">
                   {quantity}
                 </span>
                 <button
                   type="button"
                   onClick={() => handleQuantityChange(1)}
                   disabled={quantity >= product.stock}
-                  className="flex h-11 w-11 items-center justify-center rounded-full text-lg font-bold text-white hover:bg-white/10 disabled:opacity-30 transition"
+                  className="flex h-11 w-11 items-center justify-center rounded-full text-lg font-bold text-white hover:bg-white/10 disabled:opacity-30 transition cursor-pointer"
                 >
                   +
                 </button>
@@ -345,7 +360,7 @@ export default function ProductDetailView({ product }: { product: Product }) {
                 type="button"
                 onClick={handleAddToCart}
                 disabled={product.stock === 0}
-                className={`flex-1 rounded-full py-4 px-6 text-sm font-extrabold transition-all duration-300 shadow-2xl flex items-center justify-center gap-2 ${
+                className={`flex-1 rounded-full py-4 px-6 text-xs sm:text-sm font-extrabold transition-all duration-300 shadow-2xl flex items-center justify-center gap-2 cursor-pointer ${
                   product.stock === 0
                     ? "bg-zinc-800 text-zinc-500 cursor-not-allowed border border-white/5"
                     : added
@@ -371,15 +386,25 @@ export default function ProductDetailView({ product }: { product: Product }) {
               </button>
             </div>
 
-            {/* WhatsApp Quick Order Button */}
+            {/* WhatsApp Quick Order Button - Highly prominent, eye-catching & bold */}
             <a
-              href={`https://wa.me/905358746909?text=${encodeURIComponent(`Merhaba, ${product.name} ürünü hakkında (${quantity} adet) sipariş vermek ve bilgi almak istiyorum.`)}`}
+              href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-full bg-[#25D366]/15 border border-[#25D366]/40 text-[#25D366] font-bold text-xs hover:bg-[#25D366] hover:text-black transition duration-300 shadow-lg"
+              className="group relative flex items-center justify-center gap-3 w-full py-4 px-6 rounded-full bg-[#25D366] text-black font-black text-sm sm:text-base shadow-[0_6px_25px_rgba(37,211,102,0.45)] hover:bg-[#20bd5a] hover:scale-[1.02] active:scale-95 transition-all duration-300 border border-white/20 overflow-hidden"
             >
-              <span className="text-base">💬</span>
-              <span>WhatsApp ile Hızlı Sipariş & Bilgi Al</span>
+              {/* Shine effect */}
+              <span className="absolute inset-0 w-1/2 h-full bg-white/20 skew-x-12 -translate-x-full group-hover:translate-x-[300%] transition-transform duration-1000 ease-out pointer-events-none" />
+
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-black text-white text-base font-normal shrink-0 shadow-md">
+                💬
+              </span>
+              <span className="tracking-wide">
+                WhatsApp ile Sipariş Ver & Bilgi Al
+              </span>
+              <span className="text-sm font-extrabold transition-transform group-hover:translate-x-1">
+                →
+              </span>
             </a>
           </div>
 
@@ -387,8 +412,12 @@ export default function ProductDetailView({ product }: { product: Product }) {
           <div className="grid grid-cols-3 gap-2 sm:gap-3 border-t border-white/10 pt-6">
             <div className="rounded-2xl border border-white/5 bg-[#121420]/40 p-2.5 sm:p-3 text-center">
               <span className="text-lg sm:text-xl">🚚</span>
-              <h4 className="mt-1 text-[10px] sm:text-[11px] font-bold text-white leading-tight">Ücretsiz Kargo</h4>
-              <p className="mt-0.5 text-[9px] sm:text-[10px] text-zinc-500 hidden xs:block">750 TL Üzeri</p>
+              <h4 className="mt-1 text-[10px] sm:text-[11px] font-bold text-white leading-tight">
+                {isFreeShipping ? "Ücretsiz Kargo" : `₺${shippingFee} Kargo`}
+              </h4>
+              <p className="mt-0.5 text-[9px] sm:text-[10px] text-zinc-500 hidden xs:block">
+                {isFreeShipping ? "Tüm Türkiye" : "Hızlı Gönderim"}
+              </p>
             </div>
             <div className="rounded-2xl border border-white/5 bg-[#121420]/40 p-2.5 sm:p-3 text-center">
               <span className="text-lg sm:text-xl">🛡️</span>
@@ -404,21 +433,26 @@ export default function ProductDetailView({ product }: { product: Product }) {
         </div>
       </div>
 
-      {/* Sticky Mobile Bottom Add-to-Cart Bar (Above Mobile Nav Bar) */}
-      <div className="md:hidden fixed bottom-[57px] left-0 right-0 z-30 bg-[#090a0f]/95 backdrop-blur-xl border-t border-white/10 p-3 px-4 shadow-[0_-8px_20px_rgba(0,0,0,0.5)]">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <span className="text-[10px] text-zinc-400 block font-light">Toplam Tutar</span>
-            <span className="text-lg font-black gold-gradient-text">
-              ₺{(product.price * quantity).toLocaleString("tr-TR")}
-            </span>
-          </div>
+      {/* Sticky Mobile Bottom Dual Action Bar (Visible only on mobile devices) */}
+      <div className="md:hidden fixed bottom-[57px] left-0 right-0 z-30 bg-[#090a0f]/95 backdrop-blur-xl border-t border-white/10 p-2.5 px-3 shadow-[0_-8px_25px_rgba(0,0,0,0.7)]">
+        <div className="flex items-center gap-2">
+          {/* Mobile WhatsApp Quick Button */}
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 flex items-center justify-center gap-1.5 py-3 px-3 rounded-full bg-[#25D366] text-black font-extrabold text-xs shadow-[0_4px_15px_rgba(37,211,102,0.4)] active:scale-95 transition"
+          >
+            <span className="text-sm">💬</span>
+            <span className="truncate">WhatsApp Sipariş</span>
+          </a>
 
+          {/* Mobile Add to Cart Button */}
           <button
             type="button"
             onClick={handleAddToCart}
             disabled={product.stock === 0}
-            className={`flex-1 max-w-[200px] rounded-full py-3 px-4 text-xs font-extrabold transition-all shadow-xl flex items-center justify-center gap-1.5 ${
+            className={`flex-1 rounded-full py-3 px-3 text-xs font-extrabold transition-all shadow-xl flex items-center justify-center gap-1.5 cursor-pointer ${
               product.stock === 0
                 ? "bg-zinc-800 text-zinc-500 cursor-not-allowed"
                 : added
@@ -435,7 +469,8 @@ export default function ProductDetailView({ product }: { product: Product }) {
               </>
             ) : (
               <>
-                <span>🛍️ Sepete Ekle</span>
+                <span>🛍️</span>
+                <span>Sepete Ekle</span>
               </>
             )}
           </button>
@@ -444,3 +479,4 @@ export default function ProductDetailView({ product }: { product: Product }) {
     </div>
   );
 }
+

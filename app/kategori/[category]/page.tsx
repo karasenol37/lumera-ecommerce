@@ -24,9 +24,20 @@ export default async function CategoryPage({
   const { category } = await params;
   const decodedCategory = decodeURIComponent(category);
 
+  let categoryFilter: string[] = [decodedCategory];
+  if (decodedCategory === "Şemsiye Modelleri" || decodedCategory === "Şemsiye") {
+    categoryFilter = ["Şemsiye Modelleri", "Şemsiye", "Güneş Şemsiyeleri"];
+  } else if (decodedCategory === "Lüks Şezlong" || decodedCategory === "Şezlong") {
+    categoryFilter = ["Lüks Şezlong", "Şezlong"];
+  } else if (decodedCategory === "Ateş Çukurları" || decodedCategory === "Ateş Çukuru") {
+    categoryFilter = ["Ateş Çukurları", "Ateş Çukuru"];
+  } else if (decodedCategory === "Hamak") {
+    categoryFilter = ["Hamak", "Hamak Serisi"];
+  }
+
   const products = await prisma.product.findMany({
     where: {
-      category: decodedCategory,
+      category: { in: categoryFilter },
       isActive: true,
     },
     orderBy: {

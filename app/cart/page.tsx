@@ -58,7 +58,7 @@ export default function CartPage() {
             </h2>
 
             <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-zinc-400 max-w-md mx-auto font-light">
-              Lüks bahçe mobilyaları ve konforlu hamak koleksiyonumuzu keşfederek alışverişe başlayabilirsiniz.
+              Lüks hamak, şezlong, şemsiye ve ateş çukuru koleksiyonumuzu keşfederek alışverişe başlayabilirsiniz.
             </p>
 
             <Link

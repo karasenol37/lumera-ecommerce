@@ -23,11 +23,10 @@ type HeaderProps = {
 };
 
 const navCategories = [
-  { name: "Hamak Serisi", slug: "Hamak", icon: "🌴" },
-  { name: "Lüks Şezlonglar", slug: "Şezlong", icon: "☀️" },
-  { name: "Güneş Şemsiyeleri", slug: "Şemsiye", icon: "⛱️" },
-  { name: "Ateş Çukurları", slug: "Ateş Çukuru", icon: "🔥" },
-  { name: "Bahçe Mobilyaları", slug: "Bahçe Mobilyaları", icon: "🪵" },
+  { name: "Hamak", slug: "Hamak", icon: "🌴" },
+  { name: "Lüks Şezlong", slug: "Lüks Şezlong", icon: "☀️" },
+  { name: "Şemsiye Modelleri", slug: "Şemsiye Modelleri", icon: "⛱️" },
+  { name: "Ateş Çukurları", slug: "Ateş Çukurları", icon: "🔥" },
 ];
 
 export default function HeaderClient({

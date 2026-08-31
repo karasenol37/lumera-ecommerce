@@ -19,9 +19,11 @@ model Product {
   description String
   material    String
   dimensions  String
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isActive     Boolean  @default(true)
+  freeShipping Boolean  @default(true)
+  shippingFee  Float    @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   images     ProductImage[]
   orderItems OrderItem[]

@@ -107,6 +107,14 @@ export async function PUT(
     ? formData.get("isActive") === "true"
     : existingProduct.isActive;
 
+  const freeShipping = formData.has("freeShipping")
+    ? formData.get("freeShipping") === "true"
+    : (existingProduct as any).freeShipping ?? true;
+
+  const shippingFee = freeShipping
+    ? 0
+    : Number(formData.get("shippingFee") ?? (existingProduct as any).shippingFee ?? 0);
+
   const dataToUpdate: any = {
     name,
     slug,
@@ -118,6 +126,8 @@ export async function PUT(
     material,
     dimensions,
     isActive,
+    freeShipping,
+    shippingFee,
   };
 
   // Ana Görsel Güncelleme

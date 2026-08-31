@@ -10,6 +10,8 @@ type ProductCardProps = {
   oldPrice: number;
   stock: number;
   image: string;
+  freeShipping?: boolean;
+  shippingFee?: number;
 };
 
 export default function ProductCard({
@@ -19,6 +21,7 @@ export default function ProductCard({
   oldPrice,
   stock,
   image,
+  freeShipping = true,
 }: ProductCardProps) {
   const discount =
     oldPrice > price
@@ -50,6 +53,12 @@ export default function ProductCard({
             "Tükendi"
           )}
         </span>
+
+        {freeShipping && (
+          <span className="rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 sm:px-2.5 sm:py-0.5 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider backdrop-blur-md">
+            Ücretsiz Kargo
+          </span>
+        )}
       </div>
 
       {/* Favorite Button Overlay */}

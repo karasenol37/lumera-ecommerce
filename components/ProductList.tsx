@@ -33,7 +33,7 @@ export default async function ProductList({ category, sort }: ProductListProps) 
             Premium Dış Mekan Ürünleri
           </h2>
           <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-zinc-400 font-light max-w-lg">
-            Bahçeniz, terasınız ve havuz kenarınız için tasarlanmış dayanıklı ve lüks mobilyalar.
+            Açık hava yaşam alanlarınız, terasınız ve havuz kenarınız için tasarlanmış dayanıklı ve lüks dinlenme koleksiyonları.
           </p>
         </div>
       </div>

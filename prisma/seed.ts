@@ -15,23 +15,25 @@ async function main() {
         price: 12990,
         oldPrice: 15990,
         stock: 10,
+        freeShipping: true,
+        shippingFee: 0,
         image: "/images/products/hamak.jpg",
         description:
-          "Doğal teak ağacından üretilmiş, bahçenize şıklık katacak premium hamak.",
+          "Doğal teak ağacından üretilmiş, açık hava alanlarınıza şıklık katacak premium hamak.",
         material:
           "Teak ahşap + dayanıklı kumaş",
         dimensions:
           "250 x 120 cm",
       },
-
-
       {
-        name: "Premium Bahçe Şemsiyesi",
-        slug: "premium-bahce-semsiyesi",
-        category: "Şemsiye",
+        name: "Premium Şemsiye Modeli",
+        slug: "premium-semsiye-modeli",
+        category: "Şemsiye Modelleri",
         price: 8490,
         oldPrice: 9990,
         stock: 10,
+        freeShipping: true,
+        shippingFee: 0,
         image: "/images/products/semsiye.jpg",
         description:
           "Güneş korumalı, dayanıklı dış mekan şemsiyesi.",
@@ -40,35 +42,35 @@ async function main() {
         dimensions:
           "300 cm çap",
       },
-
-
       {
-        name: "Konfor Ahşap Şezlong",
-        slug: "konfor-ahsap-sezlong",
-        category: "Şezlong",
+        name: "Lüks Ahşap Şezlong",
+        slug: "luks-ahsap-sezlong",
+        category: "Lüks Şezlong",
         price: 5990,
         oldPrice: 6990,
         stock: 10,
+        freeShipping: true,
+        shippingFee: 0,
         image: "/images/products/sezlong.jpg",
         description:
-          "Bahçe ve teras kullanımı için ergonomik şezlong.",
+          "Teras ve havuz kenarı kullanımı için ergonomik lüks şezlong.",
         material:
           "Masif ahşap",
         dimensions:
           "190 x 70 cm",
       },
-
-
       {
-        name: "Bahçe Ateş Çukuru",
-        slug: "bahce-ates-cukuru",
-        category: "Ateş Çukuru",
+        name: "Modern Ateş Çukuru",
+        slug: "modern-ates-cukuru",
+        category: "Ateş Çukurları",
         price: 7490,
         oldPrice: 8990,
         stock: 10,
+        freeShipping: true,
+        shippingFee: 0,
         image: "/images/products/ates-cukuru.jpg",
         description:
-          "Bahçenizde sıcak atmosfer oluşturacak modern ateş çukuru.",
+          "Açık havada sıcak atmosfer oluşturacak modern ateş çukuru.",
         material:
           "Çelik",
         dimensions:

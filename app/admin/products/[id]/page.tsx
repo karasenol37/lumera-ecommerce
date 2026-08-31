@@ -32,6 +32,8 @@ export default function EditProductPage() {
     material: "",
     dimensions: "",
     isActive: true,
+    freeShipping: true,
+    shippingFee: "0",
   });
 
   const [currentMainImage, setCurrentMainImage] = useState<string | null>(null);
@@ -62,10 +64,16 @@ export default function EditProductPage() {
 
         const p = data.product;
 
+        // Map older category names if necessary
+        let categoryName = p.category || "Hamak";
+        if (categoryName === "Şemsiye") categoryName = "Şemsiye Modelleri";
+        if (categoryName === "Şezlong") categoryName = "Lüks Şezlong";
+        if (categoryName === "Ateş Çukuru") categoryName = "Ateş Çukurları";
+
         setForm({
           name: p.name || "",
           slug: p.slug || "",
-          category: p.category || "Hamak",
+          category: categoryName,
           price: p.price !== undefined ? String(p.price) : "",
           oldPrice: p.oldPrice !== undefined ? String(p.oldPrice) : "",
           stock: p.stock !== undefined ? String(p.stock) : "0",
@@ -73,6 +81,8 @@ export default function EditProductPage() {
           material: p.material || "",
           dimensions: p.dimensions || "",
           isActive: p.isActive ?? true,
+          freeShipping: p.freeShipping ?? true,
+          shippingFee: p.shippingFee !== undefined ? String(p.shippingFee) : "0",
         });
 
         setCurrentMainImage(p.image || null);
@@ -98,7 +108,7 @@ export default function EditProductPage() {
       const checked = (e.target as HTMLInputElement).checked;
       setForm((prev) => ({ ...prev, [name]: checked }));
     } else {
-      setForm((prev) => ({ ...prev, [value ? name : name]: value }));
+      setForm((prev) => ({ ...prev, [name]: value }));
     }
   }
 
@@ -164,6 +174,9 @@ export default function EditProductPage() {
       formData.append("material", form.material);
       formData.append("dimensions", form.dimensions);
       formData.append("isActive", String(form.isActive));
+
+      formData.append("freeShipping", String(form.freeShipping));
+      formData.append("shippingFee", form.freeShipping ? "0" : form.shippingFee);
 
       if (newMainImage) {
         formData.append("mainImage", newMainImage);
@@ -340,9 +353,9 @@ export default function EditProductPage() {
                 className="w-full rounded-xl border border-white/10 bg-[#090a0f] p-4 text-sm text-white focus:border-[#c8a165] focus:outline-none"
               >
                 <option value="Hamak">Hamak</option>
-                <option value="Şemsiye">Şemsiye</option>
-                <option value="Şezlong">Şezlong</option>
-                <option value="Ateş Çukuru">Ateş Çukuru</option>
+                <option value="Lüks Şezlong">Lüks Şezlong</option>
+                <option value="Şemsiye Modelleri">Şemsiye Modelleri</option>
+                <option value="Ateş Çukurları">Ateş Çukurları</option>
               </select>
             </div>
 
@@ -390,6 +403,60 @@ export default function EditProductPage() {
                 placeholder="15"
                 className="w-full rounded-xl border border-white/10 bg-[#090a0f] p-4 text-sm text-white focus:border-[#c8a165] focus:outline-none"
               />
+            </div>
+          </div>
+
+          {/* Kargo Ayarları */}
+          <div className="rounded-xl border border-white/10 bg-[#090a0f] p-5 space-y-4">
+            <h4 className="text-sm font-bold text-[#e5c184] uppercase tracking-wider flex items-center gap-2">
+              <span>🚚</span> Kargo Ayarları
+            </h4>
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-6">
+                <label className="flex items-center gap-2.5 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="shippingType"
+                    checked={form.freeShipping}
+                    onChange={() => setForm((prev) => ({ ...prev, freeShipping: true, shippingFee: "0" }))}
+                    className="w-4 h-4 text-[#c8a165] focus:ring-[#c8a165]"
+                  />
+                  <span className="text-sm font-medium text-emerald-400">
+                    ✓ Ücretsiz Kargo
+                  </span>
+                </label>
+
+                <label className="flex items-center gap-2.5 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="shippingType"
+                    checked={!form.freeShipping}
+                    onChange={() => setForm((prev) => ({ ...prev, freeShipping: false }))}
+                    className="w-4 h-4 text-[#c8a165] focus:ring-[#c8a165]"
+                  />
+                  <span className="text-sm font-medium text-zinc-300">
+                    Ücretli Kargo
+                  </span>
+                </label>
+              </div>
+
+              {!form.freeShipping && (
+                <div className="flex items-center gap-2">
+                  <label className="text-xs font-semibold text-zinc-400">
+                    Kargo Ücreti (TL):
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    name="shippingFee"
+                    value={form.shippingFee}
+                    onChange={handleChange}
+                    placeholder="150"
+                    className="w-32 rounded-lg border border-white/10 bg-[#121420] p-2.5 text-sm text-white focus:border-[#c8a165] focus:outline-none"
+                  />
+                </div>
+              )}
             </div>
           </div>
 

@@ -13,9 +13,9 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "LUMERA | Premium Outdoor & Lüks Bahçe Mobilyaları",
+  title: "LUMERA | Premium Outdoor & Lüks Dinlenme Koleksiyonları",
   description:
-    "Doğal ahşap ve lüks tasarımın buluştuğu hamak, şezlong ve outdoor mobilya koleksiyonu.",
+    "Doğal ahşap ve lüks tasarımın buluştuğu hamak, şezlong, şemsiye ve ateş çukuru koleksiyonu.",
 };
 
 export default async function RootLayout({
