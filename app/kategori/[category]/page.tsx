@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import ProductCard from "@/components/ProductCard";
 import { prisma } from "@/lib/prisma";
-
+import JsonLd from "@/components/JsonLd";
+import {
+  getSiteUrl,
+  generateCollectionSchema,
+  generateBreadcrumbSchema,
+  SITE_NAME,
+} from "@/lib/seo";
 
 type CategoryProduct = {
   id: number;
@@ -12,15 +19,53 @@ type CategoryProduct = {
   image: string;
 };
 
-
-
-export default async function CategoryPage({
-  params,
-}: {
+type Props = {
   params: Promise<{
     category: string;
   }>;
-}) {
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { category } = await params;
+  const decodedCategory = decodeURIComponent(category);
+  const siteUrl = getSiteUrl();
+  const canonicalUrl = `${siteUrl}/kategori/${encodeURIComponent(decodedCategory)}`;
+
+  const title = `${decodedCategory} Modelleri & Fiyatları`;
+  const description = `En şık ve lüks masif ahşap ${decodedCategory} çeşitleri. Özel tasarım, dayanıklı dış mekan zanaatı ve Türkiye geneli ücretsiz kargo avantajıyla keşfedin.`;
+
+  return {
+    title,
+    description,
+    keywords: [
+      decodedCategory,
+      `${decodedCategory} modelleri`,
+      `${decodedCategory} fiyatları`,
+      "masif ahşap bahçe mobilyası",
+      "lüks outdoor",
+      "el yapımı",
+      "lumera",
+    ],
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: `${title} | ${SITE_NAME}`,
+      description,
+      url: canonicalUrl,
+      siteName: SITE_NAME,
+      locale: "tr_TR",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${SITE_NAME}`,
+      description,
+    },
+  };
+}
+
+export default async function CategoryPage({ params }: Props) {
   const { category } = await params;
   const decodedCategory = decodeURIComponent(category);
 
@@ -45,8 +90,28 @@ export default async function CategoryPage({
     },
   });
 
+  const siteUrl = getSiteUrl();
+  const collectionSchema = generateCollectionSchema(
+    decodedCategory,
+    products,
+    siteUrl
+  );
+  const breadcrumbSchema = generateBreadcrumbSchema(
+    [
+      { name: "Ana Sayfa", url: "/" },
+      {
+        name: decodedCategory,
+        url: `/kategori/${encodeURIComponent(decodedCategory)}`,
+      },
+    ],
+    siteUrl
+  );
+
   return (
     <main className="min-h-screen bg-[#090a0f] px-3.5 sm:px-6 py-10 sm:py-16 pb-28 md:pb-16 text-white">
+      <JsonLd data={collectionSchema} />
+      <JsonLd data={breadcrumbSchema} />
+
       <div className="mx-auto max-w-7xl">
         <p className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] sm:tracking-[0.3em] text-[#c8a165] uppercase">
           LUMERA COLLECTION
@@ -79,4 +144,4 @@ export default async function CategoryPage({
       </div>
     </main>
   );
-}
+}

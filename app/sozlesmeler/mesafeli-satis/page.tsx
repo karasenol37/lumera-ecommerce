@@ -1,6 +1,27 @@
+import type { Metadata } from "next";
 import HeaderWrapper from "@/components/HeaderWrapper";
 import Footer from "@/components/Footer";
 import { getSiteSettings } from "@/lib/services/settingsService";
+import { getSiteUrl, SITE_NAME } from "@/lib/seo";
+
+const siteUrl = getSiteUrl();
+
+export const metadata: Metadata = {
+  title: "Mesafeli Satış Sözleşmesi",
+  description:
+    "6502 sayılı Tüketicinin Korunması Hakkında Kanun uyarınca hazırlanan resmi Mesafeli Satış Sözleşmesi.",
+  alternates: {
+    canonical: `${siteUrl}/sozlesmeler/mesafeli-satis`,
+  },
+  openGraph: {
+    title: `Mesafeli Satış Sözleşmesi | ${SITE_NAME}`,
+    description: "LUMERA resmi mesafeli satış sözleşmesi metni.",
+    url: `${siteUrl}/sozlesmeler/mesafeli-satis`,
+    siteName: SITE_NAME,
+    locale: "tr_TR",
+    type: "article",
+  },
+};
 
 export default async function DistanceSellingAgreementPage() {
   const settings = await getSiteSettings();
@@ -12,6 +33,7 @@ export default async function DistanceSellingAgreementPage() {
   return (
     <div className="min-h-screen bg-[#090a0f] text-[#f5efe6] flex flex-col justify-between">
       <HeaderWrapper />
+
 
       <main className="flex-1 mx-auto max-w-5xl px-6 py-20 w-full">
         <div className="mb-12 text-center">

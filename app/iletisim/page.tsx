@@ -1,7 +1,35 @@
+import type { Metadata } from "next";
 import HeaderWrapper from "@/components/HeaderWrapper";
 import Footer from "@/components/Footer";
 import { getSiteSettings } from "@/lib/services/settingsService";
 import ContactForm from "./ContactForm";
+import JsonLd from "@/components/JsonLd";
+import {
+  getSiteUrl,
+  generateContactPageSchema,
+  generateBreadcrumbSchema,
+  SITE_NAME,
+} from "@/lib/seo";
+
+const siteUrl = getSiteUrl();
+
+export const metadata: Metadata = {
+  title: "İletişim & WhatsApp Sipariş Hattı",
+  description:
+    "LUMERA müşteri hizmetleri, adres, telefon ve doğrudan WhatsApp sipariş hattı. Masif ahşap bahçe mobilyaları hakkında bilgi alın.",
+  alternates: {
+    canonical: `${siteUrl}/iletisim`,
+  },
+  openGraph: {
+    title: `İletişim | ${SITE_NAME}`,
+    description:
+      "LUMERA müşteri hizmetleri, telefon ve doğrudan WhatsApp sipariş hattı.",
+    url: `${siteUrl}/iletisim`,
+    siteName: SITE_NAME,
+    locale: "tr_TR",
+    type: "website",
+  },
+};
 
 export default async function ContactPage() {
   const settings = await getSiteSettings();
@@ -10,9 +38,21 @@ export default async function ContactPage() {
   const email = settings.contactEmail || "lumeratasarim@gmail.com";
   const address = settings.contactAddress || "Kastamonu / Tosya";
 
+  const contactSchema = generateContactPageSchema(siteUrl, settings);
+  const breadcrumbSchema = generateBreadcrumbSchema(
+    [
+      { name: "Ana Sayfa", url: "/" },
+      { name: "İletişim", url: "/iletisim" },
+    ],
+    siteUrl
+  );
+
   return (
     <div className="min-h-screen bg-[#090a0f] text-[#f5efe6] flex flex-col justify-between">
+      <JsonLd data={contactSchema} />
+      <JsonLd data={breadcrumbSchema} />
       <HeaderWrapper />
+
 
       <main className="flex-1 mx-auto max-w-7xl px-4 sm:px-6 py-12 sm:py-20 w-full pb-24 md:pb-20">
         <div className="mb-10 sm:mb-16 text-center">

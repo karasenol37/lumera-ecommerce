@@ -1,17 +1,51 @@
+import type { Metadata } from "next";
 import HeaderWrapper from "@/components/HeaderWrapper";
 import Footer from "@/components/Footer";
 import Link from "next/link";
+import JsonLd from "@/components/JsonLd";
+import {
+  getSiteUrl,
+  generateAboutPageSchema,
+  generateBreadcrumbSchema,
+  SITE_NAME,
+} from "@/lib/seo";
 
-export const metadata = {
-  title: "Hakkımızda | LUMERA Luxury Outdoor",
+const siteUrl = getSiteUrl();
+
+export const metadata: Metadata = {
+  title: "Hakkımızda | Masif Ahşap ve Zanaatın Hikayesi",
   description:
-    "Doğal masif ahşap, üst düzey zanaat ve modern estetiğin buluştuğu LUMERA Outdoor hikayesini keşfedin.",
+    "Doğal masif ahşap, üst düzey el işçiliği ve modern estetiğin buluştuğu LUMERA Outdoor hikayesini keşfedin. Açık havada lüks ve konfor.",
+  alternates: {
+    canonical: `${siteUrl}/hakkimizda`,
+  },
+  openGraph: {
+    title: `Hakkımızda | ${SITE_NAME}`,
+    description:
+      "Doğal masif ahşap ve üst düzey zanaatın buluştuğu LUMERA Outdoor hikayesi.",
+    url: `${siteUrl}/hakkimizda`,
+    siteName: SITE_NAME,
+    locale: "tr_TR",
+    type: "website",
+  },
 };
 
 export default function HakkimizdaPage() {
+  const aboutSchema = generateAboutPageSchema(siteUrl);
+  const breadcrumbSchema = generateBreadcrumbSchema(
+    [
+      { name: "Ana Sayfa", url: "/" },
+      { name: "Hakkımızda", url: "/hakkimizda" },
+    ],
+    siteUrl
+  );
+
   return (
     <div className="min-h-screen bg-[#090a0f] text-[#f5efe6] flex flex-col justify-between">
+      <JsonLd data={aboutSchema} />
+      <JsonLd data={breadcrumbSchema} />
       <HeaderWrapper />
+
 
       <main className="flex-1 mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24 w-full space-y-24">
         {/* Hero Section */}

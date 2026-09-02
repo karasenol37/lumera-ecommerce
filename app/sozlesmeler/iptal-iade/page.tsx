@@ -1,6 +1,27 @@
+import type { Metadata } from "next";
 import HeaderWrapper from "@/components/HeaderWrapper";
 import Footer from "@/components/Footer";
 import { getSiteSettings } from "@/lib/services/settingsService";
+import { getSiteUrl, SITE_NAME } from "@/lib/seo";
+
+const siteUrl = getSiteUrl();
+
+export const metadata: Metadata = {
+  title: "İptal ve İade Koşulları",
+  description:
+    "LUMERA siparişlerinizde geçerli iade, değişim ve cayma hakkı koşulları hakkında detaylı bilgi.",
+  alternates: {
+    canonical: `${siteUrl}/sozlesmeler/iptal-iade`,
+  },
+  openGraph: {
+    title: `İptal ve İade Koşulları | ${SITE_NAME}`,
+    description: "LUMERA iade ve değişim süreçleri bilgilendirmesi.",
+    url: `${siteUrl}/sozlesmeler/iptal-iade`,
+    siteName: SITE_NAME,
+    locale: "tr_TR",
+    type: "article",
+  },
+};
 
 export default async function ReturnPolicyPage() {
   const settings = await getSiteSettings();
@@ -11,6 +32,7 @@ export default async function ReturnPolicyPage() {
   return (
     <div className="min-h-screen bg-[#090a0f] text-[#f5efe6] flex flex-col justify-between">
       <HeaderWrapper />
+
 
       <main className="flex-1 mx-auto max-w-5xl px-6 py-20 w-full">
         <div className="mb-12 text-center">

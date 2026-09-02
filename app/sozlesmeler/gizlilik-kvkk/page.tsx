@@ -1,6 +1,27 @@
+import type { Metadata } from "next";
 import HeaderWrapper from "@/components/HeaderWrapper";
 import Footer from "@/components/Footer";
 import { getSiteSettings } from "@/lib/services/settingsService";
+import { getSiteUrl, SITE_NAME } from "@/lib/seo";
+
+const siteUrl = getSiteUrl();
+
+export const metadata: Metadata = {
+  title: "Gizlilik Politikası ve KVKK Aydınlatma Metni",
+  description:
+    "LUMERA kişisel verilerin korunması kanunu (KVKK) ve gizlilik politikası detayları.",
+  alternates: {
+    canonical: `${siteUrl}/sozlesmeler/gizlilik-kvkk`,
+  },
+  openGraph: {
+    title: `Gizlilik ve KVKK | ${SITE_NAME}`,
+    description: "LUMERA kişisel verilerin korunması ve gizlilik metni.",
+    url: `${siteUrl}/sozlesmeler/gizlilik-kvkk`,
+    siteName: SITE_NAME,
+    locale: "tr_TR",
+    type: "article",
+  },
+};
 
 export default async function PrivacyKvkkPage() {
   const settings = await getSiteSettings();
@@ -10,6 +31,7 @@ export default async function PrivacyKvkkPage() {
   return (
     <div className="min-h-screen bg-[#090a0f] text-[#f5efe6] flex flex-col justify-between">
       <HeaderWrapper />
+
 
       <main className="flex-1 mx-auto max-w-5xl px-6 py-20 w-full">
         <div className="mb-12 text-center">
