@@ -6,7 +6,7 @@ export function getSiteUrl(): string {
   const url =
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.NEXT_PUBLIC_APP_URL ||
-    "https://lumera.com";
+    "https://lumeratasarim.com";
   // Ensure no trailing slash
   return url.replace(/\/$/, "");
 }
