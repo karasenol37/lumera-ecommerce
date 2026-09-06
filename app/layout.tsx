@@ -88,7 +88,8 @@ export const metadata: Metadata = {
   verification: {
     google:
       process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
-      process.env.GOOGLE_SITE_VERIFICATION,
+      process.env.GOOGLE_SITE_VERIFICATION ||
+      "yLHll3VBbtRyQbhr_GnRwFBIjOpuYA-akPTru2MAvhI",
   },
   category: "ecommerce",
 };
