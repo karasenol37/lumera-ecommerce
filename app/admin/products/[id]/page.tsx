@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import AdminHeader from "@/components/admin/AdminHeader";
+import { compressImage, compressImages } from "@/lib/utils/imageCompressor";
 
 interface GalleryImage {
   id: number;
@@ -179,16 +180,28 @@ export default function EditProductPage() {
       formData.append("shippingFee", form.freeShipping ? "0" : form.shippingFee);
 
       if (newMainImage) {
-        formData.append("mainImage", newMainImage);
+        const optimizedMain = await compressImage(newMainImage, {
+          maxWidth: 1920,
+          maxHeight: 1920,
+          quality: 0.85,
+        });
+        formData.append("mainImage", optimizedMain);
       }
 
       if (deletedImageIds.length > 0) {
         formData.append("deletedImageIds", JSON.stringify(deletedImageIds));
       }
 
-      newGalleryFiles.forEach((file) => {
-        formData.append("gallery", file);
-      });
+      if (newGalleryFiles.length > 0) {
+        const optimizedGallery = await compressImages(newGalleryFiles, {
+          maxWidth: 1920,
+          maxHeight: 1920,
+          quality: 0.85,
+        });
+        optimizedGallery.forEach((file) => {
+          formData.append("gallery", file);
+        });
+      }
 
       const res = await fetch(`/api/admin/products/${id}`, {
         method: "PUT",

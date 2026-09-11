@@ -82,22 +82,26 @@ export async function createProduct(formData: FormData) {
       },
     });
 
-    const galleryImages = formData.getAll("images") as File[];
-    for (const image of galleryImages) {
-      if (image && image.size > 0) {
-        const url = await saveImage(image);
-        await prisma.productImage.create({
-          data: {
-            url,
-            productId: product.id,
-          },
-        });
-      }
+    const galleryImages = (formData.getAll("images") as File[]).filter(
+      (image) => image && image instanceof File && image.size > 0
+    );
+
+    if (galleryImages.length > 0) {
+      const galleryUrls = await Promise.all(
+        galleryImages.map((image) => saveImage(image))
+      );
+
+      await prisma.productImage.createMany({
+        data: galleryUrls.map((url) => ({
+          url,
+          productId: product.id,
+        })),
+      });
     }
 
-    return product;
-  } catch (error) {
+    return { success: true, product };
+  } catch (error: any) {
     console.error("CREATE PRODUCT ERROR:", error);
-    throw error;
+    throw new Error(error?.message || "Ürün eklenirken bir hata oluştu.");
   }
 }

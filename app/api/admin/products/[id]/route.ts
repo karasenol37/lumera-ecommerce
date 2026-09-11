@@ -155,13 +155,14 @@ export async function PUT(
   }
 
   // Yeni Galeri Yükleme
-  const newGalleryFiles = formData.getAll("gallery") as File[];
-  const newGalleryUrls: string[] = [];
-  for (const file of newGalleryFiles) {
-    if (file instanceof File && file.size > 0) {
-      const url = await saveFile(file);
-      newGalleryUrls.push(url);
-    }
+  const newGalleryFiles = (formData.getAll("gallery") as File[]).filter(
+    (file) => file instanceof File && file.size > 0
+  );
+  let newGalleryUrls: string[] = [];
+  if (newGalleryFiles.length > 0) {
+    newGalleryUrls = await Promise.all(
+      newGalleryFiles.map((file) => saveFile(file))
+    );
   }
 
   const updatedProduct = await prisma.product.update({

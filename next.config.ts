@@ -46,7 +46,13 @@ const nextConfig: NextConfig = {
       "./node_modules/http-signature/**",
       "./node_modules/sshpk/**"
     ]
-  }
+  },
+
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "25mb",
+    },
+  },
 };
 
 export default nextConfig;
