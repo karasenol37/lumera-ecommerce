@@ -25,7 +25,7 @@ const categories = [
   {
     name: "Tamamlayıcı Ürünler",
     image: "/images/categories/tamamlayici-urunler.jpg",
-    desc: "Hamak & Şezlong Aksesuarları, Minderler ve Yedek Parçalar",
+    desc: "Şemsiye Ayağı & Şemsiye Altlığı, Hamak & Şezlong Parçaları, Minderler",
   },
 ];
 
