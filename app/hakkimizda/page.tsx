@@ -74,8 +74,8 @@ export default function HakkimizdaPage() {
             <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#121420]/80 backdrop-blur-2xl shadow-2xl group">
               <div className="aspect-[4/3] w-full overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80"
-                  alt="LUMERA Ahşap Zanaatı"
+                  src="/images/hakkimizda-craft.jpg"
+                  alt="LUMERA Ahşap Zanaatı ve Dış Mekan Mobilyaları"
                   className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
               </div>
@@ -109,10 +109,10 @@ export default function HakkimizdaPage() {
                 Açık havada vakit geçirmek sadece bir dinlenme anı değil, doğayla kurulan derin bir bağdır. LUMERA olarak biz, bahçenizde veya terasınızda geçirdiğiniz her saniyenin eşsiz bir deneyime dönüşmesini hedefliyoruz.
               </p>
               <p>
-                Fırınlanmış birinci sınıf Teak ve masif ahşap malzemeleri, usta marangozlarımızın el işçiliğiyle biçimlendiriyoruz. Güneş ışınlarına, neme ve tüm mevsim şartlarına dayanıklı kılan özel doğal yağ cilalarımız sayesinde koleksiyonlarımız yıllar boyu estetiğini korur.
+                Fırınlanmış birinci sınıf masif ahşap malzemeleri, usta marangozlarımızın el işçiliğiyle biçimlendiriyoruz. Güneş ışınlarına, neme ve tüm mevsim şartlarına dayanıklı kılan özel doğal yağ cilalarımız sayesinde koleksiyonlarımız yıllar boyu estetiğini korur.
               </p>
               <p>
-                Hamaklardan lüks şezlonglara, şemsiye modellerinden ateş çukurlarına kadar tasarladığımız her üründe konfor, dayanıklılık ve mimari zarafet ön plandadır.
+                Hamaklardan lüks şezlonglara, şemsiye modellerinden tamamlayıcı dış mekan ürünlerine kadar tasarladığımız her parçada konfor, dayanıklılık ve mimari zarafet ön plandadır.
               </p>
             </div>
           </div>

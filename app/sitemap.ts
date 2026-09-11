@@ -52,6 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "Lüks Şezlong",
     "Şemsiye Modelleri",
     "Ateş Çukurları",
+    "Tamamlayıcı Ürünler",
   ]);
 
   // 3. Dynamic Products

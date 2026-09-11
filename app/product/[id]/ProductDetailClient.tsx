@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
+import { formatProductDescription } from "@/lib/utils/formatDescription";
 
 
 type Product = {
@@ -242,15 +243,12 @@ text-[#c8a165]
 
 
 
-<p className="
-mt-8
-leading-7
-text-gray-300
-">
-
-{product.description}
-
-</p>
+<div
+  className="product-description-content mt-8 leading-7 text-gray-300 space-y-2"
+  dangerouslySetInnerHTML={{
+    __html: formatProductDescription(product.description),
+  }}
+/>
 
 
 

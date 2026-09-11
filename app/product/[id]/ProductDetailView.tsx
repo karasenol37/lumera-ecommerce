@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useFavorite } from "@/context/FavoriteContext";
+import { formatProductDescription } from "@/lib/utils/formatDescription";
 
 type ProductImage = {
   id: number;
@@ -293,7 +294,15 @@ export default function ProductDetailView({ product }: { product: Product }) {
             {/* Tab Content */}
             <div className="text-xs sm:text-sm leading-relaxed text-zinc-300 font-light">
               {activeTab === "desc" && (
-                <p>{product.description || "Bu özel tasarım ürün, dış mekan koşullarına yüksek dayanıklılık gösteren fırınlanmış masif ahşaptan üretilmiştir. Dinlenme alanlarınıza şıklık katmak üzere tasarlanmıştır."}</p>
+                <div
+                  className="product-description-content text-xs sm:text-sm leading-relaxed text-zinc-300 font-light"
+                  dangerouslySetInnerHTML={{
+                    __html: formatProductDescription(
+                      product.description ||
+                        "Bu özel tasarım ürün, dış mekan koşullarına yüksek dayanıklılık gösteren fırınlanmış masif ahşaptan üretilmiştir. Dinlenme alanlarınıza şıklık katmak üzere tasarlanmıştır."
+                    ),
+                  }}
+                />
               )}
 
               {activeTab === "specs" && (

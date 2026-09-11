@@ -22,6 +22,11 @@ const categories = [
     image: "/images/categories/ates-cukuru.jpg",
     desc: "Akşam Keyfi İçin Özel Tasarım Çelik Ateş Çukurları",
   },
+  {
+    name: "Tamamlayıcı Ürünler",
+    image: "/images/categories/tamamlayici-urunler.jpg",
+    desc: "Hamak & Şezlong Aksesuarları, Minderler ve Yedek Parçalar",
+  },
 ];
 
 export default function Categories() {
@@ -41,7 +46,7 @@ export default function Categories() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-6">
         {categories.map((category) => (
           <Link
             key={category.name}

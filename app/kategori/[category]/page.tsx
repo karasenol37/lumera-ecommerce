@@ -78,6 +78,8 @@ export default async function CategoryPage({ params }: Props) {
     categoryFilter = ["Ateş Çukurları", "Ateş Çukuru"];
   } else if (decodedCategory === "Hamak") {
     categoryFilter = ["Hamak", "Hamak Serisi"];
+  } else if (decodedCategory === "Tamamlayıcı Ürünler" || decodedCategory === "Tamamlayıcı Ürün" || decodedCategory === "Aksesuar") {
+    categoryFilter = ["Tamamlayıcı Ürünler", "Tamamlayıcı Ürün", "Aksesuar", "Yedek Parça", "Minder"];
   }
 
   const products = await prisma.product.findMany({

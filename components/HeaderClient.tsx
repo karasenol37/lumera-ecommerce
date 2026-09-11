@@ -27,6 +27,7 @@ const navCategories = [
   { name: "Lüks Şezlong", slug: "Lüks Şezlong", icon: "☀️" },
   { name: "Şemsiye Modelleri", slug: "Şemsiye Modelleri", icon: "⛱️" },
   { name: "Ateş Çukurları", slug: "Ateş Çukurları", icon: "🔥" },
+  { name: "Tamamlayıcı Ürünler", slug: "Tamamlayıcı Ürünler", icon: "🪵" },
 ];
 
 export default function HeaderClient({

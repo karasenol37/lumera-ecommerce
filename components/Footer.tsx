@@ -57,6 +57,11 @@ export default async function Footer() {
                   Ateş Çukurları
                 </Link>
               </li>
+              <li>
+                <Link href={`/kategori/${encodeURIComponent("Tamamlayıcı Ürünler")}`} className="hover:text-[#c8a165] transition">
+                  Tamamlayıcı Ürünler
+                </Link>
+              </li>
             </ul>
           </div>
 

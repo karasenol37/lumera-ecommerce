@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import AdminHeader from "@/components/admin/AdminHeader";
 import { compressImage, compressImages } from "@/lib/utils/imageCompressor";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 
 interface GalleryImage {
   id: number;
@@ -369,6 +370,7 @@ export default function EditProductPage() {
                 <option value="Lüks Şezlong">Lüks Şezlong</option>
                 <option value="Şemsiye Modelleri">Şemsiye Modelleri</option>
                 <option value="Ateş Çukurları">Ateş Çukurları</option>
+                <option value="Tamamlayıcı Ürünler">Tamamlayıcı Ürünler (Minder, Aksesuar, Parça vb.)</option>
               </select>
             </div>
 
@@ -474,20 +476,10 @@ export default function EditProductPage() {
           </div>
 
           {/* Açıklama */}
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">
-              Ürün Açıklaması *
-            </label>
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              rows={5}
-              required
-              placeholder="Ürünün özelliklerini detaylı bir şekilde açıklayın..."
-              className="w-full rounded-xl border border-white/10 bg-[#090a0f] p-4 text-sm text-white focus:border-[#c8a165] focus:outline-none"
-            />
-          </div>
+          <RichTextEditor
+            value={form.description}
+            onChange={(val) => setForm((prev) => ({ ...prev, description: val }))}
+          />
 
           {/* Malzeme & Ölçüler */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

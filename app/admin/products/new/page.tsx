@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import AdminHeader from "@/components/admin/AdminHeader";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 
 export default function NewProductPage() {
   const router = useRouter();
@@ -209,6 +210,7 @@ export default function NewProductPage() {
                 <option value="Lüks Şezlong">Lüks Şezlong</option>
                 <option value="Şemsiye Modelleri">Şemsiye Modelleri</option>
                 <option value="Ateş Çukurları">Ateş Çukurları</option>
+                <option value="Tamamlayıcı Ürünler">Tamamlayıcı Ürünler (Minder, Aksesuar, Parça vb.)</option>
               </select>
             </div>
           </div>
@@ -346,20 +348,10 @@ export default function NewProductPage() {
           </div>
 
           {/* Açıklama */}
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">
-              Ürün Açıklaması *
-            </label>
-            <textarea
-              name="description"
-              placeholder="Ürünün özelliklerini detaylı bir şekilde açıklayın..."
-              value={form.description}
-              onChange={handleChange}
-              rows={5}
-              required
-              className="w-full rounded-xl border border-white/10 bg-[#090a0f] p-4 text-sm text-white focus:border-[#c8a165] focus:outline-none"
-            />
-          </div>
+          <RichTextEditor
+            value={form.description}
+            onChange={(val) => setForm((prev) => ({ ...prev, description: val }))}
+          />
 
           {/* Ana Görsel */}
           <div className="rounded-xl border border-white/10 bg-[#090a0f] p-5 space-y-3">
