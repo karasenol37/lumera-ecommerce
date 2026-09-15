@@ -40,6 +40,19 @@ export default function ProductDetailView({ product }: { product: Product }) {
   const isFreeShipping = product.freeShipping !== false;
   const shippingFee = product.shippingFee || 0;
 
+  const isMetal = Boolean(
+    product.category?.toLowerCase().includes("ateş") ||
+    product.category?.toLowerCase().includes("metal") ||
+    product.category?.toLowerCase().includes("şemsiye") ||
+    product.material?.toLowerCase().includes("çelik") ||
+    product.material?.toLowerCase().includes("metal") ||
+    product.material?.toLowerCase().includes("alüminyum") ||
+    product.name?.toLowerCase().includes("ateş") ||
+    product.name?.toLowerCase().includes("metal")
+  );
+
+  const craftsmanshipBadge = isMetal ? "HASSAS METAL İŞÇİLİĞİ" : "MASİF AHŞAP EL İŞÇİLİĞİ";
+
   // Gallery array
   const allImages = [
     { id: 0, url: product.image },
@@ -129,7 +142,7 @@ export default function ProductDetailView({ product }: { product: Product }) {
             {/* Badges */}
             <div className="absolute top-4 left-4 flex flex-col gap-2">
               <span className="rounded-full bg-black/60 border border-white/10 px-3.5 py-1.5 text-[10px] font-bold tracking-widest text-[#c8a165] uppercase backdrop-blur-md">
-                MASİF AHŞAP EL İŞÇİLİĞİ
+                {craftsmanshipBadge}
               </span>
               <span className="rounded-full bg-[#c8a165] px-3.5 py-1 text-[10px] font-extrabold tracking-wider text-black uppercase shadow-lg">
                 %20 İNDİRİM
@@ -299,7 +312,9 @@ export default function ProductDetailView({ product }: { product: Product }) {
                   dangerouslySetInnerHTML={{
                     __html: formatProductDescription(
                       product.description ||
-                        "Bu özel tasarım ürün, dış mekan koşullarına yüksek dayanıklılık gösteren fırınlanmış masif ahşaptan üretilmiştir. Dinlenme alanlarınıza şıklık katmak üzere tasarlanmıştır."
+                        (isMetal
+                          ? "Bu özel tasarım ürün, dış mekan koşullarına ve yüksek ısıya dayanıklı hassas işlenmiş çelikten üretilmiştir. Dinlenme alanlarınıza şıklık katmak üzere tasarlanmıştır."
+                          : "Bu özel tasarım ürün, dış mekan koşullarına yüksek dayanıklılık gösteren fırınlanmış masif ahşaptan üretilmiştir. Dinlenme alanlarınıza şıklık katmak üzere tasarlanmıştır.")
                     ),
                   }}
                 />
@@ -309,7 +324,7 @@ export default function ProductDetailView({ product }: { product: Product }) {
                 <dl className="grid grid-cols-2 gap-4">
                   <div className="rounded-xl bg-[#090a0f] p-3 border border-white/5">
                     <dt className="text-[10px] text-zinc-500 uppercase font-bold">Materyal</dt>
-                    <dd className="mt-1 font-semibold text-white">{product.material || "Fırınlanmış Teak Ahşap"}</dd>
+                    <dd className="mt-1 font-semibold text-white">{product.material || (isMetal ? "Isıya Dayanıklı Çelik" : "Fırınlanmış Teak Ahşap")}</dd>
                   </div>
                   <div className="rounded-xl bg-[#090a0f] p-3 border border-white/5">
                     <dt className="text-[10px] text-zinc-500 uppercase font-bold">Ölçüler</dt>
@@ -321,7 +336,7 @@ export default function ProductDetailView({ product }: { product: Product }) {
                   </div>
                   <div className="rounded-xl bg-[#090a0f] p-3 border border-white/5">
                     <dt className="text-[10px] text-zinc-500 uppercase font-bold">Üretim Türü</dt>
-                    <dd className="mt-1 font-semibold text-white">El İşçiliği</dd>
+                    <dd className="mt-1 font-semibold text-white">{isMetal ? "Hassas Metal İşçiliği" : "Masif Ahşap El İşçiliği"}</dd>
                   </div>
                 </dl>
               )}
@@ -431,7 +446,7 @@ export default function ProductDetailView({ product }: { product: Product }) {
             <div className="rounded-2xl border border-white/5 bg-[#121420]/40 p-2.5 sm:p-3 text-center">
               <span className="text-lg sm:text-xl">🛡️</span>
               <h4 className="mt-1 text-[10px] sm:text-[11px] font-bold text-white leading-tight">2 Yıl Garanti</h4>
-              <p className="mt-0.5 text-[9px] sm:text-[10px] text-zinc-500 hidden xs:block">Masif Ahşap</p>
+              <p className="mt-0.5 text-[9px] sm:text-[10px] text-zinc-500 hidden xs:block">{isMetal ? "Paslanmaz Metal" : "Masif Ahşap"}</p>
             </div>
             <div className="rounded-2xl border border-white/5 bg-[#121420]/40 p-2.5 sm:p-3 text-center">
               <span className="text-lg sm:text-xl">💳</span>

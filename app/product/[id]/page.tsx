@@ -39,9 +39,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const siteUrl = getSiteUrl();
+  const isMetal = Boolean(
+    product.category?.toLowerCase().includes("ateş") ||
+    product.category?.toLowerCase().includes("metal") ||
+    product.category?.toLowerCase().includes("şemsiye") ||
+    product.material?.toLowerCase().includes("çelik") ||
+    product.material?.toLowerCase().includes("metal") ||
+    product.material?.toLowerCase().includes("alüminyum") ||
+    product.name?.toLowerCase().includes("ateş") ||
+    product.name?.toLowerCase().includes("metal")
+  );
+
   const cleanDescription =
     product.description?.replace(/<[^>]*>?/gm, "").slice(0, 160) ||
-    `${product.name} - Premium masif ahşap ve üst düzey işçilikle üretilen LUMERA koleksiyonu.`;
+    `${product.name} - ${isMetal ? "Hassas metal işçiliği ve üst düzey zanaatle" : "Premium masif ahşap ve üst düzey işçilikle"} üretilen LUMERA koleksiyonu.`;
 
   const imageUrl = product.image?.startsWith("http")
     ? product.image
@@ -50,13 +61,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const canonicalUrl = `${siteUrl}/product/${product.id}`;
 
   return {
-    title: `${product.name} - Masif Ahşap Tasarım`,
+    title: `${product.name} - ${isMetal ? "Hassas Metal İşçiliği" : "Masif Ahşap Tasarım"}`,
     description: cleanDescription,
     keywords: [
       product.name,
       product.category,
-      "masif ahşap",
-      "lüks bahçe mobilyası",
+      isMetal ? "metal işçiliği" : "masif ahşap",
+      isMetal ? "ateş çukuru" : "lüks bahçe mobilyası",
       "el yapımı",
       "lumera",
       ...(product.material ? [product.material] : []),
