@@ -28,7 +28,8 @@ export default async function DistanceSellingAgreementPage() {
 
   const phone = settings.contactPhone || "0535 874 69 09";
   const email = settings.contactEmail || "lumeratasarim@gmail.com";
-  const address = settings.contactAddress || "Kastamonu / Tosya";
+  const address =
+    settings.companyFullAddress || settings.contactAddress || "Tosya Organize Sanayi Bölgesi, Kastamonu";
 
   return (
     <div className="min-h-screen bg-[#090a0f] text-[#f5efe6] flex flex-col justify-between">

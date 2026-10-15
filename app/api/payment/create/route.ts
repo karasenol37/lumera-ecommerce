@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { initializeCheckoutForm } from "@/lib/payment/iyzico-auth";
 import Iyzipay from "iyzipay";
+import { calculateShipping } from "@/lib/utils/shipping";
 
 function generateId(prefix: string = "ID") {
   return `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
@@ -53,7 +54,25 @@ export async function POST(req: NextRequest) {
       0
     );
 
-    const cargo = totalPrice >= 750 ? 0 : 150;
+    const productIds = items.map((i: any) => Number(i.id)).filter(Boolean);
+    const dbProducts = await prisma.product.findMany({
+      where: { id: { in: productIds } },
+    });
+
+    const itemsWithShipping = items.map((item: any) => {
+      const p = dbProducts.find((dbp) => dbp.id === Number(item.id));
+      return {
+        id: Number(item.id),
+        name: item.name,
+        price: p?.price ?? item.price,
+        quantity: item.quantity,
+        freeShipping: p?.freeShipping ?? item.freeShipping ?? true,
+        shippingFee: p?.shippingFee ?? item.shippingFee ?? 0,
+      };
+    });
+
+    const shippingResult = calculateShipping(itemsWithShipping);
+    const cargo = shippingResult.totalCargo;
     const grandTotal = totalPrice + cargo;
 
     const pendingPayment = await prisma.pendingPayment.create({

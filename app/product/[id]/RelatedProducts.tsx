@@ -6,6 +6,8 @@ type Product = {
   price: number;
   image: string;
   stock: number;
+  freeShipping?: boolean;
+  shippingFee?: number;
   category?: string | {
     name: string;
   } | null;
@@ -43,6 +45,8 @@ export default function RelatedProducts({
             oldPrice={Math.round(prod.price * 1.25)}
             stock={prod.stock}
             image={prod.image}
+            freeShipping={prod.freeShipping}
+            shippingFee={prod.shippingFee}
           />
         ))}
       </div>

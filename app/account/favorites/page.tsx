@@ -14,6 +14,8 @@ interface FavoriteItem {
     oldPrice?: number;
     stock?: number;
     image: string;
+    freeShipping?: boolean;
+    shippingFee?: number;
   };
 }
 
@@ -77,6 +79,8 @@ export default async function AccountFavoritesPage() {
                   oldPrice={item.product.oldPrice || item.product.price * 1.2}
                   stock={item.product.stock ?? 10}
                   image={item.product.image}
+                  freeShipping={item.product.freeShipping}
+                  shippingFee={item.product.shippingFee}
                 />
               ))}
             </div>

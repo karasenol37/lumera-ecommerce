@@ -11,17 +11,13 @@ import {
 
 
 type Product = {
-
-  id:number;
-
-  name:string;
-
-  price:number;
-
-  image:string;
-
-  stock:number;
-
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  stock: number;
+  freeShipping?: boolean;
+  shippingFee?: number;
 };
 
 

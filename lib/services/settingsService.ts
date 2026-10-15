@@ -6,7 +6,13 @@ export const DEFAULT_SETTINGS: Record<string, string> = {
   contactPhone: "0535 874 69 09",
   contactEmail: "lumeratasarim@gmail.com",
   contactAddress: "Kastamonu / Tosya",
+  companyFullAddress: "Organize Sanayi Bölgesi, Marangozlar & Metal Sanayi Sitesi No: 14, Tosya / Kastamonu",
   whatsappNumber: "905358746909",
+  category_image_hamak: "/images/categories/hamak.jpg",
+  category_image_sezlong: "/images/categories/sezlong.jpg",
+  category_image_semsiye: "/images/categories/semsiye.jpg",
+  category_image_ates_cukuru: "/images/categories/ates-cukuru.jpg",
+  category_image_tamamlayici: "/images/categories/tamamlayici-urunler.jpg",
   heroBadge: "LUMERA PREMIUM OUTDOOR 2026",
   heroTitle: "Gölgede Zarafet & Konfor",
   heroSubtitle:

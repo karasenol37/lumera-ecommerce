@@ -107,13 +107,19 @@ export async function PUT(
     ? formData.get("isActive") === "true"
     : existingProduct.isActive;
 
-  const freeShipping = formData.has("freeShipping")
+  const incomingFee = formData.has("shippingFee")
+    ? Number(formData.get("shippingFee") || 0)
+    : Number((existingProduct as any).shippingFee || 0);
+
+  let freeShipping = formData.has("freeShipping")
     ? formData.get("freeShipping") === "true"
     : (existingProduct as any).freeShipping ?? true;
 
-  const shippingFee = freeShipping
-    ? 0
-    : Number(formData.get("shippingFee") ?? (existingProduct as any).shippingFee ?? 0);
+  if (incomingFee > 0) {
+    freeShipping = false;
+  }
+
+  const shippingFee = freeShipping ? 0 : incomingFee;
 
   const dataToUpdate: any = {
     name,

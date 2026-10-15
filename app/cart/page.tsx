@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import { calculateShipping } from "@/lib/utils/shipping";
 
 export default function CartPage() {
   const {
@@ -22,7 +23,8 @@ export default function CartPage() {
     0
   );
 
-  const cargo = total >= 750 ? 0 : 150;
+  const shippingInfo = calculateShipping(cart);
+  const cargo = shippingInfo.totalCargo;
   const grandTotal = total + cargo;
 
   return (
@@ -165,14 +167,21 @@ export default function CartPage() {
                   </span>
                 </div>
 
-                <div className="flex justify-between text-zinc-400">
-                  <span>Kargo Ücreti</span>
-                  {cargo === 0 ? (
-                    <span className="text-emerald-400 font-bold">Ücretsiz</span>
-                  ) : (
-                    <span className="font-semibold text-white">
-                      ₺{cargo.toLocaleString("tr-TR")}
-                    </span>
+                <div className="flex flex-col gap-1 text-zinc-400">
+                  <div className="flex justify-between items-center">
+                    <span>Kargo Ücreti</span>
+                    {cargo === 0 ? (
+                      <span className="text-emerald-400 font-bold">Ücretsiz Kargo</span>
+                    ) : (
+                      <span className="font-semibold text-white">
+                        ₺{cargo.toLocaleString("tr-TR")}
+                      </span>
+                    )}
+                  </div>
+                  {!shippingInfo.isFree && (
+                    <div className="text-[11px] text-amber-300/90 bg-amber-500/10 border border-amber-500/20 rounded-lg p-2.5 mt-1 leading-relaxed">
+                      💡 {shippingInfo.breakdown}
+                    </div>
                   )}
                 </div>
 

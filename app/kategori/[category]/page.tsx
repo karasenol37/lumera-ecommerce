@@ -17,6 +17,8 @@ type CategoryProduct = {
   oldPrice: number;
   stock: number;
   image: string;
+  freeShipping?: boolean;
+  shippingFee?: number;
 };
 
 type Props = {
@@ -139,6 +141,8 @@ export default async function CategoryPage({ params }: Props) {
                 oldPrice={product.oldPrice}
                 stock={product.stock}
                 image={product.image}
+                freeShipping={product.freeShipping}
+                shippingFee={product.shippingFee}
               />
             ))
           )}

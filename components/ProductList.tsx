@@ -9,6 +9,8 @@ type ProductItem = {
   oldPrice?: number | null;
   stock: boolean | number;
   image?: string | null;
+  freeShipping?: boolean;
+  shippingFee?: number;
 };
 
 type ProductListProps = {
@@ -54,6 +56,8 @@ export default async function ProductList({ category, sort }: ProductListProps) 
               oldPrice={product.oldPrice ?? 0}
               stock={typeof product.stock === "number" ? product.stock : product.stock ? 10 : 0}
               image={product.image || "/images/no-image.png"}
+              freeShipping={product.freeShipping}
+              shippingFee={product.shippingFee}
             />
           ))
         )}

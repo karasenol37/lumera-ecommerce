@@ -61,6 +61,8 @@ export default function FavoritesView() {
                 oldPrice={product.price * 1.2}
                 stock={10}
                 image={product.image}
+                freeShipping={product.freeShipping}
+                shippingFee={product.shippingFee}
               />
             ))}
           </div>

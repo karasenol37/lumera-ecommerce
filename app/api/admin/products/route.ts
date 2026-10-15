@@ -215,8 +215,17 @@ String(formData.get("dimensions")),
 stock:
 Number(formData.get("stock")),
 
+freeShipping:
+  Number(formData.get("shippingFee") || 0) > 0
+    ? false
+    : formData.get("freeShipping") === "false"
+    ? false
+    : true,
 
-
+shippingFee:
+  formData.get("freeShipping") === "false" || Number(formData.get("shippingFee") || 0) > 0
+    ? Number(formData.get("shippingFee") || 0)
+    : 0,
 
 images:{
 

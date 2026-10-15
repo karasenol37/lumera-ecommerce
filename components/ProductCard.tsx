@@ -22,7 +22,11 @@ export default function ProductCard({
   stock,
   image,
   freeShipping = true,
+  shippingFee = 0,
 }: ProductCardProps) {
+  // If shippingFee > 0 and freeShipping wasn't explicitly true, or freeShipping is false:
+  const isFree = freeShipping === true && shippingFee === 0;
+
   const discount =
     oldPrice > price
       ? Math.round(((oldPrice - price) / oldPrice) * 100)
@@ -54,9 +58,13 @@ export default function ProductCard({
           )}
         </span>
 
-        {freeShipping && (
-          <span className="rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 sm:px-2.5 sm:py-0.5 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider backdrop-blur-md">
+        {isFree ? (
+          <span className="rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 sm:px-2.5 sm:py-0.5 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider backdrop-blur-md shadow-sm">
             Ücretsiz Kargo
+          </span>
+        ) : (
+          <span className="rounded-full bg-amber-500/25 text-amber-300 border border-amber-500/40 px-2 py-0.5 sm:px-2.5 sm:py-0.5 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider backdrop-blur-md shadow-sm">
+            Kargo Alıcıya Aittir
           </span>
         )}
       </div>

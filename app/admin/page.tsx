@@ -123,6 +123,28 @@ export default async function AdminPage(){
     });
   }
 
+  // Ziyaretçi Analitiği
+  let totalVisits = 0;
+  let todayVisits = 0;
+  let uniqueVisitors = 0;
+  try {
+    totalVisits = await prisma.siteVisit.count();
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    todayVisits = await prisma.siteVisit.count({
+      where: {
+        createdAt: { gte: startOfToday },
+      },
+    });
+
+    const uniqueRaw = await prisma.$queryRawUnsafe<{ count: number }[]>(
+      `SELECT COUNT(DISTINCT ip)::int as count FROM "SiteVisit" WHERE ip IS NOT NULL`
+    );
+    uniqueVisitors = uniqueRaw[0]?.count ?? totalVisits;
+  } catch (err) {
+    console.error("Error fetching visitor stats:", err);
+  }
+
 
 
 
@@ -404,8 +426,34 @@ mt-10
 grid
 gap-6
 md:grid-cols-2
-xl:grid-cols-4
+lg:grid-cols-3
+xl:grid-cols-5
 ">
+
+{/* Ziyaretçi Sayısı Kartı */}
+<div className="
+rounded-2xl
+border
+border-[#c8a165]/40
+bg-gradient-to-br from-[#121424] to-[#181818]
+p-8
+shadow-xl
+">
+  <div className="flex items-center justify-between">
+    <p className="text-gray-300 text-sm font-semibold">
+      Site Ziyaretçileri
+    </p>
+    <span className="text-2xl">👁️</span>
+  </div>
+  <h2 className="mt-3 text-3xl font-extrabold text-[#e5c184]">
+    {totalVisits.toLocaleString("tr-TR")}
+  </h2>
+  <div className="mt-3 flex items-center gap-2 text-xs text-zinc-400">
+    <span>Bugün: <strong className="text-emerald-400">{todayVisits}</strong></span>
+    <span>•</span>
+    <span>Tekil: <strong className="text-white">{uniqueVisitors}</strong></span>
+  </div>
+</div>
 
 
 

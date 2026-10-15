@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useFavorite } from "@/context/FavoriteContext";
@@ -11,11 +11,20 @@ type ProductImage = {
   url: string;
 };
 
+type ReviewItem = {
+  id: number;
+  name: string;
+  rating: number;
+  comment: string;
+  createdAt: string | Date;
+};
+
 type Product = {
   id: number;
   name: string;
   price: number;
   rating?: number;
+  likes?: number;
   image: string;
   description: string;
   material: string;
@@ -25,6 +34,7 @@ type Product = {
   freeShipping?: boolean;
   shippingFee?: number;
   images: ProductImage[];
+  reviews?: ReviewItem[];
 };
 
 export default function ProductDetailView({ product }: { product: Product }) {
@@ -34,24 +44,80 @@ export default function ProductDetailView({ product }: { product: Product }) {
   const [activeImage, setActiveImage] = useState<string>(product.image);
   const [quantity, setQuantity] = useState<number>(1);
   const [added, setAdded] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<"desc" | "specs" | "shipping">("desc");
+  const [activeTab, setActiveTab] = useState<"desc" | "specs" | "shipping" | "reviews">("desc");
+
+  // Likes state
+  const [likes, setLikes] = useState<number>(product.likes || 12);
+  const [hasLiked, setHasLiked] = useState<boolean>(false);
+
+  // Reviews state
+  const [reviews, setReviews] = useState<ReviewItem[]>(product.reviews || []);
+  const [reviewName, setReviewName] = useState<string>("");
+  const [reviewComment, setReviewComment] = useState<string>("");
+  const [reviewRating, setReviewRating] = useState<number>(5);
+  const [isSubmittingReview, setIsSubmittingReview] = useState<boolean>(false);
+  const [reviewSuccess, setReviewSuccess] = useState<string>("");
+  const [reviewError, setReviewError] = useState<string>("");
+
+  useEffect(() => {
+    // Check if user already liked this product in this session
+    const likedInStorage = localStorage.getItem(`lumera_like_${product.id}`);
+    if (likedInStorage) {
+      setHasLiked(true);
+    }
+
+    // Fetch latest reviews if not preloaded
+    if (!product.reviews || product.reviews.length === 0) {
+      fetch(`/api/reviews?productId=${product.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && Array.isArray(data.reviews)) {
+            setReviews(data.reviews);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [product.id, product.reviews]);
 
   const favorited = isFavorite(product.id);
-  const isFreeShipping = product.freeShipping !== false;
+  const isFreeShipping =
+    product.freeShipping !== false &&
+    (!product.shippingFee || product.shippingFee === 0);
   const shippingFee = product.shippingFee || 0;
 
-  const isMetal = Boolean(
-    product.category?.toLowerCase().includes("ateş") ||
-    product.category?.toLowerCase().includes("metal") ||
-    product.category?.toLowerCase().includes("şemsiye") ||
-    product.material?.toLowerCase().includes("çelik") ||
-    product.material?.toLowerCase().includes("metal") ||
-    product.material?.toLowerCase().includes("alüminyum") ||
+  // Malzeme türüne göre üzerindeki yazı dinamik olarak değişir:
+  // Ahşap, çam, gürgen, ladin, kestane vb. -> MASİF AHŞAP EL İŞÇİLİĞİ
+  // Çelik, metal, demir, alüminyum -> HASSAS METAL İŞÇİLİĞİ
+  const matLower = (product.material || "").toLowerCase();
+  const isWood = Boolean(
+    matLower.includes("ahşap") ||
+    matLower.includes("çam") ||
+    matLower.includes("gürgen") ||
+    matLower.includes("ladin") ||
+    matLower.includes("kestane") ||
+    matLower.includes("masif") ||
+    matLower.includes("kayın") ||
+    matLower.includes("teak") ||
+    matLower.includes("iroko")
+  );
+
+  const isMetal = !isWood && Boolean(
+    matLower.includes("çelik") ||
+    matLower.includes("metal") ||
+    matLower.includes("alüminyum") ||
+    matLower.includes("demir") ||
     product.name?.toLowerCase().includes("ateş") ||
+    product.category?.toLowerCase().includes("ateş") ||
     product.name?.toLowerCase().includes("metal")
   );
 
-  const craftsmanshipBadge = isMetal ? "HASSAS METAL İŞÇİLİĞİ" : "MASİF AHŞAP EL İŞÇİLİĞİ";
+  const craftsmanshipBadge = isWood
+    ? "MASİF AHŞAP EL İŞÇİLİĞİ"
+    : isMetal
+    ? "HASSAS METAL İŞÇİLİĞİ"
+    : product.material
+    ? `${product.material.toUpperCase()} İŞÇİLİĞİ`
+    : "MASİF AHŞAP EL İŞÇİLİĞİ";
 
   // Gallery array
   const allImages = [
@@ -69,6 +135,8 @@ export default function ProductDetailView({ product }: { product: Product }) {
         price: product.price,
         image: product.image,
         stock: product.stock,
+        freeShipping: isFreeShipping,
+        shippingFee: shippingFee,
       });
     }
 
@@ -85,10 +153,71 @@ export default function ProductDetailView({ product }: { product: Product }) {
     }
   }
 
+  async function handleLike() {
+    if (hasLiked) return;
+    setLikes((prev) => prev + 1);
+    setHasLiked(true);
+    localStorage.setItem(`lumera_like_${product.id}`, "1");
+
+    try {
+      await fetch(`/api/products/${product.id}/like`, { method: "POST" });
+    } catch {
+      // optimistic update
+    }
+  }
+
+  async function handleReviewSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setReviewError("");
+    setReviewSuccess("");
+
+    if (!reviewName.trim() || !reviewComment.trim()) {
+      setReviewError("Lütfen adınızı ve yorumunuzu giriniz.");
+      return;
+    }
+
+    setIsSubmittingReview(true);
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: product.id,
+          name: reviewName,
+          rating: reviewRating,
+          comment: reviewComment,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setReviews((prev) => [data.review, ...prev]);
+        setReviewSuccess("Yorumunuz başarıyla eklendi! Teşekkür ederiz.");
+        setReviewName("");
+        setReviewComment("");
+        setReviewRating(5);
+      } else {
+        setReviewError(data.error || "Yorum kaydedilemedi.");
+      }
+    } catch {
+      setReviewError("Bir hata oluştu, lütfen tekrar deneyiniz.");
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  }
+
   const oldPrice = Math.round(product.price * 1.25);
   const whatsappUrl = `https://wa.me/905358746909?text=${encodeURIComponent(
     `Merhaba LUMERA, ${product.name} ürünü hakkında (${quantity} adet) WhatsApp ile sipariş vermek ve bilgi almak istiyorum.`
   )}`;
+
+  // Average review calculation
+  const averageRating =
+    reviews.length > 0
+      ? (
+          reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+        ).toFixed(1)
+      : "5.0";
 
   return (
     <div className="w-full">
@@ -131,7 +260,7 @@ export default function ProductDetailView({ product }: { product: Product }) {
         <div className="lg:col-span-7 space-y-5">
           {/* Large Main Display */}
           <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#121420]/80 backdrop-blur-2xl shadow-2xl group">
-            <div className="aspect-[4/3] w-full overflow-hidden">
+            <div className="aspect-[4/3] w-full overflow-hidden bg-[#0a0b10]">
               <img
                 src={activeImage || "/images/no-image.jpg"}
                 alt={product.name}
@@ -140,8 +269,8 @@ export default function ProductDetailView({ product }: { product: Product }) {
             </div>
 
             {/* Badges */}
-            <div className="absolute top-4 left-4 flex flex-col gap-2">
-              <span className="rounded-full bg-black/60 border border-white/10 px-3.5 py-1.5 text-[10px] font-bold tracking-widest text-[#c8a165] uppercase backdrop-blur-md">
+            <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+              <span className="rounded-full bg-black/75 border border-[#c8a165]/40 px-3.5 py-1.5 text-[10px] font-bold tracking-widest text-[#e5c184] uppercase backdrop-blur-md shadow-lg">
                 {craftsmanshipBadge}
               </span>
               <span className="rounded-full bg-[#c8a165] px-3.5 py-1 text-[10px] font-extrabold tracking-wider text-black uppercase shadow-lg">
@@ -149,34 +278,60 @@ export default function ProductDetailView({ product }: { product: Product }) {
               </span>
             </div>
 
-            {/* Favorite Button */}
-            <button
-              type="button"
-              onClick={() =>
-                toggleFavorite({
-                  id: product.id,
-                  name: product.name,
-                  price: product.price,
-                  image: product.image,
-                })
-              }
-              className={`absolute top-4 right-4 flex h-11 w-11 items-center justify-center rounded-full backdrop-blur-md border border-white/15 transition-all duration-300 shadow-xl ${
-                favorited
-                  ? "bg-rose-500/20 text-rose-500 border-rose-500/50 scale-110"
-                  : "bg-black/50 text-white hover:bg-black/80 hover:scale-105"
-              }`}
-              title={favorited ? "Favorilerden Çıkar" : "Favorilere Ekle"}
-            >
-              <svg
-                className={`w-6 h-6 transition-transform ${
-                  favorited ? "fill-rose-500 text-rose-500 drop-shadow-[0_0_8px_rgba(244,63,94,0.6)]" : "fill-none stroke-current"
+            {/* Top Right Action Buttons: Favorite & Like */}
+            <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
+              {/* Like Button */}
+              <button
+                type="button"
+                onClick={handleLike}
+                className={`flex h-11 px-3 items-center gap-1.5 rounded-full backdrop-blur-md border transition-all duration-300 shadow-xl ${
+                  hasLiked
+                    ? "bg-rose-500/25 text-rose-300 border-rose-500/50 scale-105"
+                    : "bg-black/60 text-zinc-300 border-white/15 hover:bg-black/80 hover:text-white"
                 }`}
-                strokeWidth="2"
-                viewBox="0 0 24 24"
+                title={hasLiked ? "Beğendiniz" : "Ürünü Beğen"}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-            </button>
+                <span className="text-sm">{hasLiked ? "❤️" : "🤍"}</span>
+                <span className="text-xs font-bold">{likes}</span>
+              </button>
+
+              {/* Favorite Button */}
+              <button
+                type="button"
+                onClick={() =>
+                  toggleFavorite({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    freeShipping: isFreeShipping,
+                    shippingFee: shippingFee,
+                  })
+                }
+                className={`flex h-11 w-11 items-center justify-center rounded-full backdrop-blur-md border border-white/15 transition-all duration-300 shadow-xl ${
+                  favorited
+                    ? "bg-rose-500/20 text-rose-500 border-rose-500/50 scale-110"
+                    : "bg-black/60 text-white hover:bg-black/80 hover:scale-105"
+                }`}
+                title={favorited ? "Favorilerden Çıkar" : "Favorilere Ekle"}
+              >
+                <svg
+                  className={`w-6 h-6 transition-transform ${
+                    favorited
+                      ? "fill-rose-500 text-rose-500 drop-shadow-[0_0_8px_rgba(244,63,94,0.6)]"
+                      : "fill-none stroke-current"
+                  }`}
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
 
           {/* Thumbnails */}
@@ -216,14 +371,20 @@ export default function ProductDetailView({ product }: { product: Product }) {
 
             {/* Rating & Stock */}
             <div className="mt-3 flex items-center gap-4 text-xs">
-              <div className="flex items-center gap-1 text-amber-400 font-bold">
+              <button
+                type="button"
+                onClick={() => setActiveTab("reviews")}
+                className="flex items-center gap-1 text-amber-400 font-bold hover:underline cursor-pointer"
+              >
                 <span>★</span>
                 <span>★</span>
                 <span>★</span>
                 <span>★</span>
                 <span>★</span>
-                <span className="ml-1 text-zinc-300 font-normal">4.9 (24 İnceleme)</span>
-              </div>
+                <span className="ml-1 text-zinc-300 font-normal">
+                  {averageRating} ({reviews.length} Değerlendirme)
+                </span>
+              </button>
               <span className="text-zinc-600">•</span>
               <div>
                 {product.stock > 10 ? (
@@ -253,28 +414,34 @@ export default function ProductDetailView({ product }: { product: Product }) {
               </div>
             </div>
 
-            <div className={`rounded-2xl px-3.5 py-2 text-right border ${
-              isFreeShipping
-                ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
-                : "bg-amber-500/10 border-amber-500/30 text-amber-300"
-            }`}>
-              <span className={`block text-[10px] font-bold uppercase tracking-wider ${
-                isFreeShipping ? "text-emerald-400" : "text-amber-400"
-              }`}>
-                {isFreeShipping ? "ÜCRETSİZ" : `₺${shippingFee}`}
+            <div
+              className={`rounded-2xl px-4 py-2.5 text-right border ${
+                isFreeShipping
+                  ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
+                  : "bg-amber-500/10 border-amber-500/30 text-amber-300"
+              }`}
+            >
+              <span
+                className={`block text-[11px] font-extrabold uppercase tracking-wider ${
+                  isFreeShipping ? "text-emerald-400" : "text-amber-400"
+                }`}
+              >
+                {isFreeShipping ? "ÜCRETSİZ KARGO" : "KARGO ALICIYA AİTTİR"}
               </span>
               <span className="text-xs font-semibold">
-                {isFreeShipping ? "Sigortalı Kargo" : "Kargo Ücreti"}
+                {isFreeShipping
+                  ? "Sigortalı Teslimat"
+                  : `₺${shippingFee} Kargo Bedeli`}
               </span>
             </div>
           </div>
 
-          {/* Tab Navigation: Description / Specifications */}
+          {/* Tab Navigation: Description / Specifications / Shipping / Reviews */}
           <div className="rounded-3xl border border-white/10 bg-[#121420]/80 p-6 backdrop-blur-2xl shadow-xl space-y-4">
-            <div className="flex border-b border-white/10 pb-3 gap-6 text-xs font-semibold">
+            <div className="flex border-b border-white/10 pb-3 gap-4 sm:gap-6 text-xs font-semibold overflow-x-auto scrollbar-none">
               <button
                 onClick={() => setActiveTab("desc")}
-                className={`pb-2 transition relative ${
+                className={`pb-2 transition shrink-0 relative ${
                   activeTab === "desc"
                     ? "text-[#c8a165] border-b-2 border-[#c8a165]"
                     : "text-zinc-400 hover:text-white"
@@ -284,7 +451,7 @@ export default function ProductDetailView({ product }: { product: Product }) {
               </button>
               <button
                 onClick={() => setActiveTab("specs")}
-                className={`pb-2 transition relative ${
+                className={`pb-2 transition shrink-0 relative ${
                   activeTab === "specs"
                     ? "text-[#c8a165] border-b-2 border-[#c8a165]"
                     : "text-zinc-400 hover:text-white"
@@ -294,13 +461,23 @@ export default function ProductDetailView({ product }: { product: Product }) {
               </button>
               <button
                 onClick={() => setActiveTab("shipping")}
-                className={`pb-2 transition relative ${
+                className={`pb-2 transition shrink-0 relative ${
                   activeTab === "shipping"
                     ? "text-[#c8a165] border-b-2 border-[#c8a165]"
                     : "text-zinc-400 hover:text-white"
                 }`}
               >
-                Teslimat & Garanti
+                Teslimat & Kargo
+              </button>
+              <button
+                onClick={() => setActiveTab("reviews")}
+                className={`pb-2 transition shrink-0 relative ${
+                  activeTab === "reviews"
+                    ? "text-[#c8a165] border-b-2 border-[#c8a165]"
+                    : "text-zinc-400 hover:text-white"
+                }`}
+              >
+                Yorumlar ({reviews.length})
               </button>
             </div>
 
@@ -312,9 +489,11 @@ export default function ProductDetailView({ product }: { product: Product }) {
                   dangerouslySetInnerHTML={{
                     __html: formatProductDescription(
                       product.description ||
-                        (isMetal
+                        (isWood
+                          ? "Bu özel tasarım ürün, dış mekan koşullarına yüksek dayanıklılık gösteren fırınlanmış masif ahşaptan üretilmiştir. Dinlenme alanlarınıza şıklık katmak üzere tasarlanmıştır."
+                          : isMetal
                           ? "Bu özel tasarım ürün, dış mekan koşullarına ve yüksek ısıya dayanıklı hassas işlenmiş çelikten üretilmiştir. Dinlenme alanlarınıza şıklık katmak üzere tasarlanmıştır."
-                          : "Bu özel tasarım ürün, dış mekan koşullarına yüksek dayanıklılık gösteren fırınlanmış masif ahşaptan üretilmiştir. Dinlenme alanlarınıza şıklık katmak üzere tasarlanmıştır.")
+                          : "Bu seçkin ürün, dış mekan koşullarına yüksek dayanıklılık gösteren üst düzey zanaatle üretilmiştir.")
                     ),
                   }}
                 />
@@ -324,7 +503,9 @@ export default function ProductDetailView({ product }: { product: Product }) {
                 <dl className="grid grid-cols-2 gap-4">
                   <div className="rounded-xl bg-[#090a0f] p-3 border border-white/5">
                     <dt className="text-[10px] text-zinc-500 uppercase font-bold">Materyal</dt>
-                    <dd className="mt-1 font-semibold text-white">{product.material || (isMetal ? "Isıya Dayanıklı Çelik" : "Fırınlanmış Teak Ahşap")}</dd>
+                    <dd className="mt-1 font-semibold text-white">
+                      {product.material || (isWood ? "Fırınlanmış 1. Sınıf Ahşap" : isMetal ? "Hassas İşlenmiş Çelik" : "Lüks Malzeme")}
+                    </dd>
                   </div>
                   <div className="rounded-xl bg-[#090a0f] p-3 border border-white/5">
                     <dt className="text-[10px] text-zinc-500 uppercase font-bold">Ölçüler</dt>
@@ -336,18 +517,141 @@ export default function ProductDetailView({ product }: { product: Product }) {
                   </div>
                   <div className="rounded-xl bg-[#090a0f] p-3 border border-white/5">
                     <dt className="text-[10px] text-zinc-500 uppercase font-bold">Üretim Türü</dt>
-                    <dd className="mt-1 font-semibold text-white">{isMetal ? "Hassas Metal İşçiliği" : "Masif Ahşap El İşçiliği"}</dd>
+                    <dd className="mt-1 font-semibold text-white">{craftsmanshipBadge}</dd>
                   </div>
                 </dl>
               )}
 
               {activeTab === "shipping" && (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <p>
-                    • Türkiye geneli <strong>Özel Korumalı Ahşap Sandık</strong> ambalajı ile {isFreeShipping ? "ücretsiz teslim edilir." : `₺${shippingFee} kargo bedeli ile gönderilir.`}
+                    • Türkiye geneli <strong>Özel Korumalı Sandık</strong> ambalajı ile{" "}
+                    {isFreeShipping ? (
+                      <span className="text-emerald-400 font-bold">ücretsiz teslim edilir.</span>
+                    ) : (
+                      <span className="text-amber-400 font-bold">
+                        kargo alıcıya aittir (₺{shippingFee} kargo bedeli ile gönderilir).
+                      </span>
+                    )}
+                  </p>
+                  <p>
+                    • <strong>Çoklu Ürün Kargo Avantajı:</strong> Birden fazla ürün alımında en yüksek kargo ücreti üzerine diğer ürünlerin kargo bedelinin yalnızca %40&apos;ı eklenir (%60 kargo indirimi uygulanır).
                   </p>
                   <p>• Ürünlerimiz <strong>2 Yıl Lumera Üretici Garantisi</strong> kapsamındadır.</p>
-                  <p>• 14 gün içinde koşulsuz iade imkanı sunulmaktadır.</p>
+                  <p>• 14 gün içinde koşulsuz iade ve değişim güvencesi sunulmaktadır.</p>
+                </div>
+              )}
+
+              {activeTab === "reviews" && (
+                <div className="space-y-6">
+                  {/* Reviews Summary */}
+                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                    <div>
+                      <div className="flex items-center gap-1.5 text-amber-400 font-bold text-base">
+                        <span>★</span>
+                        <span>★</span>
+                        <span>★</span>
+                        <span>★</span>
+                        <span>★</span>
+                        <span className="ml-1 text-white text-sm">
+                          {averageRating} / 5.0
+                        </span>
+                      </div>
+                      <p className="text-xs text-zinc-400 mt-0.5">
+                        {reviews.length} müşteri değerlendirmesi
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Reviews List */}
+                  <div className="space-y-4 max-h-64 overflow-y-auto pr-1">
+                    {reviews.length === 0 ? (
+                      <p className="text-zinc-500 italic text-xs">
+                        Bu ürün için henüz yorum yapılmamış. İlk yorumu siz yazın!
+                      </p>
+                    ) : (
+                      reviews.map((r, i) => (
+                        <div
+                          key={r.id || i}
+                          className="rounded-2xl border border-white/5 bg-[#090a0f] p-4 space-y-1.5"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-white text-xs">
+                              {r.name}
+                            </span>
+                            <div className="flex text-amber-400 text-xs">
+                              {"★".repeat(r.rating || 5)}
+                            </div>
+                          </div>
+                          <p className="text-xs text-zinc-300 font-light leading-relaxed">
+                            {r.comment}
+                          </p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  {/* Add Review Form */}
+                  <form
+                    onSubmit={handleReviewSubmit}
+                    className="border-t border-white/10 pt-4 space-y-3"
+                  >
+                    <h4 className="text-xs font-bold text-white">Yorum Yazın</h4>
+
+                    {reviewSuccess && (
+                      <div className="rounded-xl bg-emerald-500/20 border border-emerald-500/30 p-2.5 text-xs text-emerald-300">
+                        {reviewSuccess}
+                      </div>
+                    )}
+                    {reviewError && (
+                      <div className="rounded-xl bg-rose-500/20 border border-rose-500/30 p-2.5 text-xs text-rose-300">
+                        {reviewError}
+                      </div>
+                    )}
+
+                    {/* Star Rating Select */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] text-zinc-400">Puanınız:</span>
+                      <div className="flex gap-1 text-amber-400 text-lg cursor-pointer">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            type="button"
+                            key={star}
+                            onClick={() => setReviewRating(star)}
+                            className={`transition hover:scale-125 ${
+                              star <= reviewRating ? "text-amber-400" : "text-zinc-600"
+                            }`}
+                          >
+                            ★
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <input
+                      type="text"
+                      placeholder="Adınız Soyadınız"
+                      value={reviewName}
+                      onChange={(e) => setReviewName(e.target.value)}
+                      className="w-full rounded-xl bg-[#090a0f] border border-white/10 p-2.5 text-xs text-white placeholder:text-zinc-600 focus:border-[#c8a165] outline-none"
+                    />
+
+                    <textarea
+                      placeholder="Ürün hakkındaki deneyiminiz ve yorumunuz..."
+                      rows={3}
+                      value={reviewComment}
+                      onChange={(e) => setReviewComment(e.target.value)}
+                      className="w-full rounded-xl bg-[#090a0f] border border-white/10 p-2.5 text-xs text-white placeholder:text-zinc-600 focus:border-[#c8a165] outline-none"
+                    />
+
+                    <button
+                      type="submit"
+                      disabled={isSubmittingReview}
+                      className="rounded-full bg-[#c8a165] px-5 py-2 text-xs font-bold text-black hover:bg-[#e5c184] transition disabled:opacity-50 cursor-pointer"
+                    >
+                      {isSubmittingReview ? "Gönderiliyor..." : "Yorumu Gönder"}
+                    </button>
+                  </form>
                 </div>
               )}
             </div>
@@ -410,14 +714,13 @@ export default function ProductDetailView({ product }: { product: Product }) {
               </button>
             </div>
 
-            {/* WhatsApp Quick Order Button - Highly prominent, eye-catching & bold */}
+            {/* WhatsApp Quick Order Button */}
             <a
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="group relative flex items-center justify-center gap-3 w-full py-4 px-6 rounded-full bg-[#25D366] text-black font-black text-sm sm:text-base shadow-[0_6px_25px_rgba(37,211,102,0.45)] hover:bg-[#20bd5a] hover:scale-[1.02] active:scale-95 transition-all duration-300 border border-white/20 overflow-hidden"
             >
-              {/* Shine effect */}
               <span className="absolute inset-0 w-1/2 h-full bg-white/20 skew-x-12 -translate-x-full group-hover:translate-x-[300%] transition-transform duration-1000 ease-out pointer-events-none" />
 
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-black text-white text-base font-normal shrink-0 shadow-md">
@@ -437,16 +740,16 @@ export default function ProductDetailView({ product }: { product: Product }) {
             <div className="rounded-2xl border border-white/5 bg-[#121420]/40 p-2.5 sm:p-3 text-center">
               <span className="text-lg sm:text-xl">🚚</span>
               <h4 className="mt-1 text-[10px] sm:text-[11px] font-bold text-white leading-tight">
-                {isFreeShipping ? "Ücretsiz Kargo" : `₺${shippingFee} Kargo`}
+                {isFreeShipping ? "Ücretsiz Kargo" : "Kargo Alıcıya Ait"}
               </h4>
               <p className="mt-0.5 text-[9px] sm:text-[10px] text-zinc-500 hidden xs:block">
-                {isFreeShipping ? "Tüm Türkiye" : "Hızlı Gönderim"}
+                {isFreeShipping ? "Tüm Türkiye" : `₺${shippingFee} Bedelle`}
               </p>
             </div>
             <div className="rounded-2xl border border-white/5 bg-[#121420]/40 p-2.5 sm:p-3 text-center">
               <span className="text-lg sm:text-xl">🛡️</span>
               <h4 className="mt-1 text-[10px] sm:text-[11px] font-bold text-white leading-tight">2 Yıl Garanti</h4>
-              <p className="mt-0.5 text-[9px] sm:text-[10px] text-zinc-500 hidden xs:block">{isMetal ? "Paslanmaz Metal" : "Masif Ahşap"}</p>
+              <p className="mt-0.5 text-[9px] sm:text-[10px] text-zinc-500 hidden xs:block">{isWood ? "Masif Ahşap" : isMetal ? "Paslanmaz Metal" : "Lüks Malzeme"}</p>
             </div>
             <div className="rounded-2xl border border-white/5 bg-[#121420]/40 p-2.5 sm:p-3 text-center">
               <span className="text-lg sm:text-xl">💳</span>
@@ -457,7 +760,7 @@ export default function ProductDetailView({ product }: { product: Product }) {
         </div>
       </div>
 
-      {/* Sticky Mobile Bottom Dual Action Bar (Visible only on mobile devices) */}
+      {/* Sticky Mobile Bottom Dual Action Bar */}
       <div className="md:hidden fixed bottom-[57px] left-0 right-0 z-30 bg-[#090a0f]/95 backdrop-blur-xl border-t border-white/10 p-2.5 px-3 shadow-[0_-8px_25px_rgba(0,0,0,0.7)]">
         <div className="flex items-center gap-2">
           {/* Mobile WhatsApp Quick Button */}
@@ -503,4 +806,3 @@ export default function ProductDetailView({ product }: { product: Product }) {
     </div>
   );
 }
-

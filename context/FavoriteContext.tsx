@@ -10,15 +10,12 @@ ReactNode
 
 
 type FavoriteProduct = {
-
-id:number;
-
-name:string;
-
-price:number;
-
-image:string;
-
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  freeShipping?: boolean;
+  shippingFee?: number;
 };
 
 
@@ -162,11 +159,22 @@ item=>item.id!==id
 
 
 
-  function toggleFavorite(product: FavoriteProduct) {
-    if (isFavorite(product.id)) {
+  async function toggleFavorite(product: FavoriteProduct) {
+    const wasFav = isFavorite(product.id);
+    if (wasFav) {
       removeFavorite(product.id);
     } else {
       addFavorite(product);
+    }
+
+    try {
+      await fetch("/api/account/favorites", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product.id }),
+      });
+    } catch {
+      // Misafir kullanıcı için localStorage zaten çalışıyor
     }
   }
 

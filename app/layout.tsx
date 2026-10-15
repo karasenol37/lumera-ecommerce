@@ -6,6 +6,7 @@ import { FavoriteProvider } from "@/context/FavoriteContext";
 import { getSessionUser } from "@/lib/session";
 import { getSiteSettings } from "@/lib/services/settingsService";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
+import VisitorTracker from "@/components/VisitorTracker";
 import JsonLd from "@/components/JsonLd";
 import {
   getSiteUrl,
@@ -118,6 +119,7 @@ export default async function RootLayout({
       <body className="min-h-screen bg-[#090a0f] text-[#f5efe6] selection:bg-[#c8a165] selection:text-black">
         <CartProvider userId={userId}>
           <FavoriteProvider userId={userId}>
+            <VisitorTracker />
             {children}
             <FloatingWhatsApp />
           </FavoriteProvider>

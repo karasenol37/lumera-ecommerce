@@ -36,7 +36,11 @@ export default async function ContactPage() {
 
   const phone = settings.contactPhone || "0535 874 69 09";
   const email = settings.contactEmail || "lumeratasarim@gmail.com";
-  const address = settings.contactAddress || "Kastamonu / Tosya";
+  const shortAddress = settings.contactAddress || "Kastamonu / Tosya";
+  const fullAddress =
+    settings.companyFullAddress ||
+    settings.contactAddress ||
+    "Organize Sanayi Bölgesi, Marangozlar & Metal Sanayi Sitesi No: 14, Tosya / Kastamonu";
 
   const contactSchema = generateContactPageSchema(siteUrl, settings);
   const breadcrumbSchema = generateBreadcrumbSchema(
@@ -120,17 +124,26 @@ export default async function ContactPage() {
               </a>
             </div>
 
-            {/* Adres */}
+            {/* Açık Adres & Fabrika */}
             <div className="rounded-2xl border border-white/10 bg-[#121420]/80 p-6 sm:p-8 backdrop-blur-md shadow-xl transition-all hover:border-[#c8a165]/50">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#c8a165]/20 text-[#e5c184] text-2xl mb-4">
                 🏢
               </div>
-              <h3 className="text-lg font-bold text-white">Adres & Üretim</h3>
+              <h3 className="text-lg font-bold text-white">Fabrika, Atölye & Showroom</h3>
               <p className="text-xs text-zinc-400 mt-1">LUMERA Luxury Outdoor & Tasarım</p>
-              <p className="text-sm text-zinc-300 mt-3 flex items-start gap-2">
-                <span>📍</span>
-                <span>{address}</span>
-              </p>
+              <div className="text-sm text-zinc-300 mt-3.5 space-y-2.5">
+                <p className="flex items-start gap-2">
+                  <span className="text-[#c8a165] shrink-0 text-base">📍</span>
+                  <span>
+                    <strong className="text-white block text-xs uppercase tracking-wider mb-1">Açık Adres:</strong>
+                    {fullAddress}
+                  </span>
+                </p>
+                <p className="flex items-center gap-2 text-xs text-zinc-400 pt-2 border-t border-white/5">
+                  <span className="text-[#c8a165]">🏭</span>
+                  <span>Üretim & Sevkiyat: <strong className="text-zinc-200">{shortAddress}</strong></span>
+                </p>
+              </div>
             </div>
           </div>
 

@@ -45,9 +45,10 @@ export async function createProduct(formData: FormData) {
     const dimensions = String(formData.get("dimensions") || "");
     const stock = Number(formData.get("stock") || 0);
 
+    const feeInput = Number(formData.get("shippingFee") || 0);
     const freeShippingRaw = formData.get("freeShipping");
-    const freeShipping = freeShippingRaw === "false" || freeShippingRaw === "0" ? false : true;
-    const shippingFee = freeShipping ? 0 : Number(formData.get("shippingFee") || 0);
+    const freeShipping = feeInput > 0 ? false : freeShippingRaw === "false" || freeShippingRaw === "0" ? false : true;
+    const shippingFee = freeShipping ? 0 : feeInput;
 
     const mainImage = formData.get("mainImage") as File;
     if (!mainImage || mainImage.size === 0) {

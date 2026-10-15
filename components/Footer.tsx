@@ -8,7 +8,8 @@ export default async function Footer() {
     settings.brandTagline || "Gölgede zarafet, dinlenmede ayrıcalık.";
   const contactPhone = settings.contactPhone || "0535 874 69 09";
   const contactEmail = settings.contactEmail || "lumeratasarim@gmail.com";
-  const contactAddress = settings.contactAddress || "Kastamonu / Tosya";
+  const contactAddress =
+    settings.companyFullAddress || settings.contactAddress || "Tosya Organize Sanayi Bölgesi, Kastamonu";
 
   return (
     <footer className="relative bg-[#06070a] border-t border-white/10 text-zinc-400 font-light pb-24 md:pb-16">
@@ -116,9 +117,12 @@ export default async function Footer() {
                 <span className="text-[#c8a165]">✉</span>
                 <span>{contactEmail}</span>
               </a>
-              <p className="flex items-center gap-2">
-                <span className="text-[#c8a165]">📍</span>
-                <span>{contactAddress}</span>
+              <p className="flex items-start gap-2 text-xs leading-relaxed">
+                <span className="text-[#c8a165] mt-0.5 shrink-0">📍</span>
+                <span>
+                  <strong className="text-zinc-200 block text-[11px] uppercase tracking-wider mb-0.5">Açık Adres:</strong>
+                  {contactAddress}
+                </span>
               </p>
               <div className="pt-2 flex flex-wrap gap-2">
                 <a

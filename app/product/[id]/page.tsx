@@ -39,20 +39,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const siteUrl = getSiteUrl();
-  const isMetal = Boolean(
-    product.category?.toLowerCase().includes("ateş") ||
-    product.category?.toLowerCase().includes("metal") ||
-    product.category?.toLowerCase().includes("şemsiye") ||
-    product.material?.toLowerCase().includes("çelik") ||
-    product.material?.toLowerCase().includes("metal") ||
-    product.material?.toLowerCase().includes("alüminyum") ||
+  const matLower = (product.material || "").toLowerCase();
+  const isWood = Boolean(
+    matLower.includes("ahşap") ||
+    matLower.includes("çam") ||
+    matLower.includes("gürgen") ||
+    matLower.includes("ladin") ||
+    matLower.includes("kestane") ||
+    matLower.includes("masif") ||
+    matLower.includes("kayın") ||
+    matLower.includes("teak") ||
+    matLower.includes("iroko")
+  );
+
+  const isMetal = !isWood && Boolean(
+    matLower.includes("çelik") ||
+    matLower.includes("metal") ||
+    matLower.includes("alüminyum") ||
+    matLower.includes("demir") ||
     product.name?.toLowerCase().includes("ateş") ||
+    product.category?.toLowerCase().includes("ateş") ||
     product.name?.toLowerCase().includes("metal")
   );
 
   const cleanDescription =
     product.description?.replace(/<[^>]*>?/gm, "").slice(0, 160) ||
-    `${product.name} - ${isMetal ? "Hassas metal işçiliği ve üst düzey zanaatle" : "Premium masif ahşap ve üst düzey işçilikle"} üretilen LUMERA koleksiyonu.`;
+    `${product.name} - ${isWood ? "Premium masif ahşap ve üst düzey işçilikle" : isMetal ? "Hassas metal işçiliği ve üst düzey zanaatle" : "Özel tasarım ve üst düzey işçilikle"} üretilen LUMERA koleksiyonu.`;
 
   const imageUrl = product.image?.startsWith("http")
     ? product.image
@@ -115,6 +127,10 @@ export default async function ProductPage({ params }: Props) {
     },
     include: {
       images: true,
+      reviews: {
+        where: { isApproved: true },
+        orderBy: { createdAt: "desc" },
+      },
     },
   });
 
