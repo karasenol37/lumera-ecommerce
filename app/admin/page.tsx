@@ -145,6 +145,13 @@ export default async function AdminPage(){
     console.error("Error fetching visitor stats:", err);
   }
 
+  let proformaCount = 0;
+  try {
+    proformaCount = await prisma.proformaInvoice.count();
+  } catch (err) {
+    console.error("Error fetching proforma count:", err);
+  }
+
 
 
 
@@ -229,7 +236,6 @@ grid
 gap-6
 md:grid-cols-2
 lg:grid-cols-3
-xl:grid-cols-5
 ">
 
 <div className="
@@ -409,6 +415,35 @@ Ayarları Yönet →
   </Link>
 </div>
 
+{/* Proforma & Teklif Kartı */}
+<div className="relative rounded-2xl border border-[#c8a165]/40 bg-gradient-to-br from-[#121420] to-[#181818] p-8 shadow-xl flex flex-col justify-between">
+  <div>
+    <span className="absolute top-4 right-4 rounded-full bg-[#c8a165]/15 border border-[#c8a165]/30 px-3 py-1 text-xs font-bold text-[#e5c184]">
+      {proformaCount} Kayıt
+    </span>
+    <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+      <span>📑 Proforma & Teklif</span>
+    </h2>
+    <p className="mt-2 text-gray-400 text-sm">
+      Kurumsal & toptan teklifler hazırla, logolu A4 PDF yazdır ve WhatsApp ile gönder.
+    </p>
+  </div>
+  <div className="mt-6 flex flex-wrap gap-2.5">
+    <Link
+      href="/admin/proforma"
+      className="rounded-full border border-[#c8a165] px-5 py-2.5 text-xs font-bold text-[#c8a165] hover:bg-[#c8a165] hover:text-black transition"
+    >
+      Teklifleri Gör
+    </Link>
+    <Link
+      href="/admin/proforma/new"
+      className="rounded-full bg-[#c8a165] px-5 py-2.5 text-xs font-bold text-black hover:bg-[#e5c184] transition"
+    >
+      + Yeni Teklif
+    </Link>
+  </div>
+</div>
+
 </div>
 
 
@@ -427,7 +462,6 @@ grid
 gap-6
 md:grid-cols-2
 lg:grid-cols-3
-xl:grid-cols-5
 ">
 
 {/* Ziyaretçi Sayısı Kartı */}
@@ -613,11 +647,19 @@ text-yellow-400
 
 </div>
 
-
-
-
-
-
+{/* Proforma Sayısı Kartı */}
+<div className="rounded-2xl border border-[#c8a165]/30 bg-gradient-to-br from-[#121422] to-[#181818] p-8 shadow-xl">
+  <div className="flex items-center justify-between">
+    <p className="text-gray-300 text-sm font-semibold">Proforma / Teklif</p>
+    <span className="text-2xl">📑</span>
+  </div>
+  <h2 className="mt-3 text-3xl font-extrabold text-[#e5c184]">{proformaCount}</h2>
+  <div className="mt-3 text-xs text-zinc-400">
+    <Link href="/admin/proforma" className="text-[#c8a165] hover:underline font-semibold">
+      Teklifleri Yönet →
+    </Link>
+  </div>
+</div>
 
 </div>
 

@@ -207,3 +207,47 @@ model SiteVisit {
   @@index([createdAt])
 }
 
+model ProformaInvoice {
+  id             Int      @id @default(autoincrement())
+  proformaNumber String   @unique
+  customerTitle  String
+  contactPerson  String?
+  email          String?
+  phone          String?
+  taxOffice      String?
+  taxNumber      String?
+  address        String?
+  city           String?
+  country        String   @default("Türkiye")
+  
+  currency       String   @default("TRY")
+  currencySymbol String   @default("₺")
+  exchangeRate   Float    @default(1.0)
+  
+  kdvRate        Float    @default(20.0)
+  kdvStatus      String   @default("HARIC")
+  discountRate   Float    @default(0.0)
+  
+  validUntilDays Int      @default(15)
+  deliveryTerms  String?
+  paymentTerms   String?
+  bankInfo       String?
+  notes          String?
+  
+  itemsJson      String
+  
+  subtotal       Float
+  totalDiscount  Float
+  totalTax       Float
+  grandTotal     Float
+  
+  status         String   @default("TEKLIF")
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([proformaNumber])
+  @@index([customerTitle])
+  @@index([createdAt])
+}
+

@@ -17,6 +17,32 @@ async function saveFile(file: File) {
 
 
 
+export async function GET() {
+  try {
+    const products = await prisma.product.findMany({
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        category: true,
+        price: true,
+        image: true,
+        material: true,
+        dimensions: true,
+        stock: true,
+        isActive: true,
+      },
+    });
+    return NextResponse.json({ success: true, products });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Ürünler alınamadı." },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(
 request:Request
 ){
