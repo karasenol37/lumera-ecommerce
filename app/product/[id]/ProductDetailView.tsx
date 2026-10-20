@@ -41,7 +41,49 @@ export default function ProductDetailView({ product }: { product: Product }) {
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorite();
 
-  const [activeImage, setActiveImage] = useState<string>(product.image);
+  // Gallery array
+  const allImages = [
+    { id: 0, url: product.image },
+    ...(product.images || []),
+  ].filter((img) => Boolean(img?.url));
+
+  const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
+  const activeImage = allImages[activeImageIndex]?.url || product.image;
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchEndX, setTouchEndX] = useState<number | null>(null);
+  const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
+
+  function nextImage() {
+    if (allImages.length <= 1) return;
+    setActiveImageIndex((prev) => (prev + 1) % allImages.length);
+  }
+
+  function prevImage() {
+    if (allImages.length <= 1) return;
+    setActiveImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+  }
+
+  function handleTouchStart(e: React.TouchEvent) {
+    setTouchEndX(null);
+    setTouchStartX(e.targetTouches[0].clientX);
+  }
+
+  function handleTouchMove(e: React.TouchEvent) {
+    setTouchEndX(e.targetTouches[0].clientX);
+  }
+
+  function handleTouchEnd() {
+    if (touchStartX === null || touchEndX === null) return;
+    const distance = touchStartX - touchEndX;
+    if (distance > 45 && allImages.length > 1) {
+      nextImage();
+    } else if (distance < -45 && allImages.length > 1) {
+      prevImage();
+    }
+    setTouchStartX(null);
+    setTouchEndX(null);
+  }
+
   const [quantity, setQuantity] = useState<number>(1);
   const [added, setAdded] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"desc" | "specs" | "shipping" | "reviews">("desc");
@@ -85,45 +127,50 @@ export default function ProductDetailView({ product }: { product: Product }) {
     (!product.shippingFee || product.shippingFee === 0);
   const shippingFee = product.shippingFee || 0;
 
-  // Malzeme türüne göre üzerindeki yazı dinamik olarak değişir:
-  // Ahşap, çam, gürgen, ladin, kestane vb. -> MASİF AHŞAP EL İŞÇİLİĞİ
-  // Çelik, metal, demir, alüminyum -> HASSAS METAL İŞÇİLİĞİ
-  const matLower = (product.material || "").toLowerCase();
-  const isWood = Boolean(
-    matLower.includes("ahşap") ||
-    matLower.includes("çam") ||
-    matLower.includes("gürgen") ||
-    matLower.includes("ladin") ||
-    matLower.includes("kestane") ||
-    matLower.includes("masif") ||
-    matLower.includes("kayın") ||
-    matLower.includes("teak") ||
-    matLower.includes("iroko")
+  // Malzeme Tercihi (Tercihli seçenek: Metal, Masif Ahşap, Metal + Ahşap)
+  const isVarnishOrPaint = Boolean(
+    product.name?.toLowerCase().includes("vernik") ||
+    product.name?.toLowerCase().includes("boya") ||
+    product.category?.toLowerCase().includes("boya") ||
+    (product.material || "").toLowerCase().includes("boya")
   );
 
-  const isMetal = !isWood && Boolean(
-    matLower.includes("çelik") ||
-    matLower.includes("metal") ||
-    matLower.includes("alüminyum") ||
-    matLower.includes("demir") ||
-    product.name?.toLowerCase().includes("ateş") ||
-    product.category?.toLowerCase().includes("ateş") ||
-    product.name?.toLowerCase().includes("metal")
-  );
+  const materialChoices = isVarnishOrPaint
+    ? [product.material || "Su Bazlı Boya"]
+    : ["Masif Ahşap", "Metal", "Metal + Ahşap"];
 
-  const craftsmanshipBadge = isWood
-    ? "MASİF AHŞAP EL İŞÇİLİĞİ"
-    : isMetal
+  const defaultMaterialChoice = (() => {
+    if (isVarnishOrPaint) return product.material || "Su Bazlı Boya";
+    const raw = (product.material || "").toLowerCase();
+    if (raw.includes("metal") && (raw.includes("ahşap") || raw.includes("ağac"))) return "Metal + Ahşap";
+    if (
+      raw.includes("metal") ||
+      raw.includes("çelik") ||
+      raw.includes("alüminyum") ||
+      product.name?.toLowerCase().includes("metal") ||
+      product.category?.toLowerCase().includes("ateş")
+    ) {
+      return "Metal";
+    }
+    return "Masif Ahşap";
+  })();
+
+  const [selectedMaterial, setSelectedMaterial] = useState<string>(defaultMaterialChoice);
+
+  // Dinamik işçilik rozeti seçilen materyale göre güncellenir
+  const activeIsWood = selectedMaterial.includes("Ahşap") && !selectedMaterial.includes("Metal");
+  const activeIsMetal = selectedMaterial.includes("Metal") && !selectedMaterial.includes("Ahşap");
+  const activeIsBoth = selectedMaterial.includes("Metal") && selectedMaterial.includes("Ahşap");
+
+  const craftsmanshipBadge = isVarnishOrPaint
+    ? "DOĞAL KORUYUCU BOYA"
+    : activeIsBoth
+    ? "METAL & MASİF AHŞAP BİRLİKTELİĞİ"
+    : activeIsMetal
     ? "HASSAS METAL İŞÇİLİĞİ"
-    : product.material
-    ? `${product.material.toUpperCase()} İŞÇİLİĞİ`
-    : "MASİF AHŞAP EL İŞÇİLİĞİ";
-
-  // Gallery array
-  const allImages = [
-    { id: 0, url: product.image },
-    ...(product.images || []),
-  ];
+    : activeIsWood
+    ? "MASİF AHŞAP EL İŞÇİLİĞİ"
+    : `${selectedMaterial.toUpperCase()} İŞÇİLİĞİ`;
 
   function handleAddToCart() {
     if (product.stock <= 0) return;
@@ -137,6 +184,7 @@ export default function ProductDetailView({ product }: { product: Product }) {
         stock: product.stock,
         freeShipping: isFreeShipping,
         shippingFee: shippingFee,
+        selectedMaterial: selectedMaterial,
       });
     }
 
@@ -208,7 +256,7 @@ export default function ProductDetailView({ product }: { product: Product }) {
 
   const oldPrice = Math.round(product.price * 1.25);
   const whatsappUrl = `https://wa.me/905358746909?text=${encodeURIComponent(
-    `Merhaba LUMERA, ${product.name} ürünü hakkında (${quantity} adet) WhatsApp ile sipariş vermek ve bilgi almak istiyorum.`
+    `Merhaba LUMERA, ${product.name} ürünü hakkında (${quantity} adet, Materyal Tercihi: ${selectedMaterial}) WhatsApp ile sipariş vermek ve bilgi almak istiyorum.`
   )}`;
 
   // Average review calculation
@@ -258,18 +306,28 @@ export default function ProductDetailView({ product }: { product: Product }) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
         {/* Left Column: Image Gallery (7 cols) */}
         <div className="lg:col-span-7 space-y-5">
-          {/* Large Main Display */}
-          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#121420]/80 backdrop-blur-2xl shadow-2xl group">
-            <div className="aspect-[4/3] w-full overflow-hidden bg-[#0a0b10]">
+          {/* Large Main Display - Kaydırılabilir Görsel Galerisi */}
+          <div
+            className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#121420]/80 backdrop-blur-2xl shadow-2xl group select-none"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {/* Geniş ve ferah 16/11 aspect ratio: Şezlong ve mobilyaların kenarları açıkça görünür */}
+            <div
+              className="relative aspect-[16/11] w-full overflow-hidden bg-[#0a0b10] cursor-zoom-in"
+              onClick={() => setIsLightboxOpen(true)}
+              title="Büyük boyutta incelemek için tıklayın"
+            >
               <img
                 src={activeImage || "/images/no-image.jpg"}
                 alt={product.name}
-                className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
+                className="h-full w-full object-cover object-center group-hover:scale-105 transition-all duration-500 ease-out"
               />
             </div>
 
             {/* Badges */}
-            <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+            <div className="absolute top-4 left-4 flex flex-col gap-2 z-10 pointer-events-none">
               <span className="rounded-full bg-black/75 border border-[#c8a165]/40 px-3.5 py-1.5 text-[10px] font-bold tracking-widest text-[#e5c184] uppercase backdrop-blur-md shadow-lg">
                 {craftsmanshipBadge}
               </span>
@@ -278,13 +336,25 @@ export default function ProductDetailView({ product }: { product: Product }) {
               </span>
             </div>
 
-            {/* Top Right Action Buttons: Favorite & Like */}
+            {/* Top Right Action Buttons: Favorite, Like & Zoom */}
             <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
+              {/* Zoom Lightbox Button */}
+              <button
+                type="button"
+                onClick={() => setIsLightboxOpen(true)}
+                className="flex h-11 w-11 items-center justify-center rounded-full backdrop-blur-md border border-white/15 bg-black/60 text-white hover:bg-black/80 hover:text-[#e5c184] hover:border-[#c8a165] transition-all shadow-xl cursor-pointer"
+                title="Büyük Görseli Aç"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                </svg>
+              </button>
+
               {/* Like Button */}
               <button
                 type="button"
                 onClick={handleLike}
-                className={`flex h-11 px-3 items-center gap-1.5 rounded-full backdrop-blur-md border transition-all duration-300 shadow-xl ${
+                className={`flex h-11 px-3 items-center gap-1.5 rounded-full backdrop-blur-md border transition-all duration-300 shadow-xl cursor-pointer ${
                   hasLiked
                     ? "bg-rose-500/25 text-rose-300 border-rose-500/50 scale-105"
                     : "bg-black/60 text-zinc-300 border-white/15 hover:bg-black/80 hover:text-white"
@@ -308,7 +378,7 @@ export default function ProductDetailView({ product }: { product: Product }) {
                     shippingFee: shippingFee,
                   })
                 }
-                className={`flex h-11 w-11 items-center justify-center rounded-full backdrop-blur-md border border-white/15 transition-all duration-300 shadow-xl ${
+                className={`flex h-11 w-11 items-center justify-center rounded-full backdrop-blur-md border border-white/15 transition-all duration-300 shadow-xl cursor-pointer ${
                   favorited
                     ? "bg-rose-500/20 text-rose-500 border-rose-500/50 scale-110"
                     : "bg-black/60 text-white hover:bg-black/80 hover:scale-105"
@@ -332,18 +402,75 @@ export default function ProductDetailView({ product }: { product: Product }) {
                 </svg>
               </button>
             </div>
+
+            {/* Kaydırma Navigasyon Okları (Çoklu Görselde) */}
+            {allImages.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    prevImage();
+                  }}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-black/65 text-white backdrop-blur-md border border-white/20 hover:bg-[#c8a165] hover:text-black hover:border-[#c8a165] transition-all shadow-xl cursor-pointer"
+                  title="Önceki Görsel"
+                >
+                  <span className="text-xl sm:text-2xl font-bold leading-none select-none">‹</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextImage();
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-black/65 text-white backdrop-blur-md border border-white/20 hover:bg-[#c8a165] hover:text-black hover:border-[#c8a165] transition-all shadow-xl cursor-pointer"
+                  title="Sonraki Görsel"
+                >
+                  <span className="text-xl sm:text-2xl font-bold leading-none select-none">›</span>
+                </button>
+
+                {/* Alt Kaydırma Noktaları (Dots) */}
+                <div className="absolute bottom-3 inset-x-0 z-20 flex items-center justify-center gap-1.5 pointer-events-none">
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 pointer-events-auto">
+                    {allImages.map((_, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveImageIndex(idx);
+                        }}
+                        className={`h-2 rounded-full transition-all cursor-pointer ${
+                          activeImageIndex === idx
+                            ? "w-6 bg-[#c8a165]"
+                            : "w-2 bg-white/40 hover:bg-white/80"
+                        }`}
+                        title={`Görsel ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Görsel Sayacı */}
+                <div className="absolute bottom-3 right-4 z-10 rounded-full bg-black/70 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-white border border-white/15">
+                  {activeImageIndex + 1} / {allImages.length}
+                </div>
+              </>
+            )}
           </div>
 
           {/* Thumbnails */}
           {allImages.length > 1 && (
-            <div className="flex items-center gap-4 overflow-x-auto pb-2 scrollbar-none">
+            <div className="flex items-center gap-3 sm:gap-4 overflow-x-auto pb-2 scrollbar-none">
               {allImages.map((img, idx) => (
                 <button
                   key={idx}
-                  onClick={() => setActiveImage(img.url)}
-                  className={`relative h-20 w-24 shrink-0 overflow-hidden rounded-2xl border transition-all ${
-                    activeImage === img.url
-                      ? "border-[#c8a165] ring-2 ring-[#c8a165]/30 scale-105"
+                  type="button"
+                  onClick={() => setActiveImageIndex(idx)}
+                  className={`relative h-20 w-24 shrink-0 overflow-hidden rounded-2xl border transition-all cursor-pointer ${
+                    activeImageIndex === idx
+                      ? "border-[#c8a165] ring-2 ring-[#c8a165]/40 scale-105"
                       : "border-white/10 opacity-70 hover:opacity-100"
                   }`}
                 >
@@ -489,9 +616,9 @@ export default function ProductDetailView({ product }: { product: Product }) {
                   dangerouslySetInnerHTML={{
                     __html: formatProductDescription(
                       product.description ||
-                        (isWood
+                        (activeIsWood
                           ? "Bu özel tasarım ürün, dış mekan koşullarına yüksek dayanıklılık gösteren fırınlanmış masif ahşaptan üretilmiştir. Dinlenme alanlarınıza şıklık katmak üzere tasarlanmıştır."
-                          : isMetal
+                          : activeIsMetal
                           ? "Bu özel tasarım ürün, dış mekan koşullarına ve yüksek ısıya dayanıklı hassas işlenmiş çelikten üretilmiştir. Dinlenme alanlarınıza şıklık katmak üzere tasarlanmıştır."
                           : "Bu seçkin ürün, dış mekan koşullarına yüksek dayanıklılık gösteren üst düzey zanaatle üretilmiştir.")
                     ),
@@ -502,10 +629,8 @@ export default function ProductDetailView({ product }: { product: Product }) {
               {activeTab === "specs" && (
                 <dl className="grid grid-cols-2 gap-4">
                   <div className="rounded-xl bg-[#090a0f] p-3 border border-white/5">
-                    <dt className="text-[10px] text-zinc-500 uppercase font-bold">Materyal</dt>
-                    <dd className="mt-1 font-semibold text-white">
-                      {product.material || (isWood ? "Fırınlanmış 1. Sınıf Ahşap" : isMetal ? "Hassas İşlenmiş Çelik" : "Lüks Malzeme")}
-                    </dd>
+                    <dt className="text-[10px] text-zinc-500 uppercase font-bold">Tercih Edilen Materyal</dt>
+                    <dd className="mt-1 font-semibold text-[#e5c184]">{selectedMaterial}</dd>
                   </div>
                   <div className="rounded-xl bg-[#090a0f] p-3 border border-white/5">
                     <dt className="text-[10px] text-zinc-500 uppercase font-bold">Ölçüler</dt>
@@ -657,6 +782,58 @@ export default function ProductDetailView({ product }: { product: Product }) {
             </div>
           </div>
 
+          {/* Materyal Tercihi (Seçimli: Ahşap, Metal, Metal + Ahşap) */}
+          <div className="rounded-3xl border border-white/10 bg-[#121420]/80 p-5 backdrop-blur-2xl shadow-xl space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+                <span>🪵</span>
+                <span>Materyal Tercihi</span>
+              </span>
+              <span className="text-xs font-extrabold text-[#e5c184] bg-[#c8a165]/10 border border-[#c8a165]/30 rounded-full px-3 py-0.5">
+                {selectedMaterial}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
+              {materialChoices.map((mat) => {
+                const isSelected = selectedMaterial === mat;
+                const icon =
+                  mat === "Masif Ahşap"
+                    ? "🌲"
+                    : mat === "Metal"
+                    ? "⚙️"
+                    : mat === "Metal + Ahşap"
+                    ? "✨"
+                    : "🎨";
+                return (
+                  <button
+                    key={mat}
+                    type="button"
+                    onClick={() => setSelectedMaterial(mat)}
+                    className={`relative flex flex-col items-center justify-center py-3 px-2 rounded-2xl border transition-all duration-200 cursor-pointer ${
+                      isSelected
+                        ? "bg-[#c8a165]/15 border-[#c8a165] text-[#e5c184] shadow-lg shadow-[#c8a165]/15 scale-[1.02]"
+                        : "bg-[#090a0f]/80 border-white/10 text-zinc-400 hover:text-white hover:border-white/25 hover:bg-white/5"
+                    }`}
+                  >
+                    <span className="text-base sm:text-lg mb-1">{icon}</span>
+                    <span className="text-[11px] sm:text-xs font-bold leading-tight text-center">
+                      {mat}
+                    </span>
+                    {isSelected && (
+                      <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#c8a165] text-black text-[9px] font-black shadow">
+                        ✓
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[10px] text-zinc-500 font-light text-center">
+              * Tercih ettiğiniz materyale göre ürününüz özel atölyemizde özenle hazırlanacaktır.
+            </p>
+          </div>
+
           {/* Quantity & Add to Cart Controls */}
           <div className="space-y-3.5 pt-2">
             <div className="flex items-center gap-3 sm:gap-4">
@@ -749,7 +926,7 @@ export default function ProductDetailView({ product }: { product: Product }) {
             <div className="rounded-2xl border border-white/5 bg-[#121420]/40 p-2.5 sm:p-3 text-center">
               <span className="text-lg sm:text-xl">🛡️</span>
               <h4 className="mt-1 text-[10px] sm:text-[11px] font-bold text-white leading-tight">2 Yıl Garanti</h4>
-              <p className="mt-0.5 text-[9px] sm:text-[10px] text-zinc-500 hidden xs:block">{isWood ? "Masif Ahşap" : isMetal ? "Paslanmaz Metal" : "Lüks Malzeme"}</p>
+              <p className="mt-0.5 text-[9px] sm:text-[10px] text-zinc-500 hidden xs:block">{activeIsWood ? "Masif Ahşap" : activeIsMetal ? "Paslanmaz Metal" : "Lüks Malzeme"}</p>
             </div>
             <div className="rounded-2xl border border-white/5 bg-[#121420]/40 p-2.5 sm:p-3 text-center">
               <span className="text-lg sm:text-xl">💳</span>
@@ -803,6 +980,87 @@ export default function ProductDetailView({ product }: { product: Product }) {
           </button>
         </div>
       </div>
+
+      {/* Lightbox / Fullscreen Modal */}
+      {isLightboxOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 sm:p-8"
+          onClick={() => setIsLightboxOpen(false)}
+        >
+          {/* Close button */}
+          <button
+            type="button"
+            onClick={() => setIsLightboxOpen(false)}
+            className="absolute top-5 right-5 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition text-lg font-bold cursor-pointer"
+            title="Kapat"
+          >
+            ✕
+          </button>
+
+          {/* Modal Content */}
+          <div
+            className="relative max-w-5xl max-h-[90vh] w-full flex flex-col items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div className="relative max-h-[75vh] w-full flex items-center justify-center">
+              <img
+                src={activeImage || "/images/no-image.jpg"}
+                alt={product.name}
+                className="max-h-[75vh] w-auto max-w-full object-contain rounded-2xl shadow-2xl"
+              />
+            </div>
+
+            {/* Lightbox Prev / Next Buttons */}
+            {allImages.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={prevImage}
+                  className="absolute left-2 sm:-left-6 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white hover:bg-[#c8a165] hover:text-black transition text-2xl font-bold cursor-pointer backdrop-blur-md"
+                  title="Önceki"
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  onClick={nextImage}
+                  className="absolute right-2 sm:-right-6 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white hover:bg-[#c8a165] hover:text-black transition text-2xl font-bold cursor-pointer backdrop-blur-md"
+                  title="Sonraki"
+                >
+                  ›
+                </button>
+              </>
+            )}
+
+            {/* Lightbox Thumbnails */}
+            {allImages.length > 1 && (
+              <div className="mt-4 flex items-center gap-3 overflow-x-auto p-2 scrollbar-none max-w-full">
+                {allImages.map((img, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setActiveImageIndex(idx)}
+                    className={`relative h-16 w-20 shrink-0 overflow-hidden rounded-xl border transition-all cursor-pointer ${
+                      activeImageIndex === idx
+                        ? "border-[#c8a165] ring-2 ring-[#c8a165]"
+                        : "border-white/20 opacity-60 hover:opacity-100"
+                    }`}
+                  >
+                    <img
+                      src={img.url}
+                      alt={`Thumbnail ${idx + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

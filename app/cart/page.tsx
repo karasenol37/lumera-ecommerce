@@ -93,13 +93,19 @@ export default function CartPage() {
                             {item.name}
                           </h2>
 
+                          {item.selectedMaterial && (
+                            <span className="inline-block mt-1 text-[11px] font-medium text-[#c8a165] bg-[#c8a165]/10 border border-[#c8a165]/30 rounded-full px-2.5 py-0.5">
+                              Materyal: {item.selectedMaterial}
+                            </span>
+                          )}
+
                           <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm font-semibold gold-gradient-text">
                             ₺{item.price.toLocaleString("tr-TR")}
                           </p>
                         </div>
 
                         <button
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => removeFromCart(item.id, item.selectedMaterial)}
                           className="p-1 sm:p-2 text-[11px] sm:text-xs font-semibold text-rose-400 hover:text-rose-300 transition shrink-0"
                           title="Ürünü Sil"
                         >
@@ -110,7 +116,7 @@ export default function CartPage() {
                       <div className="mt-3 sm:mt-6 flex items-center justify-between flex-wrap gap-2">
                         <div className="flex items-center gap-2 sm:gap-3 bg-[#090a0f] rounded-full border border-white/10 px-2 sm:px-3 py-1 sm:py-1.5">
                           <button
-                            onClick={() => decreaseQuantity(item.id)}
+                            onClick={() => decreaseQuantity(item.id, item.selectedMaterial)}
                             className="h-6 w-6 sm:h-7 sm:w-7 rounded-full bg-white/10 text-white font-bold hover:bg-[#c8a165] hover:text-black transition text-xs sm:text-sm"
                           >
                             −
@@ -121,7 +127,7 @@ export default function CartPage() {
                           </span>
 
                           <button
-                            onClick={() => increaseQuantity(item.id)}
+                            onClick={() => increaseQuantity(item.id, item.selectedMaterial)}
                             className="h-6 w-6 sm:h-7 sm:w-7 rounded-full bg-white/10 text-white font-bold hover:bg-[#c8a165] hover:text-black transition text-xs sm:text-sm"
                           >
                             +
@@ -201,7 +207,7 @@ export default function CartPage() {
                       cart
                         .map(
                           (item, idx) =>
-                            `${idx + 1}. ${item.name} (${item.quantity} Adet) - ₺${(
+                            `${idx + 1}. ${item.name}${item.selectedMaterial ? ` [Materyal: ${item.selectedMaterial}]` : ""} (${item.quantity} Adet) - ₺${(
                               item.price * item.quantity
                             ).toLocaleString("tr-TR")}`
                         )

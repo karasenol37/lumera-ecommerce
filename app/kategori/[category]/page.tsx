@@ -125,7 +125,15 @@ export default async function CategoryPage({ params }: Props) {
           {decodedCategory}
         </h1>
 
-        <div className="mt-8 sm:mt-12 grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
+        <div
+          className={`mt-8 sm:mt-12 grid gap-4 sm:gap-6 ${
+            products.length <= 2
+              ? "grid-cols-1 sm:grid-cols-2 max-w-4xl"
+              : products.length === 3
+              ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl"
+              : "grid-cols-2 sm:grid-cols-2 lg:grid-cols-4"
+          }`}
+        >
           {products.length === 0 ? (
             <div className="col-span-full rounded-2xl border border-white/10 bg-[#121420]/80 p-8 sm:p-12 text-center text-zinc-400 text-xs sm:text-sm">
               Bu kategoride ürün bulunamadı.

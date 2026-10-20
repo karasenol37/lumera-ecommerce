@@ -58,13 +58,9 @@ export default function ProductCard({
           )}
         </span>
 
-        {isFree ? (
+        {isFree && (
           <span className="rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 sm:px-2.5 sm:py-0.5 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider backdrop-blur-md shadow-sm">
             Ücretsiz Kargo
-          </span>
-        ) : (
-          <span className="rounded-full bg-amber-500/25 text-amber-300 border border-amber-500/40 px-2 py-0.5 sm:px-2.5 sm:py-0.5 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider backdrop-blur-md shadow-sm">
-            Kargo Alıcıya Aittir
           </span>
         )}
       </div>
@@ -74,16 +70,17 @@ export default function ProductCard({
         <FavoriteButton id={id} name={name} price={price} image={image} />
       </div>
 
-      {/* Image Container */}
+      {/* Image Container - Geniş 16/11 format ve ferah kenarlar */}
       <Link href={`/product/${id}`} className="block overflow-hidden">
-        <div className="relative h-44 xs:h-52 sm:h-72 w-full overflow-hidden bg-[#0a0b10]">
+        <div className="relative aspect-[16/11] w-full overflow-hidden bg-[#0a0b10]">
           <img
             src={image || "/images/no-image.jpg"}
             alt={name}
-            className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
+            className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
           />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-[#11131c] via-transparent to-transparent opacity-80" />
+          {/* Hafif alt gölge geçişi (görseli karartmadan kenarların tamamı net görünür) */}
+          <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#11131c]/50 to-transparent pointer-events-none" />
 
           {/* Quick View Button (Desktop only hover) */}
           <div className="hidden sm:flex absolute inset-0 items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100 backdrop-blur-[2px]">

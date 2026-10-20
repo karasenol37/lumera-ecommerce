@@ -1,5 +1,6 @@
+import Link from "next/link";
+import Image from "next/image";
 import { getSiteSettings } from "@/lib/services/settingsService";
-import CategoriesSlider from "./CategoriesSlider";
 
 export default async function Categories() {
   const settings = await getSiteSettings();
@@ -48,7 +49,48 @@ export default async function Categories() {
         </p>
       </div>
 
-      <CategoriesSlider categories={categories} />
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-6">
+        {categories.map((category) => (
+          <Link
+            key={category.name}
+            href={`/kategori/${encodeURIComponent(category.name)}`}
+            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-[#121420]/80 backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:border-[#c8a165]/60 hover:shadow-[0_15px_35px_rgba(200,161,101,0.2)]"
+          >
+            {/* Görsel Konteyneri: Kenarlar açık, geniş aspect ratio */}
+            <div className="relative aspect-[16/11] w-full overflow-hidden bg-[#090a0f]">
+              <Image
+                src={category.image}
+                alt={category.name}
+                fill
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#121420] via-transparent to-transparent opacity-60" />
+
+              <div className="absolute top-2 right-2 sm:top-3 sm:right-3 rounded-full bg-[#090a0f]/80 backdrop-blur-md px-2.5 py-0.5 sm:px-3 sm:py-1 text-[9px] sm:text-[10px] font-semibold tracking-wider text-[#c8a165] border border-[#c8a165]/30 shadow-sm">
+                KOLEKSİYON
+              </div>
+            </div>
+
+            {/* İçerik */}
+            <div className="p-3 sm:p-5 flex flex-col flex-1 justify-between">
+              <div>
+                <h3 className="text-sm sm:text-lg font-bold text-white transition-colors duration-200 group-hover:text-[#c8a165] line-clamp-1">
+                  {category.name}
+                </h3>
+                <p className="mt-1 text-[11px] sm:text-xs text-zinc-400 font-light leading-snug line-clamp-2">
+                  {category.desc}
+                </p>
+              </div>
+
+              <div className="mt-3 sm:mt-5 pt-2.5 border-t border-white/5 flex items-center justify-between text-[11px] sm:text-xs font-semibold text-[#c8a165]">
+                <span>Modelleri İncele</span>
+                <span className="transition-transform duration-300 group-hover:translate-x-1 text-sm">→</span>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
     </section>
   );
 }

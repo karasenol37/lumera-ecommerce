@@ -1,3 +1,4 @@
+"useClient"; // nextjs client
 "use client";
 
 import {
@@ -8,8 +9,6 @@ import {
   ReactNode,
 } from "react";
 
-
-
 type Product = {
   id: number;
   name: string;
@@ -18,63 +17,24 @@ type Product = {
   stock: number;
   freeShipping?: boolean;
   shippingFee?: number;
+  selectedMaterial?: string;
 };
-
-
-
-
 
 export type CartItem = Product & {
-
-  quantity:number;
-
+  quantity: number;
+  selectedMaterial?: string;
 };
-
-
-
-
-
-
 
 type CartContextType = {
-
-
-  cart:CartItem[];
-
-
-  addToCart:(product:Product)=>void;
-
-
-  removeFromCart:(id:number)=>void;
-
-
-  increaseQuantity:(id:number)=>void;
-
-
-  decreaseQuantity:(id:number)=>void;
-
-
-  clearCart:()=>void;
-
-
+  cart: CartItem[];
+  addToCart: (product: Product) => void;
+  removeFromCart: (id: number, selectedMaterial?: string) => void;
+  increaseQuantity: (id: number, selectedMaterial?: string) => void;
+  decreaseQuantity: (id: number, selectedMaterial?: string) => void;
+  clearCart: () => void;
 };
 
-
-
-
-
-
-
-const CartContext =
-createContext<CartContextType | undefined>(undefined);
-
-
-
-
-
-
-
-
+const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({
   children,
@@ -120,476 +80,114 @@ export function CartProvider({
     } catch {}
   }, [cart, storageKey, isLoaded]);
 
+  function addToCart(product: Product) {
+    if (product.stock <= 0) {
+      alert("Bu ürün stokta yok.");
+      return;
+    }
 
+    setCart((current) => {
+      const existing = current.find(
+        (item) =>
+          item.id === product.id &&
+          (item.selectedMaterial || "") === (product.selectedMaterial || "")
+      );
 
+      if (existing) {
+        if (existing.quantity >= product.stock) {
+          alert("Yeterli stok yok.");
+          return current;
+        }
 
+        return current.map((item) =>
+          item.id === product.id &&
+          (item.selectedMaterial || "") === (product.selectedMaterial || "")
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
 
+      return [
+        ...current,
+        {
+          ...product,
+          quantity: 1,
+        },
+      ];
+    });
+  }
 
+  function removeFromCart(id: number, selectedMaterial?: string) {
+    setCart((current) =>
+      current.filter(
+        (item) =>
+          !(
+            item.id === id &&
+            (selectedMaterial === undefined ||
+              (item.selectedMaterial || "") === (selectedMaterial || ""))
+          )
+      )
+    );
+  }
 
+  function increaseQuantity(id: number, selectedMaterial?: string) {
+    setCart((current) =>
+      current.map((item) => {
+        const matches =
+          item.id === id &&
+          (selectedMaterial === undefined ||
+            (item.selectedMaterial || "") === (selectedMaterial || ""));
+        if (matches) {
+          if (item.quantity >= item.stock) {
+            alert("Stok sınırına ulaştınız.");
+            return item;
+          }
+          return { ...item, quantity: item.quantity + 1 };
+        }
+        return item;
+      })
+    );
+  }
 
+  function decreaseQuantity(id: number, selectedMaterial?: string) {
+    setCart((current) =>
+      current.map((item) => {
+        const matches =
+          item.id === id &&
+          (selectedMaterial === undefined ||
+            (item.selectedMaterial || "") === (selectedMaterial || ""));
+        if (matches) {
+          return { ...item, quantity: Math.max(1, item.quantity - 1) };
+        }
+        return item;
+      })
+    );
+  }
 
-function addToCart(
+  function clearCart() {
+    setCart([]);
+  }
 
-product:Product
-
-){
-
-
-
-setCart((current)=>{
-
-
-
-
-
-const existing =
-
-current.find(
-
-(item)=>item.id===product.id
-
-);
-
-
-
-
-
-
-
-// ürün zaten sepetteyse
-
-if(existing){
-
-
-
-
-
-if(existing.quantity >= product.stock){
-
-
-alert(
-
-"Yeterli stok yok."
-
-);
-
-
-return current;
-
-
+  return (
+    <CartContext.Provider
+      value={{
+        cart,
+        addToCart,
+        removeFromCart,
+        increaseQuantity,
+        decreaseQuantity,
+        clearCart,
+      }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
 }
 
-
-
-
-
-
-
-return current.map(item=>
-
-
-item.id===product.id
-
-?
-
-{
-
-...item,
-
-quantity:item.quantity+1
-
-}
-
-
-:
-
-item
-
-
-);
-
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-// stok yoksa
-
-if(product.stock <= 0){
-
-
-alert(
-
-"Bu ürün stokta yok."
-
-);
-
-
-return current;
-
-
-}
-
-
-
-
-
-
-
-
-
-return [
-
-...current,
-
-
-{
-
-...product,
-
-quantity:1
-
-}
-
-];
-
-
-
-
-
-});
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-function removeFromCart(
-
-id:number
-
-){
-
-
-
-setCart((current)=>
-
-
-current.filter(
-
-(item)=>item.id!==id
-
-)
-
-
-);
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-function increaseQuantity(
-
-id:number
-
-){
-
-
-
-setCart((current)=>
-
-
-
-current.map(item=>{
-
-
-
-
-
-if(item.id===id){
-
-
-
-
-
-if(item.quantity >= item.stock){
-
-
-alert(
-
-"Stok sınırına ulaştınız."
-
-);
-
-
-return item;
-
-
-}
-
-
-
-
-
-
-
-
-return {
-
-
-...item,
-
-
-quantity:item.quantity+1
-
-
-};
-
-
-
-}
-
-
-
-
-
-return item;
-
-
-
-})
-
-
-);
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-function decreaseQuantity(
-
-id:number
-
-){
-
-
-
-setCart((current)=>
-
-
-current.map(item=>{
-
-
-
-
-
-if(item.id===id){
-
-
-
-return {
-
-
-...item,
-
-
-quantity:
-
-Math.max(
-
-1,
-
-item.quantity-1
-
-)
-
-
-};
-
-
-
-}
-
-
-
-
-
-return item;
-
-
-
-})
-
-
-);
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-function clearCart(){
-
-
-setCart([]);
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-return (
-
-
-<CartContext.Provider
-
-
-value={{
-
-
-cart,
-
-
-addToCart,
-
-
-removeFromCart,
-
-
-increaseQuantity,
-
-
-decreaseQuantity,
-
-
-clearCart
-
-
-
-}}
-
-
->
-
-
-{children}
-
-
-</CartContext.Provider>
-
-
-
-);
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-export function useCart(){
-
-
-
-const context =
-
-useContext(CartContext);
-
-
-
-
-
-if(!context){
-
-
-throw new Error(
-
-"useCart CartProvider içinde kullanılmalıdır"
-
-);
-
-
-}
-
-
-
-
-
-return context;
-
-
-
+export function useCart() {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error("useCart CartProvider içinde kullanılmalıdır");
+  }
+  return context;
 }

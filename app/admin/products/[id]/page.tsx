@@ -484,15 +484,37 @@ export default function EditProductPage() {
           {/* Malzeme & Ölçüler */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">
-                Malzeme / Materyal
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                  Malzeme / Materyal Tercihi
+                </label>
+                <span className="text-[11px] text-zinc-500">Hazır seçenekler</span>
+              </div>
+
+              {/* Hızlı Seçim Butonları */}
+              <div className="flex flex-wrap gap-1.5 mb-2.5">
+                {["Masif Ahşap", "Metal", "Metal + Ahşap", "% 100 1. Sınıf Kestane Ağacı", "Su bazlı Boya"].map((preset) => (
+                  <button
+                    key={preset}
+                    type="button"
+                    onClick={() => setForm((prev) => ({ ...prev, material: preset }))}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition border cursor-pointer ${
+                      form.material === preset
+                        ? "bg-[#c8a165] text-black border-[#c8a165]"
+                        : "bg-[#121420] text-zinc-300 border-white/10 hover:border-[#c8a165]/50"
+                    }`}
+                  >
+                    {preset}
+                  </button>
+                ))}
+              </div>
+
               <input
                 type="text"
                 name="material"
                 value={form.material}
                 onChange={handleChange}
-                placeholder="Örn: %100 Fırınlanmış Teak Ağacı & Su Geçirmez Kumaş"
+                placeholder="Örn: Masif Ahşap, Metal, Metal + Ahşap"
                 className="w-full rounded-xl border border-white/10 bg-[#090a0f] p-4 text-sm text-white focus:border-[#c8a165] focus:outline-none"
               />
             </div>

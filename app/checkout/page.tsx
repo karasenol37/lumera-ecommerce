@@ -194,7 +194,7 @@ export default function CheckoutPage() {
                           cart
                             .map(
                               (i, idx) =>
-                                `${idx + 1}. ${i.name} (${i.quantity} Adet) - ₺${(
+                                `${idx + 1}. ${i.name}${i.selectedMaterial ? ` [Materyal: ${i.selectedMaterial}]` : ""} (${i.quantity} Adet) - ₺${(
                                   i.price * i.quantity
                                 ).toLocaleString("tr-TR")}`
                             )
@@ -246,13 +246,16 @@ export default function CheckoutPage() {
             </h2>
 
             <div className="mt-6 space-y-4 max-h-80 overflow-y-auto pr-2">
-              {cart.map((item) => (
+              {cart.map((item, index) => (
                 <div
-                  key={item.id}
+                  key={`${item.id}-${item.selectedMaterial || ""}-${index}`}
                   className="flex items-center justify-between text-sm py-2 border-b border-white/5"
                 >
                   <div>
                     <p className="font-semibold text-white">{item.name}</p>
+                    {item.selectedMaterial && (
+                      <p className="text-[11px] text-[#c8a165]">Materyal: {item.selectedMaterial}</p>
+                    )}
                     <p className="text-xs text-zinc-400">{item.quantity} Adet</p>
                   </div>
                   <span className="font-bold text-[#e5c184]">
