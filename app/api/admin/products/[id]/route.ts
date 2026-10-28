@@ -5,6 +5,7 @@ import { getSessionUser } from "@/lib/actions/session";
 import { put } from "@vercel/blob";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import { buildProductImageFileName } from "@/lib/utils/productImage";
 
 async function isAuthorizedAdmin() {
   const jwtSession = await getSession();
@@ -16,18 +17,24 @@ async function isAuthorizedAdmin() {
   return false;
 }
 
-async function saveFile(file: File) {
+async function saveFile(file: File, productName: string, index?: number) {
+  const fileName = buildProductImageFileName(
+    productName,
+    file.name,
+    index,
+    file.type
+  );
+
   if (process.env.BLOB_READ_WRITE_TOKEN) {
-    const blob = await put(
-      `${Date.now()}-${file.name.replace(/\s+/g, "-")}`,
-      file,
-      { access: "public" }
-    );
+    const blob = await put(fileName, file, {
+      access: "public",
+      addRandomSuffix: false,
+      allowOverwrite: true,
+    });
     return blob.url;
   } else {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const fileName = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
     const uploadDir = path.join(process.cwd(), "public", "uploads");
     await mkdir(uploadDir, { recursive: true });
     await writeFile(path.join(uploadDir, fileName), buffer);
@@ -139,14 +146,15 @@ export async function PUT(
   // Ana Görsel Güncelleme
   const mainImage = formData.get("mainImage");
   if (mainImage && mainImage instanceof File && mainImage.size > 0) {
-    dataToUpdate.image = await saveFile(mainImage);
+    dataToUpdate.image = await saveFile(mainImage, name, 1);
   }
 
   // Silinecek Galeri Görselleri
+  let deletedIds: number[] = [];
   const deletedImageIdsRaw = formData.get("deletedImageIds");
   if (deletedImageIdsRaw) {
     try {
-      const deletedIds: number[] = JSON.parse(String(deletedImageIdsRaw));
+      deletedIds = JSON.parse(String(deletedImageIdsRaw));
       if (Array.isArray(deletedIds) && deletedIds.length > 0) {
         await prisma.productImage.deleteMany({
           where: {
@@ -160,6 +168,10 @@ export async function PUT(
     }
   }
 
+  const remainingGalleryCount = existingProduct.images.filter(
+    (img) => !deletedIds.includes(img.id)
+  ).length;
+
   // Yeni Galeri Yükleme
   const newGalleryFiles = (formData.getAll("gallery") as File[]).filter(
     (file) => file instanceof File && file.size > 0
@@ -167,7 +179,9 @@ export async function PUT(
   let newGalleryUrls: string[] = [];
   if (newGalleryFiles.length > 0) {
     newGalleryUrls = await Promise.all(
-      newGalleryFiles.map((file) => saveFile(file))
+      newGalleryFiles.map((file, idx) =>
+        saveFile(file, name, remainingGalleryCount + idx + 2)
+      )
     );
   }
 

@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #090a0f;
-  --foreground: #f5efe6;
+  --background: #1b2129;
+  --foreground: #f7f3eb;
   --gold-primary: #c8a165;
   --gold-light: #e5c184;
   --gold-dark: #a67c3b;
@@ -15,10 +15,42 @@
 }
 
 body {
-  background-color: #090a0f;
-  color: #f5efe6;
+  background-color: #1b2129;
+  background-image:
+    radial-gradient(circle at 15% 8%, rgba(200, 161, 101, 0.14), transparent 42%),
+    radial-gradient(circle at 85% 28%, rgba(62, 88, 82, 0.22), transparent 48%),
+    radial-gradient(circle at 50% 85%, rgba(200, 161, 101, 0.09), transparent 50%),
+    linear-gradient(180deg, #1f2630 0%, #192028 50%, #1d242d 100%);
+  background-attachment: fixed;
+  color: #f7f3eb;
   font-family: var(--font-sans), system-ui, sans-serif;
   overflow-x: hidden;
+}
+
+/* Ferah ve doğal ahşap/dış mekan içerikleriyle uyumlu arka plan harmonizasyonu */
+.bg-\[\#090a0f\] {
+  background-color: #1b2129 !important;
+  background-image: radial-gradient(
+    circle at 20% 15%,
+    rgba(200, 161, 101, 0.08),
+    transparent 45%
+  );
+}
+
+.bg-\[\#0a0b10\],
+.bg-\[\#06070a\],
+.bg-\[\#0b0b0b\] {
+  background-color: #151a21 !important;
+}
+
+.bg-\[\#11131c\],
+.bg-\[\#121420\] {
+  background-color: #222933 !important;
+}
+
+.bg-\[\#11131c\]\/80,
+.bg-\[\#121420\]\/80 {
+  background-color: rgba(34, 41, 51, 0.85) !important;
 }
 
 /* Custom Scrollbar */
@@ -26,10 +58,10 @@ body {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #090a0f;
+  background: #171c23;
 }
 ::-webkit-scrollbar-thumb {
-  background: #222533;
+  background: #2f3846;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -38,16 +70,16 @@ body {
 
 /* Glassmorphism & Gold Gradient Utilities */
 .glass-panel {
-  background: rgba(18, 20, 29, 0.7);
+  background: rgba(34, 41, 51, 0.78);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .glass-panel-gold {
-  background: rgba(24, 26, 38, 0.75);
+  background: rgba(38, 45, 56, 0.82);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(200, 161, 101, 0.25);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  border: 1px solid rgba(200, 161, 101, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.28);
 }
 
 .gold-gradient-text {
@@ -91,7 +123,7 @@ body {
 /* Product Description Content & Editor Styles */
 .product-description-editor:empty:before {
   content: attr(data-placeholder);
-  color: #71717a;
+  color: #9ca3af;
   pointer-events: none;
 }
 
@@ -152,8 +184,6 @@ body {
 
 .product-description-content th,
 .product-description-content td {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   padding: 0.5rem;
 }
-
-

@@ -1,6 +1,5 @@
 import { Product } from "@/types/product";
 
-
 export const products: Product[] = [
   {
     id: 1,
@@ -11,7 +10,7 @@ export const products: Product[] = [
     oldPrice: 15990,
     rating: 4.8,
     stock: true,
-    image: "/images/products/hamak.jpg",
+    image: "/images/products/teak-ahsap-hamak.jpg",
     description:
       "Doğal tik ağacından üretilmiş premium hamak. Teras ve açık hava yaşam alanları için özel olarak tasarlanmıştır.",
     material: "Masif Tik Ağacı",
@@ -32,7 +31,7 @@ export const products: Product[] = [
     oldPrice: 9990,
     rating: 4.6,
     stock: true,
-    image: "/images/products/semsiye.jpg",
+    image: "/images/products/premium-semsiye-modeli.jpg",
     description:
       "Geniş gölge alanı sağlayan modern tasarımlı premium şemsiye. Dış mekan konforunu artırır.",
     material: "Alüminyum gövde ve UV korumalı kumaş",
@@ -53,7 +52,7 @@ export const products: Product[] = [
     oldPrice: 6990,
     rating: 4.7,
     stock: true,
-    image: "/images/products/sezlong.jpg",
+    image: "/images/products/lumera-luks-ahsap-sezlong.jpg",
     description:
       "Teras ve havuz alanları için tasarlanmış ergonomik ahşap şezlong. Konfor ve estetiği bir araya getirir.",
     material: "Doğal Ahşap",
@@ -74,7 +73,7 @@ export const products: Product[] = [
     oldPrice: 8990,
     rating: 4.9,
     stock: true,
-    image: "/images/products/ates-cukuru.jpg",
+    image: "/images/products/modern-ates-cukuru.jpg",
     description:
       "Açık hava alanlarında sıcak ve keyifli atmosfer oluşturmak için tasarlanmış modern ateş çukuru.",
     material: "Isıya dayanıklı çelik",

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { calculateShipping } from "@/lib/utils/shipping";
+import { getProductImageUrl } from "@/lib/utils/productImage";
 
 export default function CartPage() {
   const {
@@ -81,8 +82,9 @@ export default function CartPage() {
                 >
                   <div className="flex gap-4 items-start">
                     <img
-                      src={item.image}
+                      src={getProductImageUrl(item.image, item.name, 1)}
                       alt={item.name}
+                      title={item.name}
                       className="h-20 w-20 sm:h-32 sm:w-32 rounded-xl object-cover border border-white/10 shrink-0"
                     />
 

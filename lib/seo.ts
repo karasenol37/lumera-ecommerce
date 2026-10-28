@@ -2,6 +2,8 @@
  * SEO Utility and Schema.org Structured Data Generators for LUMERA
  */
 
+import { getProductImageUrl } from "@/lib/utils/productImage";
+
 export function getSiteUrl(): string {
   const url =
     process.env.NEXT_PUBLIC_SITE_URL ||
@@ -127,11 +129,13 @@ export interface ProductSchemaInput {
 }
 
 export function generateProductSchema(product: ProductSchemaInput, siteUrl: string) {
+  const mainImgPath = getProductImageUrl(product.image, product.name, 1);
   const images = [
-    product.image?.startsWith("http") ? product.image : `${siteUrl}${product.image}`,
-    ...(product.images || []).map((img) =>
-      img.url.startsWith("http") ? img.url : `${siteUrl}${img.url}`
-    ),
+    mainImgPath.startsWith("http") ? mainImgPath : `${siteUrl}${mainImgPath}`,
+    ...(product.images || []).map((img, idx) => {
+      const galPath = getProductImageUrl(img.url, product.name, idx + 2);
+      return galPath.startsWith("http") ? galPath : `${siteUrl}${galPath}`;
+    }),
   ].filter(Boolean);
 
   const productUrl = `${siteUrl}/product/${product.id}`;

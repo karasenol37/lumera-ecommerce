@@ -26,7 +26,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 const siteUrl = getSiteUrl();
 
 export const viewport: Viewport = {
-  themeColor: "#090a0f",
+  themeColor: "#1b2129",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -116,7 +116,7 @@ export default async function RootLayout({
         <JsonLd data={organizationSchema} />
         <JsonLd data={websiteSchema} />
       </head>
-      <body className="min-h-screen bg-[#090a0f] text-[#f5efe6] selection:bg-[#c8a165] selection:text-black">
+      <body className="min-h-screen bg-[#1b2129] text-[#f7f3eb] selection:bg-[#c8a165] selection:text-black">
         <CartProvider userId={userId}>
           <FavoriteProvider userId={userId}>
             <VisitorTracker />

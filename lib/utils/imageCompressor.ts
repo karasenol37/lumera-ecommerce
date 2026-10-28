@@ -1,3 +1,5 @@
+import { buildProductImageFileName } from "@/lib/utils/productImage";
+
 /**
  * Tarayıcı tarafında (Client-Side) görselleri boyutlandırıp sıkıştırır.
  * 5-20 MB'lık kamera fotoğraflarını yüksek kalitede ~150-350 KB'a indirger.
@@ -7,6 +9,27 @@ export interface CompressImageOptions {
   maxHeight?: number;
   quality?: number; // 0.1 - 1.0
   mimeType?: string; // "image/jpeg" | "image/webp"
+  customName?: string; // Ürün adı (dosya adını ürün ismi yapmak için)
+  index?: number; // Galeri sırası (2, 3, ...)
+}
+
+function renameFileIfNeeded(
+  file: File,
+  customName?: string,
+  index?: number
+): File {
+  if (!customName) return file;
+  const targetName = buildProductImageFileName(
+    customName,
+    file.name,
+    index,
+    file.type
+  );
+  if (file.name === targetName) return file;
+  return new File([file], targetName, {
+    type: file.type,
+    lastModified: Date.now(),
+  });
 }
 
 export async function compressImage(
@@ -18,20 +41,25 @@ export async function compressImage(
     maxHeight = 1920,
     quality = 0.85,
     mimeType = "image/jpeg",
+    customName,
+    index,
   } = options;
 
-  // Görsel değilse veya SVG / GIF ise sıkıştırmadan döndür
+  // Görsel değilse veya SVG / GIF ise sıkıştırmadan (gerekirse yeniden adlandırarak) döndür
   if (
     !file.type.startsWith("image/") ||
     file.type === "image/svg+xml" ||
     file.type === "image/gif"
   ) {
-    return file;
+    return renameFileIfNeeded(file, customName, index);
   }
 
-  // Zaten küçükse (< 250 KB) sıkıştırmaya gerek yok
-  if (file.size <= 250 * 1024 && (file.type === "image/jpeg" || file.type === "image/webp")) {
-    return file;
+  // Zaten küçükse (< 250 KB) sıkıştırmaya gerek yok, sadece ürün adını uygula
+  if (
+    file.size <= 250 * 1024 &&
+    (file.type === "image/jpeg" || file.type === "image/webp")
+  ) {
+    return renameFileIfNeeded(file, customName, index);
   }
 
   return new Promise((resolve) => {
@@ -57,7 +85,7 @@ export async function compressImage(
 
         const ctx = canvas.getContext("2d");
         if (!ctx) {
-          resolve(file); // Canvas context alınamazsa orijinal dosyayı dön
+          resolve(renameFileIfNeeded(file, customName, index));
           return;
         }
 
@@ -76,23 +104,30 @@ export async function compressImage(
         canvas.toBlob(
           (blob) => {
             if (!blob) {
-              resolve(file);
+              resolve(renameFileIfNeeded(file, customName, index));
               return;
             }
 
-            // Dosya adı uzantısını ayarla
-            const originalName = file.name.substring(0, file.name.lastIndexOf(".")) || file.name;
-            const extension = mimeType === "image/webp" ? ".webp" : ".jpg";
-            const newFileName = `${originalName}${extension}`;
+            // Dosya adını ürün adına göre ayarla
+            const baseProductOrFileName =
+              customName ||
+              file.name.substring(0, file.name.lastIndexOf(".")) ||
+              file.name;
+            const newFileName = buildProductImageFileName(
+              baseProductOrFileName,
+              file.name,
+              index,
+              mimeType
+            );
 
             const compressedFile = new File([blob], newFileName, {
               type: mimeType,
               lastModified: Date.now(),
             });
 
-            // Eğer sıkıştırılmış dosya orijinalinden büyükse orijinali kullan
+            // Eğer sıkıştırılmış dosya orijinalinden büyükse orijinali (ürün adıyla) kullan
             if (compressedFile.size >= file.size) {
-              resolve(file);
+              resolve(renameFileIfNeeded(file, customName, index));
             } else {
               resolve(compressedFile);
             }
@@ -103,18 +138,18 @@ export async function compressImage(
       };
 
       img.onerror = () => {
-        resolve(file); // Hata durumunda orijinal dosyayı döndür
+        resolve(renameFileIfNeeded(file, customName, index));
       };
 
       if (readerEvent.target?.result) {
         img.src = readerEvent.target.result as string;
       } else {
-        resolve(file);
+        resolve(renameFileIfNeeded(file, customName, index));
       }
     };
 
     reader.onerror = () => {
-      resolve(file);
+      resolve(renameFileIfNeeded(file, customName, index));
     };
 
     reader.readAsDataURL(file);
@@ -122,11 +157,19 @@ export async function compressImage(
 }
 
 /**
- * Birden fazla görseli paralel olarak optimize eder.
+ * Birden fazla görseli paralel olarak optimize eder ve ürün adına göre numaralandırır.
  */
 export async function compressImages(
   files: File[],
-  options?: CompressImageOptions
+  options?: CompressImageOptions,
+  startIndex = 2
 ): Promise<File[]> {
-  return Promise.all(files.map((file) => compressImage(file, options)));
+  return Promise.all(
+    files.map((file, idx) =>
+      compressImage(file, {
+        ...options,
+        index: options?.index !== undefined ? options.index + idx : startIndex + idx,
+      })
+    )
+  );
 }

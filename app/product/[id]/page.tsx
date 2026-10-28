@@ -12,6 +12,11 @@ import {
   generateBreadcrumbSchema,
   SITE_NAME,
 } from "@/lib/seo";
+import { getProductImageUrl } from "@/lib/utils/productImage";
+import {
+  getFallbackReviewsForProduct,
+  syncDefaultReviewsToDatabase,
+} from "@/lib/data/defaultReviews";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -66,9 +71,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     product.description?.replace(/<[^>]*>?/gm, "").slice(0, 160) ||
     `${product.name} - ${isWood ? "Premium masif ahşap ve üst düzey işçilikle" : isMetal ? "Hassas metal işçiliği ve üst düzey zanaatle" : "Özel tasarım ve üst düzey işçilikle"} üretilen LUMERA koleksiyonu.`;
 
-  const imageUrl = product.image?.startsWith("http")
-    ? product.image
-    : `${siteUrl}${product.image}`;
+  const namedImagePath = getProductImageUrl(product.image, product.name, 1);
+  const imageUrl = namedImagePath.startsWith("http")
+    ? namedImagePath
+    : `${siteUrl}${namedImagePath}`;
 
   const canonicalUrl = `${siteUrl}/product/${product.id}`;
 
@@ -120,6 +126,8 @@ export default async function ProductPage({ params }: Props) {
     notFound();
   }
 
+  await syncDefaultReviewsToDatabase(productId);
+
   // Fetch product from DB with images
   const product = await prisma.product.findUnique({
     where: {
@@ -136,6 +144,10 @@ export default async function ProductPage({ params }: Props) {
 
   if (!product) {
     notFound();
+  }
+
+  if (!product.reviews || product.reviews.length === 0) {
+    product.reviews = getFallbackReviewsForProduct(productId) as any;
   }
 
   // Fetch 4 related products

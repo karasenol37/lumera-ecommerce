@@ -185,6 +185,8 @@ export default function EditProductPage() {
           maxWidth: 1920,
           maxHeight: 1920,
           quality: 0.85,
+          customName: form.name,
+          index: 1,
         });
         formData.append("mainImage", optimizedMain);
       }
@@ -194,11 +196,16 @@ export default function EditProductPage() {
       }
 
       if (newGalleryFiles.length > 0) {
-        const optimizedGallery = await compressImages(newGalleryFiles, {
-          maxWidth: 1920,
-          maxHeight: 1920,
-          quality: 0.85,
-        });
+        const optimizedGallery = await compressImages(
+          newGalleryFiles,
+          {
+            maxWidth: 1920,
+            maxHeight: 1920,
+            quality: 0.85,
+            customName: form.name,
+          },
+          existingGallery.length + 2
+        );
         optimizedGallery.forEach((file) => {
           formData.append("gallery", file);
         });

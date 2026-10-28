@@ -8,6 +8,8 @@ export async function registerUser(data: {
   name: string;
   email: string;
   password: string;
+  city?: string;
+  district?: string;
 }) {
   const existingUser = await prisma.user.findUnique({
     where: {
@@ -31,6 +33,24 @@ export async function registerUser(data: {
       password: hashedPassword,
     },
   });
+
+  // İl ve ilçe bilgisini veritabanına kaydet
+  const city = data.city?.trim() || "";
+  const district = data.district?.trim() || "";
+  if (city || district) {
+    try {
+      await prisma.siteSetting.upsert({
+        where: { key: `user_location_${user.id}` },
+        update: { value: JSON.stringify({ city, district }) },
+        create: {
+          key: `user_location_${user.id}`,
+          value: JSON.stringify({ city, district }),
+        },
+      });
+    } catch (e) {
+      console.error("Kullanıcı il/ilçe kaydı hatası:", e);
+    }
+  }
 
   // Otomatik oturum başlat
   await createSession(user.id);

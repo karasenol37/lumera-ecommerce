@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 import { getSiteUrl } from "@/lib/seo";
+import { getProductImageUrl } from "@/lib/utils/productImage";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
@@ -64,6 +65,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
       select: {
         id: true,
+        name: true,
         category: true,
         image: true,
         updatedAt: true,
@@ -74,13 +76,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       if (prod.category) {
         categoryNames.add(prod.category);
       }
+      const namedImg = prod.image
+        ? getProductImageUrl(prod.image, prod.name, 1)
+        : null;
       productRoutes.push({
         url: `${siteUrl}/product/${prod.id}`,
         lastModified: prod.updatedAt || now,
         changeFrequency: "weekly",
         priority: 0.9,
-        images: prod.image
-          ? [prod.image.startsWith("http") ? prod.image : `${siteUrl}${prod.image}`]
+        images: namedImg
+          ? [namedImg.startsWith("http") ? namedImg : `${siteUrl}${namedImg}`]
           : undefined,
       });
     }

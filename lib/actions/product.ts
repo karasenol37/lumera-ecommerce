@@ -4,29 +4,33 @@ import { prisma } from "@/lib/prisma";
 import { put } from "@vercel/blob";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import {
+  buildProductImageFileName,
+  createProductImageSlug,
+} from "@/lib/utils/productImage";
 
 function createSlug(text: string) {
-  return text
-    .toLowerCase()
-    .replace(/ğ/g, "g")
-    .replace(/ü/g, "u")
-    .replace(/ş/g, "s")
-    .replace(/ı/g, "i")
-    .replace(/ö/g, "o")
-    .replace(/ç/g, "c")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+  return createProductImageSlug(text);
 }
 
-async function saveImage(file: File) {
+async function saveImage(file: File, productName: string, index?: number) {
+  const fileName = buildProductImageFileName(
+    productName,
+    file.name,
+    index,
+    file.type
+  );
+
   if (process.env.BLOB_READ_WRITE_TOKEN) {
-    const fileName = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
-    const blob = await put(fileName, file, { access: "public" });
+    const blob = await put(fileName, file, {
+      access: "public",
+      addRandomSuffix: false,
+      allowOverwrite: true,
+    });
     return blob.url;
   } else {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const fileName = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
     const uploadDir = path.join(process.cwd(), "public", "uploads");
     await mkdir(uploadDir, { recursive: true });
     await writeFile(path.join(uploadDir, fileName), buffer);
@@ -47,15 +51,18 @@ export async function createProduct(formData: FormData) {
 
     const feeInput = Number(formData.get("shippingFee") || 0);
     const freeShippingRaw = formData.get("freeShipping");
-    const freeShipping = feeInput > 0 ? false : freeShippingRaw === "false" || freeShippingRaw === "0" ? false : true;
+    const freeShipping =
+      feeInput > 0
+        ? false
+        : freeShippingRaw === "false" || freeShippingRaw === "0"
+        ? false
+        : true;
     const shippingFee = freeShipping ? 0 : feeInput;
 
     const mainImage = formData.get("mainImage") as File;
     if (!mainImage || mainImage.size === 0) {
       throw new Error("Ana resim zorunludur.");
     }
-
-    const imageUrl = await saveImage(mainImage);
 
     let slug = createSlug(name);
     const existingProduct = await prisma.product.findUnique({
@@ -65,6 +72,8 @@ export async function createProduct(formData: FormData) {
     if (existingProduct) {
       slug = `${slug}-${Date.now()}`;
     }
+
+    const imageUrl = await saveImage(mainImage, slug, 1);
 
     const product = await prisma.product.create({
       data: {
@@ -89,7 +98,7 @@ export async function createProduct(formData: FormData) {
 
     if (galleryImages.length > 0) {
       const galleryUrls = await Promise.all(
-        galleryImages.map((image) => saveImage(image))
+        galleryImages.map((image, idx) => saveImage(image, slug, idx + 2))
       );
 
       await prisma.productImage.createMany({
@@ -105,4 +114,4 @@ export async function createProduct(formData: FormData) {
     console.error("CREATE PRODUCT ERROR:", error);
     throw new Error(error?.message || "Ürün eklenirken bir hata oluştu.");
   }
-}
+}

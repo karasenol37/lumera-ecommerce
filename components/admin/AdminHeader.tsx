@@ -22,6 +22,8 @@ export default function AdminHeader({
     { href: "/admin/products", label: "Ürünler" },
     { href: "/admin/orders", label: "Siparişler" },
     { href: "/admin/proforma", label: "📑 Proforma & Teklif" },
+    { href: "/admin/reviews", label: "⭐ Yorumlar" },
+    { href: "/admin/messages", label: "✉️ Mesajlar & Bildirimler" },
     { href: "/admin/users", label: "Kullanıcılar" },
     { href: "/admin/settings", label: "Ayarlar" },
   ];

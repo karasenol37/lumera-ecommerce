@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { retrieveCheckoutForm } from "@/lib/payment/iyzico-auth";
 import Iyzipay from "iyzipay";
+import { notifyNewOrder } from "@/lib/notifications";
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,6 +36,7 @@ export async function POST(req: NextRequest) {
     }
 
     const orderNumber = `LUM-${Date.now()}`;
+    const rawItems = (pendingPayment.items as any[]) || [];
 
     const order = await prisma.order.create({
       data: {
@@ -53,7 +55,7 @@ export async function POST(req: NextRequest) {
         paymentMethod: "Kredi Kartı",
         status: "Hazırlanıyor",
         items: {
-          create: (pendingPayment.items as any[]).map((item: any) => ({
+          create: rawItems.map((item: any) => ({
             productId: item.id,
             quantity: item.quantity,
             price: item.price,
@@ -61,6 +63,25 @@ export async function POST(req: NextRequest) {
         },
       },
     });
+
+    // lumeratasarim@gmail.com hesabına sipariş bildirimi gönder
+    await notifyNewOrder({
+      orderNumber: order.orderNumber,
+      fullName: pendingPayment.fullName,
+      phone: pendingPayment.phone,
+      email: pendingPayment.email,
+      city: pendingPayment.city,
+      district: pendingPayment.district,
+      address: pendingPayment.address,
+      total: pendingPayment.total,
+      paymentStatus: "Ödendi (Kredi Kartı)",
+      items: rawItems.map((item: any) => ({
+        productId: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+    }).catch((err) => console.error("Sipariş e-posta bildirim hatası:", err));
 
     await prisma.pendingPayment.delete({
       where: { id: pendingPayment.id },

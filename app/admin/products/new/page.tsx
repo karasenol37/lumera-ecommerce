@@ -90,20 +90,27 @@ export default function NewProductPage() {
       setLoading(true);
       setLoadingStep("Görseller optimize ediliyor...");
 
-      // 1. İstemci tarafında görselleri sıkıştır ve optimize et
+      // 1. İstemci tarafında görselleri sıkıştır ve optimize et (dosya adını ürün ismi yap)
       const optimizedMainImage = await compressImage(mainImage, {
         maxWidth: 1920,
         maxHeight: 1920,
         quality: 0.85,
+        customName: form.name,
+        index: 1,
       });
 
       let optimizedGallery: File[] = [];
       if (galleryImages.length > 0) {
-        optimizedGallery = await compressImages(galleryImages, {
-          maxWidth: 1920,
-          maxHeight: 1920,
-          quality: 0.85,
-        });
+        optimizedGallery = await compressImages(
+          galleryImages,
+          {
+            maxWidth: 1920,
+            maxHeight: 1920,
+            quality: 0.85,
+            customName: form.name,
+          },
+          2
+        );
       }
 
       setLoadingStep("Ürün verileri kaydediliyor...");

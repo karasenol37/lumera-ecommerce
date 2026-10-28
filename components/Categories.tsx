@@ -23,18 +23,25 @@ export default async function Categories() {
     },
     {
       name: "Ateş Çukurları",
-      image: settings.category_image_ates_cukuru || "/images/categories/ates-cukuru.jpg",
+      image:
+        settings.category_image_ates_cukuru ||
+        "/images/categories/ates-cukuru.jpg",
       desc: "Akşam Keyfi İçin Özel Tasarım Çelik Ateş Çukurları",
     },
     {
       name: "Tamamlayıcı Ürünler",
-      image: settings.category_image_tamamlayici || "/images/categories/tamamlayici-urunler.jpg",
+      image:
+        settings.category_image_tamamlayici ||
+        "/images/categories/tamamlayici-urunler.jpg",
       desc: "Şemsiye Ayağı & Şemsiye Altlığı, Hamak & Şezlong Parçaları, Minderler",
     },
   ];
 
   return (
-    <section id="kategoriler" className="mx-auto max-w-7xl px-4 sm:px-6 py-10 sm:py-20">
+    <section
+      id="kategoriler"
+      className="mx-auto max-w-7xl px-4 sm:px-6 py-10 sm:py-16"
+    >
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12">
         <div>
           <span className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] sm:tracking-[0.3em] text-[#c8a165] uppercase">
@@ -44,7 +51,7 @@ export default async function Categories() {
             Modeller & Koleksiyonlar
           </h2>
         </div>
-        <p className="mt-2 sm:mt-4 md:mt-0 text-zinc-400 max-w-md text-xs sm:text-sm font-light">
+        <p className="mt-2 sm:mt-4 md:mt-0 text-zinc-300 max-w-md text-xs sm:text-sm font-light">
           Açık hava yaşam alanlarınız için en ince detayına kadar düşünülmüş gerçek premium koleksiyonlar.
         </p>
       </div>
@@ -54,20 +61,20 @@ export default async function Categories() {
           <Link
             key={category.name}
             href={`/kategori/${encodeURIComponent(category.name)}`}
-            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-[#121420]/80 backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:border-[#c8a165]/60 hover:shadow-[0_15px_35px_rgba(200,161,101,0.2)]"
+            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-[#1e242d]/90 backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:border-[#c8a165]/60 hover:shadow-[0_15px_35px_rgba(200,161,101,0.2)]"
           >
-            {/* Görsel Konteyneri: Kenarlar açık, geniş aspect ratio */}
-            <div className="relative aspect-[16/11] w-full overflow-hidden bg-[#090a0f]">
+            {/* Görsel Konteyneri: Çerçeveye tam doldurulan görsel */}
+            <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#151920]">
               <Image
                 src={category.image}
                 alt={category.name}
                 fill
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                className="object-fill transition-transform duration-700 ease-out group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#121420] via-transparent to-transparent opacity-60" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1e242d]/70 via-transparent to-transparent opacity-50" />
 
-              <div className="absolute top-2 right-2 sm:top-3 sm:right-3 rounded-full bg-[#090a0f]/80 backdrop-blur-md px-2.5 py-0.5 sm:px-3 sm:py-1 text-[9px] sm:text-[10px] font-semibold tracking-wider text-[#c8a165] border border-[#c8a165]/30 shadow-sm">
+              <div className="absolute top-2 right-2 rounded-full bg-[#151920]/80 backdrop-blur-md px-2 py-0.5 text-[8px] font-semibold tracking-wider text-[#e5c184] border border-[#c8a165]/30 shadow-sm">
                 KOLEKSİYON
               </div>
             </div>
@@ -78,14 +85,16 @@ export default async function Categories() {
                 <h3 className="text-sm sm:text-lg font-bold text-white transition-colors duration-200 group-hover:text-[#c8a165] line-clamp-1">
                   {category.name}
                 </h3>
-                <p className="mt-1 text-[11px] sm:text-xs text-zinc-400 font-light leading-snug line-clamp-2">
+                <p className="mt-1 text-[11px] sm:text-xs text-zinc-300 font-light leading-snug line-clamp-2">
                   {category.desc}
                 </p>
               </div>
 
-              <div className="mt-3 sm:mt-5 pt-2.5 border-t border-white/5 flex items-center justify-between text-[11px] sm:text-xs font-semibold text-[#c8a165]">
+              <div className="mt-3 sm:mt-5 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] sm:text-xs font-semibold text-[#c8a165]">
                 <span>Modelleri İncele</span>
-                <span className="transition-transform duration-300 group-hover:translate-x-1 text-sm">→</span>
+                <span className="transition-transform duration-300 group-hover:translate-x-1 text-sm">
+                  →
+                </span>
               </div>
             </div>
           </Link>

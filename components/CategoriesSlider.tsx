@@ -34,7 +34,7 @@ export default function CategoriesSlider({
         <button
           type="button"
           onClick={() => scroll("left")}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-[#121420]/80 text-white backdrop-blur-md transition-all hover:border-[#c8a165] hover:text-[#e5c184] hover:bg-black/60 shadow-lg cursor-pointer"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-[#1e242d]/80 text-white backdrop-blur-md transition-all hover:border-[#c8a165] hover:text-[#e5c184] hover:bg-black/60 shadow-lg cursor-pointer"
           title="Sola Kaydır"
         >
           ←
@@ -42,7 +42,7 @@ export default function CategoriesSlider({
         <button
           type="button"
           onClick={() => scroll("right")}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-[#121420]/80 text-white backdrop-blur-md transition-all hover:border-[#c8a165] hover:text-[#e5c184] hover:bg-black/60 shadow-lg cursor-pointer"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-[#1e242d]/80 text-white backdrop-blur-md transition-all hover:border-[#c8a165] hover:text-[#e5c184] hover:bg-black/60 shadow-lg cursor-pointer"
           title="Sağa Kaydır"
         >
           →
@@ -62,21 +62,20 @@ export default function CategoriesSlider({
           >
             <Link
               href={`/kategori/${encodeURIComponent(category.name)}`}
-              className="group relative flex flex-col justify-between h-full overflow-hidden rounded-2xl border border-white/10 bg-[#121420]/80 backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:border-[#c8a165]/60 hover:shadow-[0_15px_35px_rgba(200,161,101,0.2)]"
+              className="group relative flex flex-col justify-between h-full overflow-hidden rounded-2xl border border-white/10 bg-[#1e242d]/90 backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:border-[#c8a165]/60 hover:shadow-[0_15px_35px_rgba(200,161,101,0.2)]"
             >
-              {/* Görsel Konteyneri: Kenarlar kapanmasın diye geniş aspect ratio ve temiz çerçeve */}
-              <div className="relative aspect-[16/11] w-full overflow-hidden bg-[#090a0f]">
+              {/* Görsel Konteyneri: Çerçeveye tam doldurulan görsel */}
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#151920]">
                 <Image
                   src={category.image}
                   alt={category.name}
                   fill
                   sizes="(max-width: 640px) 280px, 360px"
-                  className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="object-fill transition-transform duration-700 ease-out group-hover:scale-105"
                 />
-                {/* İnce hafif gölge geçişi (görseli karartmadan kenarların tamamı net görünür) */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#121420] via-transparent to-transparent opacity-60" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1e242d]/70 via-transparent to-transparent opacity-50" />
 
-                <div className="absolute top-3 right-3 rounded-full bg-[#090a0f]/80 backdrop-blur-md px-3 py-1 text-[10px] font-bold tracking-wider text-[#e5c184] border border-[#c8a165]/40 shadow-md">
+                <div className="absolute top-2.5 right-2.5 rounded-full bg-[#151920]/80 backdrop-blur-md px-2 py-0.5 text-[8px] font-bold tracking-wider text-[#e5c184] border border-[#c8a165]/40 shadow-md">
                   KOLEKSİYON
                 </div>
               </div>
@@ -87,12 +86,12 @@ export default function CategoriesSlider({
                   <h3 className="text-base sm:text-xl font-bold text-white transition-colors duration-200 group-hover:text-[#c8a165]">
                     {category.name}
                   </h3>
-                  <p className="mt-1.5 text-xs text-zinc-400 font-light leading-relaxed line-clamp-2">
+                  <p className="mt-1.5 text-xs text-zinc-300 font-light leading-relaxed line-clamp-2">
                     {category.desc}
                   </p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-semibold text-[#c8a165]">
+                <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs font-semibold text-[#c8a165]">
                   <span>Modelleri İncele</span>
                   <span className="transition-transform duration-300 group-hover:translate-x-1.5 text-sm">
                     →
@@ -105,7 +104,7 @@ export default function CategoriesSlider({
       </div>
 
       {/* Mobile Swipe Hint */}
-      <div className="sm:hidden flex items-center justify-center gap-1.5 text-[11px] text-zinc-500 mt-2">
+      <div className="sm:hidden flex items-center justify-center gap-1.5 text-[11px] text-zinc-400 mt-2">
         <span>↔</span>
         <span>Modelleri görmek için yana doğru kaydırın</span>
       </div>

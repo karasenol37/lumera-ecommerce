@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSiteSettings } from "@/lib/services/settingsService";
 import { PrismaClient } from "@prisma/client";
+import { ADMIN_NOTIFICATION_EMAIL } from "@/lib/notifications";
 
 export async function POST(req: Request) {
   try {
@@ -15,11 +16,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // Site ayarlarından güncel e-posta adresini al (ana sayfada görüntülenen mail)
     const settings = await getSiteSettings();
-    const targetEmail = settings.contactEmail || "lumeratasarim@gmail.com";
+    const targetEmail = settings.contactEmail || ADMIN_NOTIFICATION_EMAIL;
 
-    // Prisma model erişimi
     let client: any = prisma;
     if (!client.contactMessage) {
       client = new PrismaClient();
@@ -38,9 +37,25 @@ export async function POST(req: Request) {
       });
     }
 
-    // Konsol logu ve bilgilendirme
-    console.log(`[İletişim Formu] Mesaj başarıyla iletildi -> Hedef E-posta: ${targetEmail}`);
-    console.log(`Gönderen: ${name} (${email}) | Konu: ${subject || "Konusuz"}`);
+    // FormSubmit üzerinden lumeratasarim@gmail.com adresine e-posta bildirimi
+    try {
+      await fetch(`https://formsubmit.co/ajax/${ADMIN_NOTIFICATION_EMAIL}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          _subject: `✉️ İletişim Mesajı: ${subject || name}`,
+          Gonderen: name.trim(),
+          Eposta: email.trim(),
+          Konu: subject || "Genel İletişim",
+          Mesaj: message.trim(),
+        }),
+      });
+    } catch {
+      // ignore external relay error
+    }
 
     return NextResponse.json({
       success: true,

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { initializeCheckoutForm } from "@/lib/payment/iyzico-auth";
 import Iyzipay from "iyzipay";
 import { calculateShipping } from "@/lib/utils/shipping";
+import { notifyNewOrder } from "@/lib/notifications";
 
 function generateId(prefix: string = "ID") {
   return `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
@@ -178,6 +179,25 @@ export async function POST(req: NextRequest) {
       where: { id: pendingPayment.id },
       data: { token: result.token },
     });
+
+    // Sipariş oluşturulduğunda lumeratasarim@gmail.com adresine bildirim gönder
+    await notifyNewOrder({
+      orderNumber: `SİP-${pendingPayment.id}`,
+      fullName: buyer.fullName.trim(),
+      phone: buyer.phone.trim(),
+      email: buyer.email.trim(),
+      city,
+      district: buyer.district?.trim() || "",
+      address,
+      total: grandTotal,
+      paymentStatus: "Ödeme Başlatıldı",
+      items: itemsWithShipping.map((i: any) => ({
+        productId: i.id,
+        name: i.name,
+        quantity: i.quantity,
+        price: i.price,
+      })),
+    }).catch(() => {});
 
     return NextResponse.json({
       success: true,
